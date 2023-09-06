@@ -29,10 +29,10 @@ This dependency requires **Android API level 33 (or later)** in the main applica
     
 ## Usage
 ```
-import com.example.dlvn_sdk.DlvnSdk
+import com.example.dlvn_sdk.EdoctorDlvnSdk
 
 // Initialize SDK instance with context before using any functions
-val dlvnSdk = DlvnSdk(context: Context)
+val dlvnSdk = EdoctorDlvnSdk(context: Context)
 ```
 
 ## API References
