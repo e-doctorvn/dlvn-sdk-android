@@ -1,6 +1,6 @@
 package com.example.dlvn_sdk.api
 
-import com.example.dlvn_sdk.DlvnSdk
+import com.example.dlvn_sdk.EdoctorDlvnSdk
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -9,12 +9,12 @@ import java.net.HttpURLConnection
 class InterceptorImp(): Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
-        var accessToken: String? = DlvnSdk.accessToken // get accessToken
+        var accessToken: String? = EdoctorDlvnSdk.accessToken // get accessToken
 
         val response = chain.proceed(newRequestWithAccessToken(accessToken, request))
 
         if (response.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
-            val newAccessToken = DlvnSdk.accessToken
+            val newAccessToken = EdoctorDlvnSdk.accessToken
             if (newAccessToken != accessToken) {
                 return chain.proceed(newRequestWithAccessToken(accessToken, request))
             } else {
@@ -38,7 +38,7 @@ class InterceptorImp(): Interceptor {
 
     private fun refreshToken(): String? {
         synchronized(this) {
-            val refreshToken = DlvnSdk.accessToken
+            val refreshToken = EdoctorDlvnSdk.accessToken
             refreshToken.let {
                 return ""
             }

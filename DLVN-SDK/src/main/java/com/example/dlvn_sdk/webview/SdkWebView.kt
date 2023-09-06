@@ -27,7 +27,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.example.dlvn_sdk.Constants
-import com.example.dlvn_sdk.DlvnSdk
+import com.example.dlvn_sdk.EdoctorDlvnSdk
 import com.example.dlvn_sdk.R
 
 class SdkWebView: DialogFragment() {
@@ -187,7 +187,7 @@ class SdkWebView: DialogFragment() {
                     view!!.context.startActivity(intent)
                     true
                 } catch (e: Exception) {
-                    Log.d(DlvnSdk.LOG_TAG, "shouldOverrideUrlLoading Exception:$e")
+                    Log.d(EdoctorDlvnSdk.LOG_TAG, "shouldOverrideUrlLoading Exception:$e")
                     true
                 }
             }

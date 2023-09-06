@@ -17,7 +17,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.create
 
-class DlvnSdk(context: Context) {
+class EdoctorDlvnSdk(context: Context) {
     private val webView: SdkWebView = SdkWebView()
     private var apiService: ApiService? = null
 
@@ -35,7 +35,7 @@ class DlvnSdk(context: Context) {
     }
 
     init {
-        DlvnSdk.context = context
+        EdoctorDlvnSdk.context = context
         accessToken = "hello"
 
         if (apiService === null) {
