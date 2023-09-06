@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "920172192520",
+    "project_id": "application-18caf",
+    "storage_bucket": "application-18caf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920172192520:android:25b17c6b14036d011b02bd",
+        "android_client_info": {
+          "package_name": "com.example.application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "920172192520-vje7ea10r35d0s0diqjk7l0cnkhdg8of.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCuQBZ2AOtC-L4WyhM14ETlwLXqp8quzs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "920172192520-vje7ea10r35d0s0diqjk7l0cnkhdg8of.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
