@@ -2,12 +2,14 @@
 
 EDR - DLVN Android SDK 
 
-## Version 1.0.0
+## Version 1.0.1
 
 ## Requirements
-This dependency requires **Android API level 33 (or later)** in the main application
 
-```compileSdk 33 //or later```
+This dependency requires:
+
+* **Compile SDK API level 33 (or later)** in the main application (```compileSdk 33 //or later```)
+* Target at least **Android 5.0 - API level 21 (or later)** (```minSdk 21```)
 
 ## Installation
 
@@ -23,7 +25,7 @@ This dependency requires **Android API level 33 (or later)** in the main applica
 
   ```
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.0.0'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.0.1'
     }
   ```
     
