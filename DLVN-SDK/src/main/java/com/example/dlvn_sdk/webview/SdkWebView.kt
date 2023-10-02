@@ -1,6 +1,7 @@
 package com.example.dlvn_sdk.webview
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -9,14 +10,19 @@ import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
+import android.webkit.JavascriptInterface
+import android.webkit.PermissionRequest
+import android.webkit.ValueCallback
+import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
-import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
@@ -29,6 +35,10 @@ import androidx.fragment.app.FragmentManager
 import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.EdoctorDlvnSdk
 import com.example.dlvn_sdk.R
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class SdkWebView: DialogFragment() {
     private lateinit var loading: ConstraintLayout
@@ -43,6 +53,10 @@ class SdkWebView: DialogFragment() {
     lateinit var header: ConstraintLayout
     private var checkTimeoutLoadWebView = false
     var domain = Constants.healthConsultantUrl
+    private var mCM: String? = null
+    private var mUM: ValueCallback<Uri>? = null
+    private var mUMA: ValueCallback<Array<Uri>>? = null
+    private val FCR = 99
 
     companion object {
         var isVisible = false
@@ -51,15 +65,11 @@ class SdkWebView: DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SdkWebView.isVisible = true
-        setStyle(STYLE_NO_FRAME, R.style.DialogStyle);
+        setStyle(STYLE_NO_FRAME, R.style.DialogStyle)
     }
 
     override fun show(manager: FragmentManager, tag: String?) {
         super.show(manager, null)
-    }
-
-    private fun backScreen(): Unit {
-        dismiss()
     }
 
     @SuppressLint("ServiceCast")
@@ -69,7 +79,7 @@ class SdkWebView: DialogFragment() {
         return cm.activeNetworkInfo != null && cm.activeNetworkInfo!!.isConnected
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
+    @SuppressLint("SetJavaScriptEnabled", "InternalInsetResource")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -79,16 +89,16 @@ class SdkWebView: DialogFragment() {
             R.layout.webview,
             container, false
         )
-        WebView(requireContext()).clearCache(true)
-        WebStorage.getInstance().deleteAllData();
-        CookieManager.getInstance().removeAllCookies(null);
-        CookieManager.getInstance().flush();
+//        WebView(requireContext()).clearCache(true)
+//        WebStorage.getInstance().deleteAllData()
+//        CookieManager.getInstance().removeAllCookies(null)
+//        CookieManager.getInstance().flush()
 
-        var statusBarHeight = 0
-        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        if (resourceId > 0) {
-            statusBarHeight = resources.getDimensionPixelSize(resourceId)
-        }
+//        var statusBarHeight = 0
+//        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+//        if (resourceId > 0) {
+//            statusBarHeight = resources.getDimensionPixelSize(resourceId)
+//        }
 
         dialog?.window?.statusBarColor = Color.TRANSPARENT
         myWebView = v.findViewById(R.id.webview)
@@ -102,12 +112,14 @@ class SdkWebView: DialogFragment() {
         buttonRefresh = v.findViewById(R.id.btn_refresh)
         containerErrorNetwork = v.findViewById(R.id.containerErrorNetwork)
 
-        myWebView.clearCache(true);
-        myWebView.clearFormData();
-        myWebView.clearHistory();
-        myWebView.clearSslPreferences();
+//        myWebView.clearCache(true)
+        myWebView.clearFormData()
+        myWebView.clearHistory()
+        myWebView.clearSslPreferences()
+
         val cookieManager = CookieManager.getInstance()
         cookieManager.setAcceptCookie(true)
+        cookieManager.setAcceptThirdPartyCookies(myWebView, true)
 
         buttonBack?.setOnClickListener {
             dismiss()
@@ -134,7 +146,65 @@ class SdkWebView: DialogFragment() {
             myWebView.reload()
         }
 
+        myWebView.webChromeClient = object : WebChromeClient() {
+            override fun onPermissionRequest(request: PermissionRequest) {
+                activity!!.runOnUiThread {
+                    request.grant(request.resources)
+                }
+            }
+
+            @SuppressLint("QueryPermissionsNeeded")
+            override fun onShowFileChooser(
+                webView: WebView,
+                filePathCallback: ValueCallback<Array<Uri>>,
+                fileChooserParams: FileChooserParams
+            ): Boolean {
+                if (mUMA != null) {
+                    mUMA!!.onReceiveValue(null)
+                }
+                mUMA = filePathCallback
+                var takePictureIntent: Intent? = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                if (takePictureIntent!!.resolveActivity(requireActivity().packageManager) != null) {
+                    var photoFile: File? = null
+                    try {
+                        photoFile = createImageFile()
+                        takePictureIntent.putExtra("PhotoPath", mCM)
+                    } catch (ex: IOException) {
+
+                    }
+                    if (photoFile != null) {
+                        mCM = "file:" + photoFile.absolutePath
+                        takePictureIntent.putExtra(
+                            MediaStore.EXTRA_OUTPUT,
+                            Uri.fromFile(photoFile)
+                        )
+                    } else {
+                        takePictureIntent = null
+                    }
+                }
+                val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
+                contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
+                contentSelectionIntent.type = "*/*"
+                contentSelectionIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                val intentArray: Array<Intent> = takePictureIntent?.let { arrayOf(it) } ?: arrayOf<Intent>()
+                val chooserIntent = Intent(Intent.ACTION_CHOOSER)
+                chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
+                chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser")
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
+                chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
+                startActivityForResult(chooserIntent, FCR)
+                return true
+            }
+
+        }
         myWebView.webViewClient = object : WebViewClient() {
+            override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
+                super.doUpdateVisitedHistory(view, url, isReload)
+                if (view?.title?.contains("https") == false) {
+                    wvTitle.text = formatWebTitle(view.title!!)
+                }
+            }
+
             override fun onReceivedError(
                 view: WebView?,
                 errorCode: Int,
@@ -144,7 +214,7 @@ class SdkWebView: DialogFragment() {
                 if (errorCode == -2) {
                     requireActivity().runOnUiThread {
                         loading.visibility = View.GONE
-                        containerErrorNetwork?.visibility = View.VISIBLE
+                        containerErrorNetwork.visibility = View.VISIBLE
                     }
                 }
                 super.onReceivedError(view, errorCode, description, failingUrl)
@@ -156,6 +226,9 @@ class SdkWebView: DialogFragment() {
                     loading.visibility = View.GONE
                 }
                 checkTimeoutLoadWebView = true
+//                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+////                    initializeUpgradeDialog()
+//                }
             }
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -195,8 +268,9 @@ class SdkWebView: DialogFragment() {
 
         val webSettings: WebSettings = myWebView.settings
         webSettings.javaScriptEnabled = true
+        webSettings.blockNetworkLoads = false
+        webSettings.blockNetworkImage = false
         webSettings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
-        webSettings.javaScriptCanOpenWindowsAutomatically = true
         webSettings.mediaPlaybackRequiresUserGesture = false
         webSettings.setSupportMultipleWindows(true)
         webSettings.setGeolocationEnabled(true)
@@ -205,17 +279,21 @@ class SdkWebView: DialogFragment() {
         webSettings.databaseEnabled = true
         webSettings.javaScriptCanOpenWindowsAutomatically = true
         webSettings.allowContentAccess = true
-        webSettings.allowFileAccessFromFileURLs = true
         webSettings.setGeolocationEnabled(true)
         webSettings.loadWithOverviewMode = true
         webSettings.allowFileAccess = true
-        webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
+        webSettings.cacheMode = WebSettings.LOAD_DEFAULT
+        webSettings.mediaPlaybackRequiresUserGesture = false
+        webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         cookieManager.setAcceptThirdPartyCookies(myWebView, true)
+        myWebView.setLayerType(View.LAYER_TYPE_NONE, null)
+//        myWebView.addJavascriptInterface(JsObject(), "Android")
 
         myWebView.loadUrl(
             domain,
             mapOf(
                 "Content-Type" to "application/json",
+                "Authorization" to "Bearer ${EdoctorDlvnSdk.accessToken}"
             )
         )
         if (!isNetworkConnected()) {
@@ -243,5 +321,80 @@ class SdkWebView: DialogFragment() {
                 }
             }
         }
+    }
+
+    private fun formatWebTitle(title: String): String {
+        if (title.contains(" -")) {
+            return title.substring(0, title.indexOf(" -"))
+        }
+        return  title
+    }
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File? {
+        @SuppressLint("SimpleDateFormat") val timeStamp: String =
+            SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "img_" + timeStamp + "_"
+        val storageDir: File =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(imageFileName, ".jpg", storageDir)
+    }
+    fun openFileChooser(uploadMsg: ValueCallback<Uri?>?) {
+        this.openFileChooser(uploadMsg, "*/*")
+    }
+
+    private fun openFileChooser(
+        uploadMsg: ValueCallback<Uri?>?,
+        acceptType: String?
+    ) {
+        this.openFileChooser(uploadMsg, acceptType, null)
+    }
+
+    private fun openFileChooser(
+        uploadMsg: ValueCallback<Uri?>?,
+        acceptType: String?,
+        capture: String?
+    ) {
+        val i = Intent(Intent.ACTION_GET_CONTENT)
+        i.addCategory(Intent.CATEGORY_OPENABLE)
+        i.type = "*/*"
+        requireActivity().startActivityForResult(
+            Intent.createChooser(i, "File Browser"),
+            99
+        )
+    }
+
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        intent: Intent?
+    ) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        var results: Array<Uri>? = null
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == FCR) {
+                if (null == mUMA) {
+                    return
+                }
+                if (intent == null) { //Capture Photo if no image available
+                    if (mCM != null) {
+                        results = arrayOf(Uri.parse(mCM))
+                    }
+                } else {
+                    val dataString = intent.dataString
+                    if (dataString != null) {
+                        results = arrayOf(Uri.parse(dataString))
+                    } else {
+                        if (intent.clipData != null) {
+                            results = Array(intent.clipData!!.itemCount) {
+                                intent.clipData!!.getItemAt(it).uri
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        mUMA!!.onReceiveValue(results)
+        mUMA = null
     }
 }
