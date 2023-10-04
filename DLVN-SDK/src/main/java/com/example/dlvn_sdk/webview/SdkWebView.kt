@@ -16,8 +16,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.webkit.CookieManager
-import android.webkit.JavascriptInterface
 import android.webkit.PermissionRequest
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
@@ -65,6 +65,10 @@ class SdkWebView: DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SdkWebView.isVisible = true
+        dialog?.window?.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        dialog?.window?.decorView?.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
         setStyle(STYLE_NO_FRAME, R.style.DialogStyle)
     }
 
@@ -99,8 +103,12 @@ class SdkWebView: DialogFragment() {
 //        if (resourceId > 0) {
 //            statusBarHeight = resources.getDimensionPixelSize(resourceId)
 //        }
+//        dialog?.window?.decorView?.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
 
+        dialog?.window?.decorView?.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
         dialog?.window?.statusBarColor = Color.TRANSPARENT
+
         myWebView = v.findViewById(R.id.webview)
         loadingProgressBar = v.findViewById(R.id.loadingProgressBar)
         loading = v.findViewById(R.id.loading)
@@ -111,6 +119,8 @@ class SdkWebView: DialogFragment() {
         buttonClose = v.findViewById(R.id.btn_close_wv)
         buttonRefresh = v.findViewById(R.id.btn_refresh)
         containerErrorNetwork = v.findViewById(R.id.containerErrorNetwork)
+        buttonClose.setColorFilter(Color.argb(255, 255, 255, 255))
+        buttonRefresh.setColorFilter(Color.argb(255, 255, 255, 255))
 
 //        myWebView.clearCache(true)
         myWebView.clearFormData()

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
     </style>
     <style name="DialogTheme" parent="AppTheme">
         <item name="android:windowNoTitle">true</item>
@@ -20,4 +21,8 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowCloseOnTouchOutside">false</item>
     </style>
+<!--    <style name="AppTheme.ActionBar.Popup" parent="ThemeOverlay.AppCompat">-->
+<!--        <item name="android:colorBackground">@color/white</item>-->
+<!--        <item name="background">@color/white</item>-->
+<!--    </style>-->
 </resources>
