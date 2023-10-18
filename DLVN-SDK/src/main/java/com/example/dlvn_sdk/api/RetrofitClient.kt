@@ -1,15 +1,18 @@
 package com.example.dlvn_sdk.api
 
+import com.example.dlvn_sdk.Constants
+import com.example.dlvn_sdk.graphql.DataConverterFactory
+import com.google.gson.GsonBuilder
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 class RetrofitClient {
     private val requestTimeout: Long = 180
     private var retrofit: Retrofit? = null
-    private val baseUrl: String = "https://api.escuelajs.co"
+    private val baseUrl: String = Constants.edrApiUrl
 
     fun getInstance(): Retrofit? {
         if (retrofit == null) {
@@ -18,16 +21,21 @@ class RetrofitClient {
             val dispatcher = Dispatcher()
             dispatcher.maxRequests = 1
 
+            val gson = GsonBuilder()
+                .setLenient()
+                .create()
+
             val okClient: OkHttpClient = OkHttpClient.Builder()
                 .connectTimeout(requestTimeout, TimeUnit.SECONDS)
                 .readTimeout(requestTimeout, TimeUnit.SECONDS)
-                .addInterceptor(interceptor)
+//                .addInterceptor(interceptor)
                 .dispatcher(dispatcher)
                 .build()
 
             retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .addConverterFactory(MoshiConverterFactory.create())
+                .addConverterFactory(DataConverterFactory())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(okClient)
                 .build()
         }

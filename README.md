@@ -52,6 +52,21 @@ Open given URL using WebView dialog. If URL is null, use the default ```/tu-van-
 | `fm` | `FragmentManager` | **Required** |
 | `url` | `String?` | Can be null |
 
+#### DLVNSendData
+
+Function for DLVN to pass data to the SDK.
+This function returns:
+* `true` if successfully receive the data
+* `false` if `params` is empty or missing `dcid` field
+
+```
+  dlvnSdk.DLVNSendData(params: JSONObject): Boolean
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `params` | `JSONObject` | **Required** |
+
 #### Sample function
 
 Takes the name and return a hello string

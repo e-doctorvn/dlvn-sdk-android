@@ -1,5 +1,6 @@
 package com.example.dlvn_sdk.api
 
+import android.util.Log
 import com.example.dlvn_sdk.EdoctorDlvnSdk
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -32,8 +33,9 @@ class InterceptorImp(): Interceptor {
 
     private fun newRequestWithAccessToken(accessToken: String?, request: Request): Request =
         request.newBuilder()
+            .addHeader("Accept", "application/json, text/plain, */*")
             .addHeader("Content-Type", "application/json")
-            .addHeader("Authorization", "Bearer $accessToken")
+            .addHeader("Authorization", "$accessToken")
             .build()
 
     private fun refreshToken(): String? {

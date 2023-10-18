@@ -9,9 +9,11 @@ import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import com.example.dlvn_sdk.api.ApiService
 import com.example.dlvn_sdk.api.RetrofitClient
-import com.example.dlvn_sdk.model.Product
+import com.example.dlvn_sdk.model.AccountInitResponse
 import com.example.dlvn_sdk.model.User
 import com.example.dlvn_sdk.webview.SdkWebView
+import com.google.gson.JsonObject
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,12 +22,14 @@ import retrofit2.create
 class EdoctorDlvnSdk(context: Context) {
     private val webView: SdkWebView = SdkWebView()
     private var apiService: ApiService? = null
+    private var authParams: JSONObject? = null
 
     companion object {
         const val LOG_TAG = "EDOCTOR_SDK"
         @SuppressLint("StaticFieldLeak")
         internal lateinit var context: Context
         internal lateinit var accessToken: String
+        internal var edrAccessToken: String? = null
 
         fun showError(message: String?) {
             if (message != null && message != "null" && message != "") {
@@ -49,11 +53,26 @@ class EdoctorDlvnSdk(context: Context) {
         url?.let {
             webView.domain = url
         }
-        webView.show(fragmentManager, null)
+        if (authParams != null) {
+            initDLVNAccount {
+                webView.show(fragmentManager, null)
+            }
+        } else {
+            webView.show(fragmentManager, null)
+        }
     }
 
     fun sampleFunc(name: String): String {
         return "Hello $name from SDK!!!"
+    }
+
+    fun DLVNSendData(params: JSONObject): Boolean {
+        if (params.length() == 0 || !params.has("dcid")) {
+            showError("`dcid` data is required!")
+            return false
+        }
+        authParams = params
+        return true
     }
 
     private fun getUserList(mCallback: (result: Any?) -> Unit) {
@@ -76,21 +95,40 @@ class EdoctorDlvnSdk(context: Context) {
         }
     }
 
-    private fun getProducts(mCallback: (result: Any?) -> Unit) {
+    private fun initDLVNAccount(mCallback: (result: Any?) -> Unit) {
         try {
-            apiService?.getProducts()?.enqueue(object: Callback<List<Product>> {
-                /* The HTTP call failed. This method is run on the main thread */
-                override fun onFailure(call: Call<List<Product>>, t: Throwable) {
-                    Log.d(LOG_TAG, "An error happened!")
-                    t.printStackTrace()
+            if (authParams != null) {
+                val params = JsonObject()
+                val variables = JSONObject()
+                variables.put("data", authParams.toString())
+                variables.put("signature", "")
+                authParams!!.getString("dcid").let {
+                    variables.put("dcId", it.toString())
                 }
+                params.addProperty("query", "mutation DLVNAccountInit(\$data: String, \$signature: String, \$dcId: String){\n" +
+                        "  dlvnAccountInit(data: \$data, signature: \$signature, dcId: \$dcId) {\n" +
+                        "    accessToken\n" +
+                        "}\n" +
+                        "}")
+                params.addProperty("variables", variables.toString())
 
-                /* The HTTP call was successful. This method is run on the main thread */
-                override fun onResponse(call: Call<List<Product>>, response: Response<List<Product>>) {
-                    Log.d(LOG_TAG, response.body().toString())
-                    mCallback(response.body())
-                }
-            })
+                apiService?.initAccount(params)?.enqueue(object : Callback<AccountInitResponse> {
+                    override fun onResponse(call: Call<AccountInitResponse>, response: Response<AccountInitResponse>) {
+                        Log.d("zzz", response.body().toString())
+                        if (response.body()?.dlvnAccountInit?.accessToken != null) {
+                            edrAccessToken = response.body()!!.dlvnAccountInit.accessToken
+                            mCallback(response.body())
+                        }
+                    }
+
+                    override fun onFailure(call: Call<AccountInitResponse>, t: Throwable) {
+                        Log.d(LOG_TAG, "An error happened!")
+                        t.printStackTrace()
+                    }
+                })
+            } else {
+                showError("Call `DLVNSendData` before calling this function!")
+            }
         } catch (e: Error) {
 
         }
