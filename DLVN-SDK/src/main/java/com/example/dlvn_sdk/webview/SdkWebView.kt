@@ -94,10 +94,10 @@ class SdkWebView: DialogFragment() {
             R.layout.webview,
             container, false
         )
-//        WebView(requireContext()).clearCache(true)
-//        WebStorage.getInstance().deleteAllData()
-//        CookieManager.getInstance().removeAllCookies(null)
-//        CookieManager.getInstance().flush()
+        WebView(requireContext()).clearCache(true)
+        WebStorage.getInstance().deleteAllData()
+        CookieManager.getInstance().removeAllCookies(null)
+        CookieManager.getInstance().flush()
 
 //        var statusBarHeight = 0
 //        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
@@ -123,7 +123,7 @@ class SdkWebView: DialogFragment() {
         buttonClose.setColorFilter(Color.argb(255, 255, 255, 255))
         buttonRefresh.setColorFilter(Color.argb(255, 255, 255, 255))
 
-//        myWebView.clearCache(true)
+        myWebView.clearCache(true)
         myWebView.clearFormData()
         myWebView.clearHistory()
         myWebView.clearSslPreferences()
