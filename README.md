@@ -34,8 +34,14 @@ This dependency requires:
 import com.example.dlvn_sdk.EdoctorDlvnSdk
 
 // Initialize SDK instance with context before using any functions
-val dlvnSdk = EdoctorDlvnSdk(context: Context)
+val dlvnSdk = EdoctorDlvnSdk(context: Context, env: Env)
 ```
+In this constructor:
+- `env` is an enum of `Env { LIVE, SANDBOX }`. It already has the ***default value*** of `Env.SANDBOX`, so adding it to the constructor is **optional**.
+
+## Environment notes
+- On `SANDBOX`, default webview's URL is `khuat.dai-ichi-life.com.vn/tu-van-suc-khoe` and eDoctor's API on `dev` 
+- On `LIVE`, default webview's URL is `kh.dai-ichi-life.com.vn/tu-van-suc-khoe` and eDoctor's API on `production`
 
 ## API References
 
@@ -54,7 +60,7 @@ Open given URL using WebView dialog. If URL is null, use the default ```/tu-van-
 
 #### DLVNSendData
 
-Function for DLVN to pass data to the SDK before opening webview.
+Function for DLVN to pass data to the SDK **before opening** webview.
 This function returns:
 * `true` if successfully receive the data
 * `false` if `params` is empty or missing `dcid` field
