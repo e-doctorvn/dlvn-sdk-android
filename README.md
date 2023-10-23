@@ -2,7 +2,7 @@
 
 EDR - DLVN Android SDK 
 
-## Version 1.0.2
+## Version 1.0.3
 
 ## Requirements
 
@@ -25,7 +25,7 @@ This dependency requires:
 
   ```
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.0.2'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.0.3'
     }
   ```
     
@@ -54,7 +54,7 @@ Open given URL using WebView dialog. If URL is null, use the default ```/tu-van-
 
 #### DLVNSendData
 
-Function for DLVN to pass data to the SDK.
+Function for DLVN to pass data to the SDK before opening webview.
 This function returns:
 * `true` if successfully receive the data
 * `false` if `params` is empty or missing `dcid` field
