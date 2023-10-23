@@ -11,6 +11,7 @@ import com.example.dlvn_sdk.api.ApiService
 import com.example.dlvn_sdk.api.RetrofitClient
 import com.example.dlvn_sdk.model.AccountInitResponse
 import com.example.dlvn_sdk.model.User
+import com.example.dlvn_sdk.Constants.Env
 import com.example.dlvn_sdk.webview.SdkWebView
 import com.google.gson.JsonObject
 import org.json.JSONObject
@@ -19,7 +20,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.create
 
-class EdoctorDlvnSdk(context: Context) {
+class EdoctorDlvnSdk(
+    context: Context,
+    env: Env = Env.SANDBOX
+) {
     private val webView: SdkWebView = SdkWebView()
     private var apiService: ApiService? = null
     private var authParams: JSONObject? = null
@@ -43,9 +47,12 @@ class EdoctorDlvnSdk(context: Context) {
         accessToken = "hello"
 
         if (apiService === null) {
-            apiService = RetrofitClient()
+            apiService = RetrofitClient(env)
                 .getInstance()
                 ?.create<ApiService>()
+        }
+        if (env == Env.LIVE) {
+            webView.domain = Constants.healthConsultantUrlProd
         }
     }
 
@@ -123,6 +130,7 @@ class EdoctorDlvnSdk(context: Context) {
 
                     override fun onFailure(call: Call<AccountInitResponse>, t: Throwable) {
                         Log.d(LOG_TAG, "An error happened!")
+                        showError(t.message.toString())
                         t.printStackTrace()
                     }
                 })

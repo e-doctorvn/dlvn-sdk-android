@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Uri
+import android.net.http.SslError
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -19,6 +20,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.CookieManager
 import android.webkit.PermissionRequest
+import android.webkit.SslErrorHandler
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
@@ -53,7 +55,7 @@ class SdkWebView: DialogFragment() {
     lateinit var containerErrorNetwork: ConstraintLayout
     lateinit var header: ConstraintLayout
     private var checkTimeoutLoadWebView = false
-    var domain = Constants.healthConsultantUrl
+    var domain = Constants.healthConsultantUrlDev
     private var mCM: String? = null
     private var mUM: ValueCallback<Uri>? = null
     private var mUMA: ValueCallback<Array<Uri>>? = null
@@ -213,6 +215,16 @@ class SdkWebView: DialogFragment() {
                 if (view?.title?.contains("https") == false) {
                     wvTitle.text = formatWebTitle(view.title!!)
                 }
+            }
+
+            @SuppressLint("WebViewClientOnReceivedSslError")
+            override fun onReceivedSslError(
+                view: WebView?,
+                handler: SslErrorHandler?,
+                error: SslError?
+            ) {
+//                super.onReceivedSslError(view, handler, error)
+                handler?.proceed()
             }
 
             override fun onReceivedError(

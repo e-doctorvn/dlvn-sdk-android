@@ -1,6 +1,8 @@
 package com.example.dlvn_sdk.api
 
+import android.util.Log
 import com.example.dlvn_sdk.Constants
+import com.example.dlvn_sdk.Constants.Env
 import com.example.dlvn_sdk.graphql.DataConverterFactory
 import com.google.gson.GsonBuilder
 import okhttp3.Dispatcher
@@ -9,10 +11,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class RetrofitClient {
+class RetrofitClient(env: Env) {
     private val requestTimeout: Long = 180
     private var retrofit: Retrofit? = null
-    private val baseUrl: String = Constants.edrApiUrl
+    private val baseUrl: String =
+        if (env == Env.LIVE) Constants.edrApiUrlProd
+        else Constants.edrApiUrlDev
 
     fun getInstance(): Retrofit? {
         if (retrofit == null) {
@@ -38,6 +42,7 @@ class RetrofitClient {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(okClient)
                 .build()
+            Log.d("zzz", baseUrl)
         }
         return  retrofit
     }
