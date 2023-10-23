@@ -1,11 +1,13 @@
 package com.example.application
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dlvn_sdk.EdoctorDlvnSdk
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
     private var myBtn: Button? = null
@@ -32,12 +34,22 @@ class MainActivity : AppCompatActivity() {
         txtName = findViewById(R.id.textView)
         btn_dangxuat = findViewById(R.id.btn_dangxuat)
 
-        myBtn!!.setOnClickListener(View.OnClickListener {
+        myBtn!!.setOnClickListener {
+            val params = JSONObject()
+            params.put("partnerid", "45f63H33771b42f1b08b7f9a50e6bd8a")
+            params.put("deviceid", "3e030eb9-63e6-4be1-ae0e-940f6b7e2c61")
+            params.put("dcid", "19E2ADB7-91A8-4C32-821B-31A03AD32C89")
+            params.put("token", "26f63593771b42f1b08b7f9a50e6dc7c")
+
+//            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
+//
+//            }
+
             edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
 //            dlvnSdk!!.getUserList(mCallback = {
 ////                Log.d(DLVNSdk.LOG_TAG, "in mainActivity")
 //                Log.d(DLVNSdk.LOG_TAG, it.toString())
 //            })
-        })
+        }
     }
 }

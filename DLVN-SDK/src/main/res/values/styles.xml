@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="EDRAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
     </style>
-    <style name="DialogTheme" parent="AppTheme">
+    <style name="EDRDialogTheme" parent="EDRAppTheme">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">false</item>
         <item name="android:windowIsFloating">false</item>
     </style>
-    <style name="DialogStyle" parent="Theme.Design.Light.BottomSheetDialog">
+    <style name="EDRDialogStyle" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
-    <style name="FullScreenDialog" parent="Theme.AppCompat.Light.Dialog">
+    <style name="EDRFullScreenDialog" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:padding">1dp</item>

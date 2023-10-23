@@ -23,6 +23,7 @@ import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
+import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
@@ -69,7 +70,7 @@ class SdkWebView: DialogFragment() {
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         dialog?.window?.decorView?.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
-        setStyle(STYLE_NO_FRAME, R.style.DialogStyle)
+        setStyle(STYLE_NO_FRAME, R.style.EDRDialogStyle)
     }
 
     override fun show(manager: FragmentManager, tag: String?) {
@@ -93,10 +94,10 @@ class SdkWebView: DialogFragment() {
             R.layout.webview,
             container, false
         )
-//        WebView(requireContext()).clearCache(true)
-//        WebStorage.getInstance().deleteAllData()
-//        CookieManager.getInstance().removeAllCookies(null)
-//        CookieManager.getInstance().flush()
+        WebView(requireContext()).clearCache(true)
+        WebStorage.getInstance().deleteAllData()
+        CookieManager.getInstance().removeAllCookies(null)
+        CookieManager.getInstance().flush()
 
 //        var statusBarHeight = 0
 //        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
@@ -122,7 +123,7 @@ class SdkWebView: DialogFragment() {
         buttonClose.setColorFilter(Color.argb(255, 255, 255, 255))
         buttonRefresh.setColorFilter(Color.argb(255, 255, 255, 255))
 
-//        myWebView.clearCache(true)
+        myWebView.clearCache(true)
         myWebView.clearFormData()
         myWebView.clearHistory()
         myWebView.clearSslPreferences()
@@ -205,7 +206,6 @@ class SdkWebView: DialogFragment() {
                 startActivityForResult(chooserIntent, FCR)
                 return true
             }
-
         }
         myWebView.webViewClient = object : WebViewClient() {
             override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
@@ -243,6 +243,10 @@ class SdkWebView: DialogFragment() {
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
+                if (EdoctorDlvnSdk.edrAccessToken != null) {
+                    view?.evaluateJavascript("document.cookie=\"accessToken=${EdoctorDlvnSdk.edrAccessToken}; path=/\"") {}
+                    view?.evaluateJavascript("document.cookie=\"upload_token=${EdoctorDlvnSdk.edrAccessToken}; path=/\"") {}
+                }
                 Thread {
                     try {
                         Thread.sleep(30000)
@@ -303,7 +307,7 @@ class SdkWebView: DialogFragment() {
             domain,
             mapOf(
                 "Content-Type" to "application/json",
-                "Authorization" to "Bearer ${EdoctorDlvnSdk.accessToken}"
+//                "Authorization" to EdoctorDlvnSdk.edrAccessToken
             )
         )
         if (!isNetworkConnected()) {
