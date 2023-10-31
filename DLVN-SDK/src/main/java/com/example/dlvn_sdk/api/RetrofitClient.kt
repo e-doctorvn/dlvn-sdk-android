@@ -42,7 +42,6 @@ class RetrofitClient(env: Env) {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(okClient)
                 .build()
-            Log.d("zzz", baseUrl)
         }
         return  retrofit
     }

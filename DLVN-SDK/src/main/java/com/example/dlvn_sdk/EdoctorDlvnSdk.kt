@@ -7,11 +7,12 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
+import com.example.dlvn_sdk.Constants.Env
+import com.example.dlvn_sdk.Constants.webViewTag
 import com.example.dlvn_sdk.api.ApiService
 import com.example.dlvn_sdk.api.RetrofitClient
 import com.example.dlvn_sdk.model.AccountInitResponse
-import com.example.dlvn_sdk.model.User
-import com.example.dlvn_sdk.Constants.Env
+import com.example.dlvn_sdk.model.AuthenData
 import com.example.dlvn_sdk.webview.SdkWebView
 import com.google.gson.JsonObject
 import org.json.JSONObject
@@ -24,9 +25,10 @@ class EdoctorDlvnSdk(
     context: Context,
     env: Env = Env.SANDBOX
 ) {
-    private val webView: SdkWebView = SdkWebView()
+    private val webView: SdkWebView = SdkWebView(this)
     private var apiService: ApiService? = null
     private var authParams: JSONObject? = null
+    private var isFetching: Boolean = false
 
     companion object {
         const val LOG_TAG = "EDOCTOR_SDK"
@@ -57,15 +59,18 @@ class EdoctorDlvnSdk(
     }
 
     fun openWebView(fragmentManager: FragmentManager, url: String?) {
+        val isAvailable = !isFetching && !webView.isVisible
         url?.let {
             webView.domain = url
         }
-        if (authParams != null) {
+        if (authParams != null && isAvailable) {
             initDLVNAccount {
-                webView.show(fragmentManager, null)
+                webView.show(fragmentManager, webViewTag)
             }
         } else {
-            webView.show(fragmentManager, null)
+            if (isAvailable) {
+                webView.show(fragmentManager, webViewTag)
+            }
         }
     }
 
@@ -82,29 +87,13 @@ class EdoctorDlvnSdk(
         return true
     }
 
-    private fun getUserList(mCallback: (result: Any?) -> Unit) {
-        try {
-            apiService?.getData()?.enqueue(object: Callback<User> {
-                /* The HTTP call failed. This method is run on the main thread */
-                override fun onFailure(call: Call<User>, t: Throwable) {
-                    Log.d(LOG_TAG, "An error happened!")
-                    t.printStackTrace()
-                }
-
-                /* The HTTP call was successful. This method is run on the main thread */
-                override fun onResponse(call: Call<User>, response: Response<User>) {
-                    Log.d(LOG_TAG, response.body().toString())
-                    mCallback(response.body())
-                }
-            })
-        } catch (e: Error) {
-
-        }
-    }
+    var onAuthenDataResult: ((data: AuthenData) -> Unit)? = {}
 
     private fun initDLVNAccount(mCallback: (result: Any?) -> Unit) {
         try {
             if (authParams != null) {
+                isFetching = true
+
                 val params = JsonObject()
                 val variables = JSONObject()
                 variables.put("data", authParams.toString())
@@ -125,13 +114,17 @@ class EdoctorDlvnSdk(
                         if (response.body()?.dlvnAccountInit?.accessToken != null) {
                             edrAccessToken = response.body()!!.dlvnAccountInit.accessToken
                             mCallback(response.body())
+                        } else {
+                            showError("Đã có lỗi xảy ra!")
                         }
+                        isFetching = false
                     }
 
                     override fun onFailure(call: Call<AccountInitResponse>, t: Throwable) {
                         Log.d(LOG_TAG, "An error happened!")
                         showError(t.message.toString())
                         t.printStackTrace()
+                        isFetching = false
                     }
                 })
             } else {

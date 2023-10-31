@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false">
+    android:fitsSystemWindows="true">
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
@@ -13,6 +13,7 @@
             android:id="@+id/wv_activityStatusBarScrim"
             android:layout_width="match_parent"
             android:layout_height="26dp"
+            android:visibility="gone"
             android:background="@drawable/wv_status_bar_background"/>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/header"
@@ -71,9 +72,8 @@
         <WebView
             android:id="@+id/webview"
             android:layout_weight="1"
-            app:layout_constraintTop_toBottomOf="@+id/border"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="0dp"/>
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

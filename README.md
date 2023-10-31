@@ -2,7 +2,7 @@
 
 EDR - DLVN Android SDK 
 
-## Version 1.0.3
+## Version 1.0.4
 
 ## Requirements
 
@@ -25,7 +25,7 @@ This dependency requires:
 
   ```
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.0.3'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.0.4'
     }
   ```
     
@@ -72,6 +72,37 @@ This function returns:
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
 | `params` | `JSONObject` | **Required** |
+
+#### onAuthenDataResult
+
+Function for DLVN to listen to the SDK for receiving credentials include `token` & `dcid`
+This function returns with object of `AuthenData (token: String, dcid: String)` class.
+
+```
+  dlvnSdk.onAuthenDataResult: ((data: AuthenData) -> Unit)
+```
+
+| Return | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Unit` with `data` | `AuthenData` |  |
+
+* ##### Example
+
+    * **Kotlin**:
+    ```
+    dlvnSdk.onAuthenDataResult = { it ->
+        val token = it.token
+        val dcid = it.dcid
+    }
+    ```
+    
+    * **Java**:
+    ```
+    dlvnSdk.onAuthenDataResult = { it ->
+        val token = it.token
+        val dcid = it.dcid
+    }
+    ```
 
 #### Sample function
 
