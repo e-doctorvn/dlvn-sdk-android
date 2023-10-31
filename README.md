@@ -88,15 +88,16 @@ This function returns with object of `AuthenData (token: String, dcid: String)` 
 
 * ##### Example
 
-    * **Kotlin**:
+    * **Java**:
     ```
-    dlvnSdk.onAuthenDataResult = { it ->
-        val token = it.token
-        val dcid = it.dcid
-    }
+    dlvnSdk.setOnAuthenDataResult(authenData -> {
+        String token = authenData.getToken();
+        String dcid = authenData.getDcid();
+        return null;
+    });
     ```
     
-    * **Java**:
+    * **Kotlin**:
     ```
     dlvnSdk.onAuthenDataResult = { it ->
         val token = it.token
