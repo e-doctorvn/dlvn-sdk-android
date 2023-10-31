@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.net.http.SslError
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -24,6 +25,7 @@ import android.webkit.SslErrorHandler
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebStorage
 import android.webkit.WebView
@@ -43,10 +45,10 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class SdkWebView: DialogFragment() {
+class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private lateinit var loading: ConstraintLayout
     private lateinit var loadingProgressBar: ProgressBar
-    private lateinit var myWebView: WebView
+    lateinit var myWebView: WebView
     private lateinit var wvTitle: TextView
     private var buttonBack: Button? = null
     private var buttonNext: Button? = null
@@ -54,6 +56,8 @@ class SdkWebView: DialogFragment() {
     private lateinit var buttonRefresh: ImageButton
     lateinit var containerErrorNetwork: ConstraintLayout
     lateinit var header: ConstraintLayout
+
+    private var sdkInstance: EdoctorDlvnSdk
     private var checkTimeoutLoadWebView = false
     var domain = Constants.healthConsultantUrlDev
     private var mCM: String? = null
@@ -61,6 +65,9 @@ class SdkWebView: DialogFragment() {
     private var mUMA: ValueCallback<Array<Uri>>? = null
     private val FCR = 99
 
+    init {
+        sdkInstance = sdk
+    }
     companion object {
         var isVisible = false
     }
@@ -71,12 +78,14 @@ class SdkWebView: DialogFragment() {
         dialog?.window?.setFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        dialog?.window?.decorView?.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            dialog?.window?.decorView?.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
+        }
         setStyle(STYLE_NO_FRAME, R.style.EDRDialogStyle)
     }
 
     override fun show(manager: FragmentManager, tag: String?) {
-        super.show(manager, null)
+        super.show(manager, tag)
     }
 
     @SuppressLint("ServiceCast")
@@ -101,16 +110,10 @@ class SdkWebView: DialogFragment() {
         CookieManager.getInstance().removeAllCookies(null)
         CookieManager.getInstance().flush()
 
-//        var statusBarHeight = 0
-//        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-//        if (resourceId > 0) {
-//            statusBarHeight = resources.getDimensionPixelSize(resourceId)
-//        }
-//        dialog?.window?.decorView?.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
-
-        dialog?.window?.decorView?.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
-        dialog?.window?.statusBarColor = Color.TRANSPARENT
+//        dialog?.window?.decorView?.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+//        dialog?.window?.statusBarColor = Color.TRANSPARENT
+        dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
         myWebView = v.findViewById(R.id.webview)
         loadingProgressBar = v.findViewById(R.id.loadingProgressBar)
@@ -124,6 +127,8 @@ class SdkWebView: DialogFragment() {
         containerErrorNetwork = v.findViewById(R.id.containerErrorNetwork)
         buttonClose.setColorFilter(Color.argb(255, 255, 255, 255))
         buttonRefresh.setColorFilter(Color.argb(255, 255, 255, 255))
+
+        header.visibility = View.GONE
 
         myWebView.clearCache(true)
         myWebView.clearFormData()
@@ -290,6 +295,13 @@ class SdkWebView: DialogFragment() {
                     true
                 }
             }
+
+            override fun shouldInterceptRequest(
+                view: WebView?,
+                request: WebResourceRequest?
+            ): WebResourceResponse? {
+                return super.shouldInterceptRequest(view, request)
+            }
         }
 
         val webSettings: WebSettings = myWebView.settings
@@ -313,7 +325,7 @@ class SdkWebView: DialogFragment() {
         webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         cookieManager.setAcceptThirdPartyCookies(myWebView, true)
         myWebView.setLayerType(View.LAYER_TYPE_NONE, null)
-//        myWebView.addJavascriptInterface(JsObject(), "Android")
+        myWebView.addJavascriptInterface(JsInterface(this, sdkInstance), "Android")
 
         myWebView.loadUrl(
             domain,
@@ -354,6 +366,15 @@ class SdkWebView: DialogFragment() {
             return title.substring(0, title.indexOf(" -"))
         }
         return  title
+    }
+
+    fun selfClose() {
+        myWebView.removeAllViews();
+        myWebView.destroy()
+        SdkWebView.isVisible = false
+        this.dismiss()
+        super.onDestroy()
+        this.onDestroy()
     }
 
     @Throws(IOException::class)
