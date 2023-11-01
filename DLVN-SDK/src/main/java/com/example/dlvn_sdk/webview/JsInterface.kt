@@ -10,6 +10,7 @@ import com.example.dlvn_sdk.model.AuthenData
 class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
     private var sdkInstance: EdoctorDlvnSdk? = null
     private var mWebview: SdkWebView? = null
+    private var suspendReceiving: Boolean = false
 
     init {
         mWebview = webView
@@ -28,13 +29,17 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                     (EdoctorDlvnSdk.edrAccessToken == null || EdoctorDlvnSdk.edrAccessToken != authenResult.getString("edrToken"))
                     && authenResult.has("dlvnToken")
                 ) {
-                    EdoctorDlvnSdk.edrAccessToken = authenResult.getString("edrToken")
-                    sdkInstance?.onAuthenDataResult?.invoke(
-                        AuthenData(
-                            authenResult.getString("dlvnToken"),
-                            authenResult.getString("dcid")
+                    if (!suspendReceiving) {
+                        suspendReceiving = true
+                        EdoctorDlvnSdk.edrAccessToken = authenResult.getString("edrToken")
+                        sdkInstance?.onAuthenDataResult?.invoke(
+                            AuthenData(
+                                authenResult.getString("dlvnToken"),
+                                authenResult.getString("dcid")
+                            )
                         )
-                    )
+                        suspendReceiving = false
+                    }
                 }
             }
         }

@@ -48,8 +48,6 @@ class MainActivity : AppCompatActivity() {
 //            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
                 edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
 //            }
-
-//            edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
         }
     }
 }
