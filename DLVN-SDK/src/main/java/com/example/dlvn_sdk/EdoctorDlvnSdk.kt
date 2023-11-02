@@ -12,7 +12,6 @@ import com.example.dlvn_sdk.Constants.webViewTag
 import com.example.dlvn_sdk.api.ApiService
 import com.example.dlvn_sdk.api.RetrofitClient
 import com.example.dlvn_sdk.model.AccountInitResponse
-import com.example.dlvn_sdk.model.AuthenData
 import com.example.dlvn_sdk.webview.SdkWebView
 import com.google.gson.JsonObject
 import org.json.JSONObject
@@ -87,7 +86,7 @@ class EdoctorDlvnSdk(
         return true
     }
 
-    var onAuthenDataResult: ((data: AuthenData) -> Unit)? = {}
+    var onSdkRequestLogin: ((callbackUrl: String) -> Unit)? = {}
 
     private fun initDLVNAccount(mCallback: (result: Any?) -> Unit) {
         try {
