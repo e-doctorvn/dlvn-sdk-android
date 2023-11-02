@@ -33,9 +33,9 @@ class MainActivity : AppCompatActivity() {
         txtName = findViewById(R.id.textView)
         btn_dangxuat = findViewById(R.id.btn_dangxuat)
 
-        edoctorDlvnSdk!!.onAuthenDataResult = {
+        edoctorDlvnSdk!!.onSdkRequestLogin = {
             Log.d("zzz", "Nhan duoc data ne")
-            Log.d("zzz", it.toString())
+            Log.d("zzz", it)
         }
 
         myBtn!!.setOnClickListener {

@@ -5,7 +5,6 @@ import org.json.JSONObject
 import android.webkit.JavascriptInterface
 import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.EdoctorDlvnSdk
-import com.example.dlvn_sdk.model.AuthenData
 
 class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
     private var sdkInstance: EdoctorDlvnSdk? = null
@@ -23,21 +22,13 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
         Log.d("zzz", json.toString())
         when (json.getString("type")) {
             Constants.WebviewParams.closeWebview -> mWebview?.requireActivity()?.runOnUiThread { mWebview?.selfClose() }
-            Constants.WebviewParams.loginDataCallback -> {
-                val authenResult = JSONObject(json.get("data").toString())
-                if (
-                    (EdoctorDlvnSdk.edrAccessToken == null || EdoctorDlvnSdk.edrAccessToken != authenResult.getString("edrToken"))
-                    && authenResult.has("dlvnToken")
-                ) {
+            Constants.WebviewParams.requestLoginNative -> {
+                val data = JSONObject(json.get("data").toString())
+                if (data.has("currentUrl")) {
                     if (!suspendReceiving) {
                         suspendReceiving = true
-                        EdoctorDlvnSdk.edrAccessToken = authenResult.getString("edrToken")
-                        sdkInstance?.onAuthenDataResult?.invoke(
-                            AuthenData(
-                                authenResult.getString("dlvnToken"),
-                                authenResult.getString("dcid")
-                            )
-                        )
+                        sdkInstance?.onSdkRequestLogin?.invoke(data.getString("currentUrl"))
+                        mWebview?.requireActivity()?.runOnUiThread { mWebview?.selfClose() }
                         suspendReceiving = false
                     }
                 }
