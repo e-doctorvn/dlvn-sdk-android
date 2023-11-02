@@ -73,35 +73,32 @@ This function returns:
 | :-------- | :------- | :------------------------- |
 | `params` | `JSONObject` | **Required** |
 
-#### onAuthenDataResult
+#### onSdkRequestLogin
 
-Function for DLVN to listen to the SDK for receiving credentials include `token` & `dcid`
-This function returns with object of `AuthenData (token: String, dcid: String)` class.
+Function for DLVN to listen to the SDK when it needs to request login from DC app.
 
 ```kotlin
-  dlvnSdk.onAuthenDataResult: ((data: AuthenData) -> Unit)
+  dlvnSdk.onSdkRequestLogin: ((callbackUrl: String) -> Unit)
 ```
 
 | Return | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `Unit` with `data` | `AuthenData` |  |
+| `callbackUrl` | `String` |  |
 
 * ##### Example
 
     * **Java**:
     ```java
-    dlvnSdk.setOnAuthenDataResult(authenData -> {
-        String token = authenData.getToken();
-        String dcid = authenData.getDcid();
+    dlvnSdk.setOnSdkRequestLogin(callbackUrl -> {
+        String url = callbackUrl;
         return null;
     });
     ```
     
     * **Kotlin**:
     ```kotlin
-    dlvnSdk.onAuthenDataResult = { it ->
-        val token = it.token
-        val dcid = it.dcid
+    dlvnSdk.onSdkRequestLogin = { it ->
+        val url = it
     }
     ```
 
