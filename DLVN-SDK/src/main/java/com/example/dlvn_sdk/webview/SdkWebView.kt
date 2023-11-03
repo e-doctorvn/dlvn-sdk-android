@@ -84,10 +84,6 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         setStyle(STYLE_NO_FRAME, R.style.EDRDialogStyle)
     }
 
-    override fun show(manager: FragmentManager, tag: String?) {
-        super.show(manager, tag)
-    }
-
     @SuppressLint("ServiceCast")
     private fun isNetworkConnected(): Boolean {
         val cm =

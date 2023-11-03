@@ -133,4 +133,10 @@ class EdoctorDlvnSdk(
 
         }
     }
+
+    fun logOutWebView() {
+        edrAccessToken = null
+        authParams = null
+        isFetching = false
+    }
 }
