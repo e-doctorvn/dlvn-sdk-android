@@ -1,8 +1,7 @@
 # dlvn-sdk-android
 
 EDR - DLVN Android SDK 
-
-## Version 1.0.5
+## Version 1.0.6
 
 ## Requirements
 
@@ -25,7 +24,7 @@ This dependency requires:
 
   ```sh
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.0.5'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.0.6'
     }
   ```
     
@@ -101,6 +100,14 @@ Function for DLVN to listen to the SDK when it needs to request login from DC ap
         val url = it
     }
     ```
+
+#### logOutWebView
+
+Clear SDK's data when DC app logs out.
+
+```kotlin
+  dlvnSdk.logOutWebView(): Unit
+```
 
 #### Sample function
 
