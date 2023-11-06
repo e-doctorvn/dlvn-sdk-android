@@ -256,9 +256,10 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
-                if (EdoctorDlvnSdk.edrAccessToken != null) {
+                if (EdoctorDlvnSdk.edrAccessToken != null && EdoctorDlvnSdk.dlvnAccessToken != null) {
                     view?.evaluateJavascript("document.cookie=\"accessToken=${EdoctorDlvnSdk.edrAccessToken}; path=/\"") {}
                     view?.evaluateJavascript("document.cookie=\"upload_token=${EdoctorDlvnSdk.edrAccessToken}; path=/\"") {}
+                    view?.evaluateJavascript("document.cookie=\"accessTokenDlvn=${EdoctorDlvnSdk.dlvnAccessToken}; path=/\"") {}
                 }
                 Thread {
                     try {

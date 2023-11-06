@@ -35,6 +35,7 @@ class EdoctorDlvnSdk(
         internal lateinit var context: Context
         internal lateinit var accessToken: String
         internal var edrAccessToken: String? = null
+        internal var dlvnAccessToken: String? = null
 
         fun showError(message: String?) {
             if (message != null && message != "null" && message != "") {
@@ -78,8 +79,12 @@ class EdoctorDlvnSdk(
     }
 
     fun DLVNSendData(params: JSONObject): Boolean {
-        if (params.length() == 0 || !params.has("dcid")) {
-            showError("`dcid` data is required!")
+        if (params.length() == 0 || !params.has("dcid") || !params.has("token")) {
+            showError(
+                if (params.length() == 0)
+                    "Data is empty!"
+                else "`dcid` and `token` are required!"
+            )
             return false
         }
         authParams = params
@@ -99,6 +104,9 @@ class EdoctorDlvnSdk(
                 variables.put("signature", "")
                 authParams!!.getString("dcid").let {
                     variables.put("dcId", it.toString())
+                }
+                authParams!!.getString("token").let {
+                    dlvnAccessToken = it.toString()
                 }
                 params.addProperty("query", "mutation DLVNAccountInit(\$data: String, \$signature: String, \$dcId: String){\n" +
                         "  dlvnAccountInit(data: \$data, signature: \$signature, dcId: \$dcId) {\n" +
@@ -136,6 +144,7 @@ class EdoctorDlvnSdk(
 
     fun logOutWebView() {
         edrAccessToken = null
+        dlvnAccessToken = null
         authParams = null
         isFetching = false
     }

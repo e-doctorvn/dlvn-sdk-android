@@ -62,7 +62,7 @@ Open given URL using WebView dialog. If URL is null, use the default ```/tu-van-
 Function for DLVN to pass data to the SDK **before opening** webview.
 This function returns:
 * `true` if successfully receive the data
-* `false` if `params` is empty or missing `dcid` field
+* `false` if `params` is empty OR missing `dcid` || `token` field
 
 ```kotlin
   dlvnSdk.DLVNSendData(params: JSONObject): Boolean

@@ -19,7 +19,7 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
     @JavascriptInterface
     fun receiveMessage(data: String): Boolean {
         val json = JSONObject(data)
-        Log.d("zzz", json.toString())
+//        Log.d("zzz", json.toString())
         when (json.getString("type")) {
             Constants.WebviewParams.closeWebview -> mWebview?.requireActivity()?.runOnUiThread { mWebview?.selfClose() }
             Constants.WebviewParams.requestLoginNative -> {
