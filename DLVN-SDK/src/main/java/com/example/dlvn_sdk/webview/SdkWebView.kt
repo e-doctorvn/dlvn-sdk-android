@@ -45,7 +45,8 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
+
+open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private lateinit var loading: ConstraintLayout
     private lateinit var loadingProgressBar: ProgressBar
     lateinit var myWebView: WebView
@@ -381,6 +382,13 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         WebStorage.getInstance().deleteAllData()
         CookieManager.getInstance().removeAllCookies(null)
         CookieManager.getInstance().flush()
+
+        if (::myWebView.isInitialized) {
+            myWebView.clearCache(true)
+            myWebView.clearFormData()
+            myWebView.clearHistory()
+            myWebView.clearSslPreferences()
+        }
     }
 
     @Throws(IOException::class)
