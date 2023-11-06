@@ -38,6 +38,10 @@ class MainActivity : AppCompatActivity() {
             Log.d("zzz", it)
         }
 
+        callDanh!!.setOnClickListener {
+            edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
+        }
+
         myBtn!!.setOnClickListener {
             val params = JSONObject()
             params.put("partnerid", "45f63H33771b42f1b08b7f9a50e6bd8a")
