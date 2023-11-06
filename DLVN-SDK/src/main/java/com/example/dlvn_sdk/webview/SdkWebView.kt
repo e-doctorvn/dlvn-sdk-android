@@ -36,7 +36,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
 import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.EdoctorDlvnSdk
 import com.example.dlvn_sdk.R
@@ -101,10 +100,10 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             R.layout.webview,
             container, false
         )
-        WebView(requireContext()).clearCache(true)
-        WebStorage.getInstance().deleteAllData()
-        CookieManager.getInstance().removeAllCookies(null)
-        CookieManager.getInstance().flush()
+//        WebView(requireContext()).clearCache(true)
+//        WebStorage.getInstance().deleteAllData()
+//        CookieManager.getInstance().removeAllCookies(null)
+//        CookieManager.getInstance().flush()
 
 //        dialog?.window?.decorView?.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 //                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
@@ -126,10 +125,10 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
         header.visibility = View.GONE
 
-        myWebView.clearCache(true)
-        myWebView.clearFormData()
-        myWebView.clearHistory()
-        myWebView.clearSslPreferences()
+//        myWebView.clearCache(true)
+//        myWebView.clearFormData()
+//        myWebView.clearHistory()
+//        myWebView.clearSslPreferences()
 
         val cookieManager = CookieManager.getInstance()
         cookieManager.setAcceptCookie(true)
@@ -372,6 +371,18 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         this.dismiss()
         super.onDestroy()
         this.onDestroy()
+    }
+
+    fun clearCacheAndCookies(context: Context) {
+        WebView(context).clearCache(true)
+        WebStorage.getInstance().deleteAllData()
+        CookieManager.getInstance().removeAllCookies(null)
+        CookieManager.getInstance().flush()
+
+        myWebView.clearCache(true)
+        myWebView.clearFormData()
+        myWebView.clearHistory()
+        myWebView.clearSslPreferences()
     }
 
     @Throws(IOException::class)

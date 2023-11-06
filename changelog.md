@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK 
 
-Latest version: **1.0.6 (Updated: 06/11/2023)**
+Latest version: **1.0.7 (Updated: 06/11/2023)**
+
+## Version 1.0.7
+- Change name of `logOutWebView` function to `clearWebViewCache`
+- WebView is now able to perform: User (not logged in) types his question, then hits "Submit" -> back to DC app to request login but save current form data in WebView.
 
 ## Version 1.0.6
 - Addding `logOutWebView` function

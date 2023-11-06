@@ -142,10 +142,12 @@ class EdoctorDlvnSdk(
         }
     }
 
-    fun logOutWebView() {
+    fun clearWebViewCache() {
         edrAccessToken = null
         dlvnAccessToken = null
         authParams = null
         isFetching = false
+
+        webView.clearCacheAndCookies(context)
     }
 }
