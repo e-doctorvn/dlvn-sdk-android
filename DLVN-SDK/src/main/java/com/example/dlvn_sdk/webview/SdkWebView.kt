@@ -381,11 +381,6 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         WebStorage.getInstance().deleteAllData()
         CookieManager.getInstance().removeAllCookies(null)
         CookieManager.getInstance().flush()
-
-        myWebView.clearCache(true)
-        myWebView.clearFormData()
-        myWebView.clearHistory()
-        myWebView.clearSslPreferences()
     }
 
     @Throws(IOException::class)

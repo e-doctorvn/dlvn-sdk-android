@@ -144,11 +144,13 @@ class EdoctorDlvnSdk(
     }
 
     fun clearWebViewCache() {
-        edrAccessToken = null
-        dlvnAccessToken = null
-        authParams = null
-        isFetching = false
+        if (authParams != null) {
+            edrAccessToken = null
+            dlvnAccessToken = null
+            authParams = null
+            isFetching = false
 
-        webView.clearCacheAndCookies(context)
+            webView.clearCacheAndCookies(context)
+        }
     }
 }

@@ -2,7 +2,10 @@
 
 EDR - DLVN Android SDK 
 
-Latest version: **1.0.7 (Updated: 06/11/2023)**
+Latest version: **1.0.8 (Updated: 06/11/2023)**
+
+## Version 1.0.8
+- Fix app crashing when call function `clearWebViewCache`
 
 ## Version 1.0.7
 - Change name of `logOutWebView` function to `clearWebViewCache`
