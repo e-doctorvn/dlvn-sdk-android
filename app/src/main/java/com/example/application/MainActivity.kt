@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity() {
     private var btn_dangxuat: Button? = null
     private var txtName: TextView? = null
     private var edoctorDlvnSdk: EdoctorDlvnSdk? = null
-    private val accessToken: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTY5MTQwMjY3MSwiZXhwIjoxNjkzMTMwNjcxfQ.o_YSfydvUboC_XjZfm_7pHtk53G0TASgazUL-1Zqh18"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,9 +44,9 @@ class MainActivity : AppCompatActivity() {
             params.put("dcid", "19E2ADB7-91A8-4C32-821B-31A03AD32C89")
             params.put("token", "26f63593771b42f1b08b7f9a50e6dc7c")
 
-//            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
+            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
                 edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
-//            }
+            }
         }
     }
 }

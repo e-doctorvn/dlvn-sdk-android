@@ -40,6 +40,7 @@ import androidx.fragment.app.FragmentManager
 import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.EdoctorDlvnSdk
 import com.example.dlvn_sdk.R
+import com.example.dlvn_sdk.store.AppStore
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -58,6 +59,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     lateinit var header: ConstraintLayout
 
     private var sdkInstance: EdoctorDlvnSdk
+    var webViewCallActivity: Context? = null
     private var checkTimeoutLoadWebView = false
     var domain = Constants.healthConsultantUrlDev
     private var mCM: String? = null
@@ -67,6 +69,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
     init {
         sdkInstance = sdk
+        AppStore.webViewInstance = this
     }
     companion object {
         var isVisible = false

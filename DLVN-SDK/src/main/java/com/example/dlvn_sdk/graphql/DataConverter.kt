@@ -10,11 +10,11 @@ class DataConverter<Any>(
     private val delegate: Converter<ResponseBody, Data<Any>>?
 ) : Converter<ResponseBody, Any> {
     override fun convert(value: ResponseBody): Any? {
-        try {
+        return try {
             val graphQLDataModel = delegate?.convert(value)
-            return graphQLDataModel?.data
+            graphQLDataModel?.data
         } catch (e: java.lang.Exception){
-            return null
+            null
         }
     }
 }

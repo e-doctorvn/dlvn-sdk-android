@@ -24,6 +24,7 @@ class EdoctorDlvnSdk(
     context: Context,
     env: Env = Env.SANDBOX
 ) {
+    private val edrAppId: String = context.getString(R.string.EDR_APP_ID)
     private val webView: SdkWebView = SdkWebView(this)
     private var apiService: ApiService? = null
     private var authParams: JSONObject? = null
