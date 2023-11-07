@@ -2,10 +2,13 @@
 
 EDR - DLVN Android SDK 
 
-Latest version: **1.0.9 (Updated: 06/11/2023)**
+Latest version: **1.0.10 (Updated: 07/11/2023)**
+
+## Version 1.0.10
+- Fix totally clear WebView's cache in `clearWebViewCache` again
 
 ## Version 1.0.9
-- Fix totally clear WebView's cache in `clearWebViewCache`
+- Fix not clearing WebView's cache in `clearWebViewCache` -> Failed
 
 ## Version 1.0.8
 - Fix app crashing when call function `clearWebViewCache`:
