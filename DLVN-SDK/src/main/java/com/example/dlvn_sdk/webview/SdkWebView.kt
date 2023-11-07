@@ -126,6 +126,11 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
         header.visibility = View.GONE
 
+        if (EdoctorDlvnSdk.needClearCache) {
+            clearCacheAndCookies(requireContext())
+            EdoctorDlvnSdk.needClearCache = false
+        }
+
 //        myWebView.clearCache(true)
 //        myWebView.clearFormData()
 //        myWebView.clearHistory()

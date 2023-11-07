@@ -34,6 +34,7 @@ class EdoctorDlvnSdk(
         @SuppressLint("StaticFieldLeak")
         internal lateinit var context: Context
         internal lateinit var accessToken: String
+        internal var needClearCache: Boolean = false
         internal var edrAccessToken: String? = null
         internal var dlvnAccessToken: String? = null
 
@@ -88,6 +89,7 @@ class EdoctorDlvnSdk(
             return false
         }
         authParams = params
+        needClearCache = false
         return true
     }
 
@@ -119,6 +121,7 @@ class EdoctorDlvnSdk(
                     override fun onResponse(call: Call<AccountInitResponse>, response: Response<AccountInitResponse>) {
                         Log.d("zzz", response.body().toString())
                         if (response.body()?.dlvnAccountInit?.accessToken != null) {
+                            needClearCache = false
                             edrAccessToken = response.body()!!.dlvnAccountInit.accessToken
                             mCallback(response.body())
                         } else {
@@ -143,13 +146,12 @@ class EdoctorDlvnSdk(
     }
 
     fun clearWebViewCache() {
-        if (authParams != null) {
-            edrAccessToken = null
-            dlvnAccessToken = null
-            authParams = null
-            isFetching = false
+        edrAccessToken = null
+        dlvnAccessToken = null
+        authParams = null
+        isFetching = false
+        needClearCache = true
 
-            webView.clearCacheAndCookies(context)
-        }
+        webView.clearCacheAndCookies(context)
     }
 }
