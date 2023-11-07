@@ -46,11 +46,12 @@ object SendbirdCallImpl {
     }
 
     fun addListener(context: Context) {
-        SendBirdCall.removeAllListeners()
+//        SendBirdCall.removeAllListeners()
 
         val UNIQUE_HANDLER_ID = UUID.randomUUID().toString()
         SendBirdCall.addListener(UNIQUE_HANDLER_ID, object : SendBirdCallListener() {
             override fun onRinging(directCall: DirectCall) {
+                Log.d("zzz", "on ringing on ringing")
                 val ongoingCallCount: Int = SendBirdCall.ongoingCallCount
                 if (ongoingCallCount >= 2) {
                     directCall.end()
@@ -115,8 +116,10 @@ object SendbirdCallImpl {
                                         "Fetching FCM registration token failed",
                                         task.exception
                                     )
+                                    Log.d("zzz", "Fetching FCM registration token failed")
                                     return
                                 }
+                                Log.d("zzz", "Fetching FCM registration token success?")
 
                                 val token: String? = task.result
                                 CallManager.getInstance()!!.pushToken = token

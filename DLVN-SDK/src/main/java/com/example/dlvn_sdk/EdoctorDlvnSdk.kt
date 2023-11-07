@@ -4,6 +4,7 @@ package com.example.dlvn_sdk
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
@@ -11,7 +12,9 @@ import com.example.dlvn_sdk.Constants.Env
 import com.example.dlvn_sdk.Constants.webViewTag
 import com.example.dlvn_sdk.api.ApiService
 import com.example.dlvn_sdk.api.RetrofitClient
+import com.example.dlvn_sdk.helper.CallNotificationHelper
 import com.example.dlvn_sdk.model.AccountInitResponse
+import com.example.dlvn_sdk.sendbirdCall.SendbirdCallImpl
 import com.example.dlvn_sdk.webview.SdkWebView
 import com.google.gson.JsonObject
 import org.json.JSONObject
@@ -22,6 +25,7 @@ import retrofit2.create
 
 class EdoctorDlvnSdk(
     context: Context,
+    intent: Intent,
     env: Env = Env.SANDBOX
 ) {
     private val edrAppId: String = context.getString(R.string.EDR_APP_ID)
@@ -58,6 +62,15 @@ class EdoctorDlvnSdk(
         if (env == Env.LIVE) {
             webView.domain = Constants.healthConsultantUrlProd
         }
+
+        if (intent.action?.equals("CallAction") == true) {
+            if (intent.getStringExtra("Key") == "END_CALL") {
+                CallNotificationHelper.action = "_decline"
+            } else {
+                CallNotificationHelper.action = "_accept"
+            }
+        }
+        SendbirdCallImpl.initSendbirdCall(context, edrAppId)
     }
 
     fun openWebView(fragmentManager: FragmentManager, url: String?) {
@@ -95,6 +108,14 @@ class EdoctorDlvnSdk(
     }
 
     var onSdkRequestLogin: ((callbackUrl: String) -> Unit)? = {}
+
+    fun authenticateSb(context: Context, userId: String, accessToken: String) {
+        SendbirdCallImpl.authenticate(context, userId, accessToken)
+    }
+
+    fun deAuthenticateSb() {
+        SendbirdCallImpl.deAuthenticate(context)
+    }
 
     private fun initDLVNAccount(mCallback: (result: Any?) -> Unit) {
         try {

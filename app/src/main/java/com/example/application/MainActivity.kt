@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dlvn_sdk.EdoctorDlvnSdk
+import com.example.dlvn_sdk.sendbirdCall.SendbirdCallImpl
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
@@ -22,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        edoctorDlvnSdk = EdoctorDlvnSdk(applicationContext)
+        edoctorDlvnSdk = EdoctorDlvnSdk(applicationContext, intent)
 
         myBtn = findViewById(R.id.btn_id)
         callManh = findViewById(R.id.call_manh)
@@ -37,9 +38,20 @@ class MainActivity : AppCompatActivity() {
             Log.d("zzz", it)
         }
 
+        loginDanh!!.setOnClickListener {
+            txtName!!.text = "Danh (EDR)"
+            edoctorDlvnSdk!!.authenticateSb(
+                this@MainActivity,
+                "dev_danh",
+                "c95eab7963d3e186b33555b8c945ed4a9fa296a4"
+            )
+        }
+
         callDanh!!.setOnClickListener {
             edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
         }
+
+        callManh!!.setOnClickListener { SendbirdCallImpl.startCall(this@MainActivity, "dev_manh") }
 
         myBtn!!.setOnClickListener {
             val params = JSONObject()
@@ -58,7 +70,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         btn_dangxuat!!.setOnClickListener {
-            edoctorDlvnSdk!!.clearWebViewCache()
+//            edoctorDlvnSdk!!.clearWebViewCache()
+            edoctorDlvnSdk!!.deAuthenticateSb()
         }
     }
 }
