@@ -10,26 +10,39 @@
 
     <com.example.dlvn_sdk.sendbirdCall.DraggableRelativeLayout
         android:id="@+id/btn_remote_view_wv"
-        android:layout_width="158dp"
-        android:layout_height="240dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="120dp"
+        android:layout_height="180dp"
+        android:layout_marginEnd="12dp"
         android:clipChildren="true"
         android:clipToPadding="true"
+        android:clipToOutline="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="48dp">
+        android:layout_marginTop="12dp"
+        android:padding="2dp"
+        android:background="@drawable/corner_background">
         <com.sendbird.calls.SendBirdVideoView
             android:id="@+id/remote_view_wv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipChildren="true"
-            android:clipToOutline="true"/>
+            android:clipToOutline="true"
+            android:backgroundTint="@android:color/transparent"
+            android:background="@drawable/corner_background"/>
         <ImageView
             android:id="@+id/cover_wv"
+            android:scaleType="centerCrop"
             android:cropToPadding="true"
             android:clipToOutline="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/corner_background"/>
+<!--        <ImageView-->
+<!--            android:id="@+id/overlay_call_bg"-->
+<!--            android:visibility="invisible"-->
+<!--            android:src="@drawable/dlvn_city_bg"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"/>-->
     </com.example.dlvn_sdk.sendbirdCall.DraggableRelativeLayout>
 </RelativeLayout>

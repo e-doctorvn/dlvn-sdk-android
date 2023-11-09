@@ -38,20 +38,16 @@ class MainActivity : AppCompatActivity() {
             Log.d("zzz", it)
         }
 
-        loginDanh!!.setOnClickListener {
+        loginManh!!.setOnClickListener {
             txtName!!.text = "Danh (EDR)"
             edoctorDlvnSdk!!.authenticateSb(
                 this@MainActivity,
-                "dev_danh",
-                "c95eab7963d3e186b33555b8c945ed4a9fa296a4"
+                "dev_manh",
+                "45fda7a0a7920752243d302738c8be4dabba92b8"
             )
         }
 
-        callDanh!!.setOnClickListener {
-            edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
-        }
-
-        callManh!!.setOnClickListener { SendbirdCallImpl.startCall(this@MainActivity, "dev_manh") }
+        callDanh!!.setOnClickListener { SendbirdCallImpl.startCall(this@MainActivity, "dev_danh") }
 
         myBtn!!.setOnClickListener {
             val params = JSONObject()
@@ -64,9 +60,9 @@ class MainActivity : AppCompatActivity() {
 //            params.put("dcid", "FAB02ABB-91E9-47D1-B66C-A8FC4B08335B")
 //            params.put("token", "228b15fcd35f4188b393cfbe78378506")
 
-            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
+//            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
                 edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
-            }
+//            }
         }
 
         btn_dangxuat!!.setOnClickListener {

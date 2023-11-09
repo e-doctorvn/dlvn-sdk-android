@@ -39,8 +39,8 @@ class IncomingCallActivity : AppCompatActivity() {
     private var btnToggleCam: ImageButton? = null
     private var bgColorIncoming: LinearLayout? = null
     private var txtCaller: TextView? = null
-    private var txtCallee: TextView? = null
-    private var txtTimeout: TextView? = null
+//    private var txtCallee: TextView? = null
+//    private var txtTimeout: TextView? = null
     private var bgIncoming: ImageView? = null
     private var callerAvatar: ImageView? = null
     private var mReceiver: CallActionReceiver? = null
@@ -122,8 +122,8 @@ class IncomingCallActivity : AppCompatActivity() {
         acceptCallBtn = findViewById(R.id.btn_answer_call)
         rejectCallBtn = findViewById(R.id.btn_reject_call)
         txtCaller = findViewById(R.id.tv_caller_name)
-        txtCallee = findViewById(R.id.tv_user_name)
-        txtTimeout = findViewById(R.id.tv_timeout)
+//        txtCallee = findViewById(R.id.tv_user_name)
+//        txtTimeout = findViewById(R.id.tv_timeout)
         bgIncoming = findViewById(R.id.bg_incoming)
         callerAvatar = findViewById(R.id.img_caller_avatar)
         btnToggleCam = findViewById(R.id.btn_toggle_cam_incoming)
@@ -131,7 +131,7 @@ class IncomingCallActivity : AppCompatActivity() {
         bgColorIncoming = findViewById(R.id.bg_color_incoming)
 
         if (directCall?.callee?.nickname != null) {
-            txtCallee!!.text = directCall?.callee?.nickname
+//            txtCallee!!.text = directCall?.callee?.nickname
         }
         txtCaller!!.text = directCall?.caller?.nickname + " gọi video"
 
@@ -145,8 +145,8 @@ class IncomingCallActivity : AppCompatActivity() {
             .into(callerAvatar!!)
         Glide
             .with(this)
-            .load(directCall?.caller?.profileUrl)
-            .apply(RequestOptions.bitmapTransform(BlurTransformation(30)))
+            .load(resources.getDrawable(R.drawable.dlvn_city_bg))
+            .apply(RequestOptions.bitmapTransform(BlurTransformation(180)))
             .into(bgIncoming!!)
 
         setUpAnimation()
@@ -166,12 +166,12 @@ class IncomingCallActivity : AppCompatActivity() {
 
         btnToggleMic!!.setOnClickListener {
             val value: Boolean = CallManager.getInstance()?.acceptCallSetting!!.microphone
-            btnToggleMic!!.setImageResource(if (value) R.drawable.ic_mic_on else R.drawable.ic_mic_atv)
+            btnToggleMic!!.setImageResource(if (value) R.drawable.ic_mic_ina else R.drawable.ic_mic_atv)
             CallManager.getInstance()?.acceptCallSetting!!.microphone = !value
         }
         btnToggleCam!!.setOnClickListener {
             val value: Boolean = CallManager.getInstance()?.acceptCallSetting!!.camera
-            btnToggleCam!!.setImageResource(if (value) R.drawable.ic_cam_on else R.drawable.ic_cam_atv)
+            btnToggleCam!!.setImageResource(if (value) R.drawable.ic_cam_ina else R.drawable.ic_cam_atv)
             CallManager.getInstance()?.acceptCallSetting!!.camera = !value
         }
 
@@ -182,8 +182,8 @@ class IncomingCallActivity : AppCompatActivity() {
             bgColorIncoming!!.alpha = 0.5F
             bgColorIncoming!!.background = getDrawable(R.color.daiichi_secondary)
 
-            txtTimeout!!.textSize = 16F
-            txtTimeout!!.text = "Xin vui lòng chờ trong giây lát"
+//            txtTimeout!!.textSize = 16F
+//            txtTimeout!!.text = "Xin vui lòng chờ trong giây lát"
 
             CallManager.getInstance()!!.mContext = this@IncomingCallActivity
 
@@ -230,7 +230,7 @@ class IncomingCallActivity : AppCompatActivity() {
         override fun run() {
             if (timeoutValue > 0) {
                 timeoutValue -= 1
-                txtTimeout!!.text = "$timeoutValue giây"
+//                txtTimeout!!.text = "$timeoutValue giây"
             } else {
                 mainHandler.removeCallbacks(this)
                 finish()

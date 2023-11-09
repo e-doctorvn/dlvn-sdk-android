@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.dlvn_sdk.R
 import com.example.dlvn_sdk.store.AppStore
 import com.example.dlvn_sdk.webview.SdkWebView
@@ -12,6 +13,7 @@ import com.sendbird.calls.AudioDevice
 import com.sendbird.calls.DirectCall
 import com.sendbird.calls.SendBirdVideoView
 import com.sendbird.calls.handler.DirectCallListener
+import jp.wasabeef.glide.transformations.BlurTransformation
 
 class WebViewCallActivity: AppCompatActivity() {
     private val webView: SdkWebView? = AppStore.webViewInstance
@@ -49,8 +51,8 @@ class WebViewCallActivity: AppCompatActivity() {
 
         Glide
             .with(this)
-            .load(directCall?.caller?.profileUrl)
-            .centerCrop()
+            .load(resources.getDrawable(R.drawable.dlvn_city_bg))
+            .apply(RequestOptions.bitmapTransform(BlurTransformation(180)))
             .into(remoteCoverView!!)
         remoteCoverView!!.visibility = View.INVISIBLE
     }

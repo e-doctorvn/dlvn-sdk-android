@@ -22,6 +22,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.dlvn_sdk.R
 //import com.example.dlvn_sdk.components.AudioOutputDialog
 import com.example.dlvn_sdk.service.CallService
@@ -31,6 +32,7 @@ import com.sendbird.calls.CallOptions
 import com.sendbird.calls.DirectCall
 import com.sendbird.calls.SendBirdVideoView
 import com.sendbird.calls.handler.DirectCallListener
+import jp.wasabeef.glide.transformations.BlurTransformation
 
 class VideoCallActivity : AppCompatActivity() {
     private var localView: SendBirdVideoView? = null
@@ -41,13 +43,16 @@ class VideoCallActivity : AppCompatActivity() {
     private var btnRotateCam: ImageButton? = null
     private var btnToggleCam: ImageButton? = null
     private var btnToggleMic: ImageButton? = null
-    private var btnAudioDevices: ImageButton? = null
+    private var tvMicStatus: TextView? = null
+    private var tvCamStatus: TextView? = null
+//    private var btnAudioDevices: ImageButton? = null
     private var doctorAvatar: ImageView? = null
     private var callManager: CallManager? = null
     private var bgAvatar: ImageView? = null
     private var tvCalleeName: TextView? = null
     private var tvDoctorName: TextView? = null
     private var tvCallTimeout: TextView? = null
+    private var bottomOverlay: RelativeLayout? = null
     private var bottomContainer: LinearLayout? = null
     private var chatLoading: ProgressBar? = null
     private var totalCallTime: Int = 600
@@ -117,27 +122,35 @@ class VideoCallActivity : AppCompatActivity() {
         btnRotateCam = findViewById(R.id.btn_rotate_cam)
         btnToggleCam = findViewById(R.id.btn_toggle_cam)
         btnToggleMic = findViewById(R.id.btn_toggle_mic)
-        btnAudioDevices = findViewById(R.id.btn_audio_devices)
+        tvMicStatus = findViewById(R.id.tv_mic_stt)
+        tvCamStatus = findViewById(R.id.tv_cam_stt)
+//        btnAudioDevices = findViewById(R.id.btn_audio_devices)
         doctorAvatar = findViewById(R.id.img_doctor_avatar)
         tvCalleeName = findViewById(R.id.tv_callee_name)
         tvDoctorName = findViewById(R.id.tv_doctor_name)
         tvCallTimeout = findViewById(R.id.tv_call_timeout)
         chatLoading = findViewById(R.id.wv_chat_loading)
         bottomContainer = findViewById(R.id.bottom_call_container)
+        bottomOverlay = findViewById(R.id.call_control_overlay)
 
         mainHandler = Handler(Looper.getMainLooper())
         countdownCallTime()
 //        audioDialog = AudioOutputDialog(this)
 
+//        Glide
+//            .with(this)
+//            .load(directCall?.caller?.profileUrl)
+//            .centerCrop()
+//            .into(doctorAvatar!!)
+//        Glide
+//            .with(this)
+//            .load(directCall?.caller?.profileUrl)
+//            .centerCrop()
+//            .into(bgAvatar!!)
         Glide
             .with(this)
-            .load(directCall?.caller?.profileUrl)
-            .centerCrop()
-            .into(doctorAvatar!!)
-        Glide
-            .with(this)
-            .load(directCall?.caller?.profileUrl)
-            .centerCrop()
+            .load(resources.getDrawable(R.drawable.dlvn_city_bg))
+            .apply(RequestOptions.bitmapTransform(BlurTransformation(180)))
             .into(bgAvatar!!)
 
         tvDoctorName!!.text = directCall?.caller?.nickname
@@ -148,10 +161,12 @@ class VideoCallActivity : AppCompatActivity() {
 
         if (!callManager?.acceptCallSetting!!.camera) {
             localViewContainer?.visibility = View.INVISIBLE
-            btnToggleCam!!.setImageResource(R.drawable.ic_cam_on)
+            btnToggleCam!!.setImageResource(R.drawable.ic_cam_ina)
+            tvCamStatus!!.text = "Tắt camera"
         }
         if (!callManager?.acceptCallSetting!!.microphone) {
-            btnToggleMic!!.setImageResource(R.drawable.ic_mic_on)
+            btnToggleMic!!.setImageResource(R.drawable.ic_mic_ina)
+            tvMicStatus!!.text = "Tắt mic"
         }
 
         btnEndCall!!.setOnClickListener {
@@ -177,29 +192,31 @@ class VideoCallActivity : AppCompatActivity() {
 
         btnToggleMic!!.setOnClickListener {
             if (callManager!!.directCall?.isLocalAudioEnabled == true) {
-                btnToggleMic!!.setImageResource(R.drawable.ic_mic_on)
+                btnToggleMic!!.setImageResource(R.drawable.ic_mic_ina)
+                tvMicStatus!!.text = "Tắt mic"
             } else {
                 btnToggleMic!!.setImageResource(R.drawable.ic_mic_atv)
+                tvMicStatus!!.text = "Bật mic"
             }
             directCall?.let { it1 -> callManager!!.toggleMic(it1) }
         }
 
-        btnAudioDevices!!.setOnClickListener {
-//            audioDialog.show()
-            var device: AudioDevice? = null
-            directCall?.fetchBluetoothDevices()
-            directCall?.availableAudioDevices?.forEach { it ->
-                Log.d("zzz", it.name)
-                if (it == AudioDevice.SPEAKERPHONE) {
-                    device = it
-                }
-            }
-            device?.let { dv ->
-                directCall?.selectAudioDevice(dv) {
-                    Log.d("zzz", "Selected ${dv.name}")
-                }
-            }
-        }
+//        btnAudioDevices!!.setOnClickListener {
+////            audioDialog.show()
+//            var device: AudioDevice? = null
+//            directCall?.fetchBluetoothDevices()
+//            directCall?.availableAudioDevices?.forEach { it ->
+//                Log.d("zzz", it.name)
+//                if (it == AudioDevice.SPEAKERPHONE) {
+//                    device = it
+//                }
+//            }
+//            device?.let { dv ->
+//                directCall?.selectAudioDevice(dv) {
+//                    Log.d("zzz", "Selected ${dv.name}")
+//                }
+//            }
+//        }
     }
 
     override fun onUserLeaveHint() {
@@ -226,10 +243,12 @@ class VideoCallActivity : AppCompatActivity() {
             // Hide the full-screen UI (controls, etc.) while in PiP mode.
             localViewContainer!!.visibility = View.INVISIBLE
             bottomContainer!!.visibility = View.INVISIBLE
+            bottomOverlay!!.visibility = View.INVISIBLE
         } else {
             // Restore the full-screen UI.
             localViewContainer!!.visibility = View.VISIBLE
             bottomContainer!!.visibility = View.VISIBLE
+            bottomOverlay!!.visibility = View.VISIBLE
         }
     }
 
@@ -273,14 +292,17 @@ class VideoCallActivity : AppCompatActivity() {
                 super.onEstablished(call)
             }
 
+            @SuppressLint("SetTextI18n")
             override fun onLocalVideoSettingsChanged(call: DirectCall) {
                 super.onLocalVideoSettingsChanged(call)
                 if (!call.isLocalVideoEnabled) {
                     localViewContainer?.visibility = View.INVISIBLE
-                    btnToggleCam!!.setImageResource(R.drawable.ic_cam_on)
+                    btnToggleCam!!.setImageResource(R.drawable.ic_cam_ina)
+                    tvCamStatus!!.text = "Tắt camera"
                 } else {
                     localViewContainer?.visibility = View.VISIBLE
                     btnToggleCam!!.setImageResource(R.drawable.ic_cam_atv)
+                    tvCamStatus!!.text = "Bật camera"
                 }
             }
 

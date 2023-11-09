@@ -309,6 +309,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             }
         }
 
+        val jsInterface = JsInterface(this, sdkInstance)
         val webSettings: WebSettings = myWebView.settings
         webSettings.javaScriptEnabled = true
         webSettings.blockNetworkLoads = false
@@ -330,7 +331,8 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         cookieManager.setAcceptThirdPartyCookies(myWebView, true)
         myWebView.setLayerType(View.LAYER_TYPE_NONE, null)
-        myWebView.addJavascriptInterface(JsInterface(this, sdkInstance), "Android")
+        myWebView.addJavascriptInterface(jsInterface, "Android")
+        myWebView.addJavascriptInterface(jsInterface, "AndroidEdoctorCallback")
 
         myWebView.loadUrl(
             domain,
