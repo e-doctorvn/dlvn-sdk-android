@@ -258,7 +258,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 }
                 Thread {
                     try {
-                        Thread.sleep(30000)
+                        Thread.sleep(40000)
                     } catch (e: InterruptedException) {
                         e.printStackTrace()
                     }
