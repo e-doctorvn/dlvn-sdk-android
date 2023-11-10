@@ -28,6 +28,7 @@ import com.example.dlvn_sdk.helper.CallNotificationHelper
 import com.example.dlvn_sdk.helper.PermissionManager
 import com.example.dlvn_sdk.service.CallActionReceiver
 import com.example.dlvn_sdk.service.CallService
+import com.example.dlvn_sdk.store.AppStore
 import com.sendbird.calls.DirectCall
 import jp.wasabeef.glide.transformations.BlurTransformation
 
@@ -66,7 +67,7 @@ class IncomingCallActivity : AppCompatActivity() {
         val isReconnecting: Boolean = intent.getBooleanExtra("isReconnecting", false)
         if (!isReconnecting) {
             requestAllPermissions()
-            CallManager.getInstance()!!.handleSendbirdEvent(this@IncomingCallActivity)
+            AppStore.callManager?.handleSendbirdEvent(this@IncomingCallActivity)
             CallNotificationHelper.cancelCallNotification()
             listenReceiver(this)
             CallService.stopService(this)

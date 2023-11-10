@@ -14,7 +14,9 @@ import com.example.dlvn_sdk.api.ApiService
 import com.example.dlvn_sdk.api.RetrofitClient
 import com.example.dlvn_sdk.helper.CallNotificationHelper
 import com.example.dlvn_sdk.model.AccountInitResponse
+import com.example.dlvn_sdk.sendbirdCall.CallManager
 import com.example.dlvn_sdk.sendbirdCall.SendbirdCallImpl
+import com.example.dlvn_sdk.store.AppStore
 import com.example.dlvn_sdk.webview.SdkWebView
 import com.google.gson.JsonObject
 import org.json.JSONObject
@@ -70,6 +72,7 @@ class EdoctorDlvnSdk(
                 CallNotificationHelper.action = "_accept"
             }
         }
+        AppStore.callManager = CallManager()
         SendbirdCallImpl.initSendbirdCall(context, edrAppId)
     }
 

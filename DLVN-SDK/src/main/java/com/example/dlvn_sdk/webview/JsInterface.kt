@@ -2,11 +2,12 @@ package com.example.dlvn_sdk.webview
 
 import android.content.Intent
 import android.util.Log
-import org.json.JSONObject
 import android.webkit.JavascriptInterface
 import androidx.core.content.ContextCompat.startActivity
 import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.EdoctorDlvnSdk
+import org.json.JSONObject
+
 
 class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
     private var sdkInstance: EdoctorDlvnSdk? = null

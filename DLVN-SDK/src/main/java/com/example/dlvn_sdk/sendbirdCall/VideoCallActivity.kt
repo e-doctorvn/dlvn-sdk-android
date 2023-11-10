@@ -23,9 +23,12 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.dlvn_sdk.Constants
+import com.example.dlvn_sdk.Constants.CallState
 import com.example.dlvn_sdk.R
 //import com.example.dlvn_sdk.components.AudioOutputDialog
 import com.example.dlvn_sdk.service.CallService
+import com.example.dlvn_sdk.store.AppStore
 import com.sendbird.calls.AcceptParams
 import com.sendbird.calls.AudioDevice
 import com.sendbird.calls.CallOptions
@@ -69,7 +72,7 @@ class VideoCallActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_call)
-        callManager = CallManager.getInstance()
+        callManager = AppStore.callManager
         initView()
         initCallListener()
 
@@ -199,6 +202,22 @@ class VideoCallActivity : AppCompatActivity() {
                 tvMicStatus!!.text = "Bật mic"
             }
             directCall?.let { it1 -> callManager!!.toggleMic(it1) }
+        }
+
+        callManager?.onCallStateChanged = {
+            when (it) {
+                CallState.CONNECTED -> {
+                    Log.d("zzz", "inside callManager.onCallStateChanged")
+                    localViewContainer?.visibility = View.VISIBLE
+                    remoteView?.visibility = View.VISIBLE
+                }
+                CallState.ESTABLISHED -> {
+
+                }
+                CallState.RECONNECTING -> TODO()
+                CallState.RECONNECTED -> TODO()
+                CallState.ENDED -> TODO()
+            }
         }
 
 //        btnAudioDevices!!.setOnClickListener {

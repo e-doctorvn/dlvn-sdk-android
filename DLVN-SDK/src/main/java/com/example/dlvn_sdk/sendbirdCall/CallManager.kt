@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import com.example.dlvn_sdk.Constants.CallState
 import com.example.dlvn_sdk.service.CallService
 import com.sendbird.calls.AudioDevice
 import com.sendbird.calls.DirectCall
@@ -14,7 +15,7 @@ data class AcceptSetting(
     var camera: Boolean = true
 )
 
-class CallManager private constructor() {
+class CallManager {
     var directCall: DirectCall? = null
     var pushToken: String? = null
     var callState: String = "ENDED"
@@ -40,9 +41,15 @@ class CallManager private constructor() {
         }
     }
 
+    var onCallStateChanged: ((state: CallState) -> Unit)? = {}
+
     fun handleSendbirdEvent(context: Context) {
         mContext = context
         directCall?.setListener(object : DirectCallListener() {
+            override fun onEstablished(call: DirectCall) {
+                super.onEstablished(call)
+            }
+
             override fun onConnected(directCall: DirectCall) {
                 if (callState != "CONNECTED") {
                     finishCurrentActivity()
@@ -50,6 +57,7 @@ class CallManager private constructor() {
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     context.startActivity(intent)
                     callState = "CONNECTED"
+                    onCallStateChanged!!.invoke(CallState.CONNECTED)
                 }
             }
 
@@ -73,10 +81,6 @@ class CallManager private constructor() {
 
             override fun onCustomItemsUpdated(call: DirectCall, updatedKeys: List<String>) {
                 super.onCustomItemsUpdated(call, updatedKeys)
-            }
-
-            override fun onEstablished(call: DirectCall) {
-                super.onEstablished(call)
             }
 
             override fun onLocalVideoSettingsChanged(call: DirectCall) {

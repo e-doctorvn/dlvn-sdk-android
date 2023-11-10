@@ -119,7 +119,6 @@ object SendbirdCallImpl {
                                     Log.d("zzz", "Fetching FCM registration token failed")
                                     return
                                 }
-                                Log.d("zzz", "Fetching FCM registration token success?")
 
                                 val token: String? = task.result
                                 CallManager.getInstance()!!.pushToken = token

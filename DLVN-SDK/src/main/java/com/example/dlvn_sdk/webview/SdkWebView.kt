@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.ColorFilter
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.net.http.SslError
@@ -261,7 +262,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 }
                 Thread {
                     try {
-                        Thread.sleep(30000)
+                        Thread.sleep(40000)
                     } catch (e: InterruptedException) {
                         e.printStackTrace()
                     }
