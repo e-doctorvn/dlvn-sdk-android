@@ -92,8 +92,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:indeterminate="true"
             android:indeterminateTintMode="src_atop"
-            android:indeterminateTint="@color/dlvn_primary"
-            />
+            android:indeterminateTint="@color/dlvn_primary" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
