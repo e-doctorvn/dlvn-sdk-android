@@ -101,11 +101,6 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             R.layout.webview,
             container, false
         )
-//        WebView(requireContext()).clearCache(true)
-//        WebStorage.getInstance().deleteAllData()
-//        CookieManager.getInstance().removeAllCookies(null)
-//        CookieManager.getInstance().flush()
-
 //        dialog?.window?.decorView?.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 //                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
 //        dialog?.window?.statusBarColor = Color.TRANSPARENT
@@ -130,11 +125,6 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             clearCacheAndCookies(requireContext())
             EdoctorDlvnSdk.needClearCache = false
         }
-
-//        myWebView.clearCache(true)
-//        myWebView.clearFormData()
-//        myWebView.clearHistory()
-//        myWebView.clearSslPreferences()
 
         val cookieManager = CookieManager.getInstance()
         cookieManager.setAcceptCookie(true)
@@ -306,6 +296,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             }
         }
 
+        val jsInterface = JsInterface(this, sdkInstance)
         val webSettings: WebSettings = myWebView.settings
         webSettings.javaScriptEnabled = true
         webSettings.blockNetworkLoads = false
@@ -319,15 +310,14 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         webSettings.databaseEnabled = true
         webSettings.javaScriptCanOpenWindowsAutomatically = true
         webSettings.allowContentAccess = true
-        webSettings.setGeolocationEnabled(true)
         webSettings.loadWithOverviewMode = true
         webSettings.allowFileAccess = true
         webSettings.cacheMode = WebSettings.LOAD_DEFAULT
-        webSettings.mediaPlaybackRequiresUserGesture = false
         webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         cookieManager.setAcceptThirdPartyCookies(myWebView, true)
         myWebView.setLayerType(View.LAYER_TYPE_NONE, null)
-        myWebView.addJavascriptInterface(JsInterface(this, sdkInstance), "Android")
+        myWebView.addJavascriptInterface(jsInterface, "Android")
+        myWebView.addJavascriptInterface(jsInterface, "AndroidEdoctorCallback")
 
         myWebView.loadUrl(
             domain,
