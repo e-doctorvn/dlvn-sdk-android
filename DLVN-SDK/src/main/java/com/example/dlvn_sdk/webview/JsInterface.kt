@@ -1,8 +1,10 @@
 package com.example.dlvn_sdk.webview
 
+import android.content.Intent
 import android.util.Log
 import org.json.JSONObject
 import android.webkit.JavascriptInterface
+import androidx.core.content.ContextCompat.startActivity
 import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.EdoctorDlvnSdk
 
@@ -34,6 +36,13 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
             }
             Constants.WebviewParams.goBackFromDlvn -> {
                 mWebview?.requireActivity()?.runOnUiThread { mWebview?.myWebView?.goBack() }
+            }
+            Constants.WebviewParams.shareDlvnArticle -> {
+                val sharingIntent = Intent(Intent.ACTION_SEND)
+                val shareBody = json.getString("url")
+                sharingIntent.type = "text/plain"
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody)
+                mWebview?.context?.let { startActivity(it, Intent.createChooser(sharingIntent, "Share via"), null) }
             }
         }
         return true

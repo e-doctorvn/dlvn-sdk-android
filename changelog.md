@@ -2,7 +2,10 @@
 
 EDR - DLVN Android SDK 
 
-Latest version: **1.0.10 (Updated: 07/11/2023)**
+Latest version: **1.0.11 (Updated: 10/11/2023)**
+
+## Version 1.0.11
+- Handle `Back` and `Share` buttons from DLVN's article
 
 ## Version 1.0.10
 - Fix totally clear WebView's cache in `clearWebViewCache` again
