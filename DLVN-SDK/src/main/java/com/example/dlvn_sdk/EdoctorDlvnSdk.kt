@@ -55,6 +55,7 @@ class EdoctorDlvnSdk(
     init {
         EdoctorDlvnSdk.context = context
         accessToken = "hello"
+        AppStore.sdkInstance = this
 
         if (apiService === null) {
             apiService = RetrofitClient(env)
@@ -72,7 +73,6 @@ class EdoctorDlvnSdk(
                 CallNotificationHelper.action = "_accept"
             }
         }
-        AppStore.callManager = CallManager()
         SendbirdCallImpl.initSendbirdCall(context, edrAppId)
     }
 

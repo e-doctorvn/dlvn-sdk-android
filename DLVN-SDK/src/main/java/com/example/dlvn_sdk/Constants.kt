@@ -15,5 +15,8 @@ object Constants {
     enum class CallState {
         ESTABLISHED, CONNECTED, RECONNECTING, RECONNECTED, ENDED
     }
+    enum class CallAction {
+        LOCAL_VIDEO, REMOTE_VIDEO
+    }
     enum class Env { LIVE, SANDBOX }
 }

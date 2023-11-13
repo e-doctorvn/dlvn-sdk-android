@@ -1,11 +1,13 @@
 package com.example.dlvn_sdk.sendbirdCall
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.R
 import com.example.dlvn_sdk.store.AppStore
 import com.example.dlvn_sdk.webview.SdkWebView
@@ -16,28 +18,27 @@ import com.sendbird.calls.handler.DirectCallListener
 import jp.wasabeef.glide.transformations.BlurTransformation
 
 class WebViewCallActivity: AppCompatActivity() {
-    private val webView: SdkWebView? = AppStore.webViewInstance
+    private val webView: SdkWebView = SdkWebView(AppStore.sdkInstance!!)
     private var remoteView: SendBirdVideoView? = null
     private var remoteCoverView: ImageView? = null
     private var btnRemoteView: DraggableRelativeLayout? = null
-    private val directCall: DirectCall? = CallManager.getInstance()?.directCall
+    private var callManager: CallManager? = CallManager.getInstance()
+    private val directCall: DirectCall? = callManager?.directCall
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_webview)
         if (savedInstanceState == null) {
-            webView?.webViewCallActivity = this@WebViewCallActivity
+            webView.webViewCallActivity = this@WebViewCallActivity
 
-            if (webView != null) {
-                supportFragmentManager
-                    .beginTransaction()
-                    .add(R.id.fragment_container_view, webView)
-                    .commit()
-            }
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.fragment_container_view, webView)
+                .commit()
         }
 
         initView()
-        initCallListener()
+        initCallEventListener()
     }
 
     private fun initView() {
@@ -54,83 +55,42 @@ class WebViewCallActivity: AppCompatActivity() {
             .load(resources.getDrawable(R.drawable.dlvn_city_bg))
             .apply(RequestOptions.bitmapTransform(BlurTransformation(180)))
             .into(remoteCoverView!!)
-        remoteCoverView!!.visibility = View.INVISIBLE
+        if (directCall!!.isRemoteVideoEnabled) {
+            remoteCoverView!!.visibility = View.INVISIBLE
+        } else {
+            remoteCoverView!!.visibility = View.VISIBLE
+        }
     }
 
-    private fun initCallListener() {
+    private fun initCallEventListener() {
         directCall?.setRemoteVideoView(remoteView)
-        directCall?.setListener(object : DirectCallListener() {
-            override fun onConnected(call: DirectCall) {
-
+        callManager?.onCallStateChanged = {
+            when (it) {
+                Constants.CallState.ESTABLISHED -> {}
+                Constants.CallState.CONNECTED -> {}
+                Constants.CallState.RECONNECTING -> {}
+                Constants.CallState.RECONNECTED -> {}
+                Constants.CallState.ENDED -> finish()
             }
+        }
 
-            override fun onEnded(call: DirectCall) {
-                finish()
-                CallManager.getInstance()?.finishCurrentActivity()
-            }
-
-            override fun onAudioDeviceChanged(
-                call: DirectCall,
-                currentAudioDevice: AudioDevice?,
-                availableAudioDevices: MutableSet<AudioDevice>
-            ) {
-                super.onAudioDeviceChanged(call, currentAudioDevice, availableAudioDevices)
-            }
-
-            override fun onCustomItemsDeleted(call: DirectCall, deletedKeys: List<String>) {
-                super.onCustomItemsDeleted(call, deletedKeys)
-            }
-
-            override fun onCustomItemsUpdated(call: DirectCall, updatedKeys: List<String>) {
-                super.onCustomItemsUpdated(call, updatedKeys)
-            }
-
-            override fun onEstablished(call: DirectCall) {
-                super.onEstablished(call)
-            }
-
-            override fun onLocalVideoSettingsChanged(call: DirectCall) {
-                super.onLocalVideoSettingsChanged(call)
-
-            }
-
-            override fun onReconnected(call: DirectCall) {
-                super.onReconnected(call)
-
-            }
-
-            override fun onReconnecting(call: DirectCall) {
-                super.onReconnecting(call)
-
-            }
-
-            override fun onRemoteAudioSettingsChanged(call: DirectCall) {
-                super.onRemoteAudioSettingsChanged(call)
-
-            }
-
-            override fun onRemoteRecordingStatusChanged(call: DirectCall) {
-                super.onRemoteRecordingStatusChanged(call)
-            }
-
-            override fun onRemoteVideoSettingsChanged(call: DirectCall) {
-                super.onRemoteVideoSettingsChanged(call)
-                if (call.isRemoteVideoEnabled) {
-                    remoteView!!.visibility = View.VISIBLE
-                    remoteCoverView!!.visibility = View.INVISIBLE
-                } else {
-                    remoteView!!.visibility = View.INVISIBLE
-                    remoteCoverView!!.visibility = View.VISIBLE
+        callManager?.onCallActionChanged = {
+            when (it) {
+                Constants.CallAction.REMOTE_VIDEO -> {
+                    if (directCall?.isRemoteVideoEnabled!!) {
+                        remoteView!!.visibility = View.VISIBLE
+                        remoteCoverView!!.visibility = View.INVISIBLE
+                    } else {
+                        remoteView!!.visibility = View.INVISIBLE
+                        remoteCoverView!!.visibility = View.VISIBLE
+                    }
                 }
+                else -> {}
             }
+        }
 
-            override fun onUserHoldStatusChanged(
-                call: DirectCall,
-                isLocalUser: Boolean,
-                isUserOnHold: Boolean
-            ) {
-                super.onUserHoldStatusChanged(call, isLocalUser, isUserOnHold)
-            }
-        })
+        callManager?.closeWebViewActivity = {
+            finish()
+        }
     }
 }

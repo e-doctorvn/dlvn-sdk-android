@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -23,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.R
 import com.example.dlvn_sdk.helper.CallNotificationHelper
 import com.example.dlvn_sdk.helper.PermissionManager
@@ -67,12 +69,13 @@ class IncomingCallActivity : AppCompatActivity() {
         val isReconnecting: Boolean = intent.getBooleanExtra("isReconnecting", false)
         if (!isReconnecting) {
             requestAllPermissions()
-            AppStore.callManager?.handleSendbirdEvent(this@IncomingCallActivity)
+            CallManager.getInstance()?.handleSendbirdEvent(this@IncomingCallActivity)
             CallNotificationHelper.cancelCallNotification()
             listenReceiver(this)
             CallService.stopService(this)
         }
         initView(isReconnecting)
+        initCallEventListener()
     }
 
     // Yêu cầu tất cả các quyền cần thiết
@@ -176,21 +179,33 @@ class IncomingCallActivity : AppCompatActivity() {
             CallManager.getInstance()?.acceptCallSetting!!.camera = !value
         }
 
-        if (isReconnecting) {
-            acceptCallBtn!!.visibility = View.GONE
-            btnToggleCam!!.visibility = View.INVISIBLE
-            btnToggleMic!!.visibility = View.INVISIBLE
-            bgColorIncoming!!.alpha = 0.5F
-            bgColorIncoming!!.background = getDrawable(R.color.daiichi_secondary)
+//        if (isReconnecting) {
+//            acceptCallBtn!!.visibility = View.GONE
+//            btnToggleCam!!.visibility = View.INVISIBLE
+//            btnToggleMic!!.visibility = View.INVISIBLE
+//            bgColorIncoming!!.alpha = 0.5F
+//            bgColorIncoming!!.background = getDrawable(R.color.daiichi_secondary)
+//
+////            txtTimeout!!.textSize = 16F
+////            txtTimeout!!.text = "Xin vui lòng chờ trong giây lát"
+//
+//            CallManager.getInstance()!!.mContext = this@IncomingCallActivity
+//
+//            rejectCallBtn!!.setOnClickListener {
+//                finish()
+//                CallManager.getInstance()!!.resetCall()
+//            }
+//        }
+    }
 
-//            txtTimeout!!.textSize = 16F
-//            txtTimeout!!.text = "Xin vui lòng chờ trong giây lát"
-
-            CallManager.getInstance()!!.mContext = this@IncomingCallActivity
-
-            rejectCallBtn!!.setOnClickListener {
-                finish()
-                CallManager.getInstance()!!.resetCall()
+    private fun initCallEventListener() {
+        CallManager.getInstance()!!.onCallStateChanged = {
+            when (it) {
+                Constants.CallState.ESTABLISHED -> {}
+                Constants.CallState.CONNECTED -> {}
+                Constants.CallState.RECONNECTING -> {}
+                Constants.CallState.RECONNECTED -> {}
+                Constants.CallState.ENDED -> finish()
             }
         }
     }

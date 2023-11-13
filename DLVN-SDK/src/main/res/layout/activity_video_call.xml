@@ -7,16 +7,25 @@
 
     <com.sendbird.calls.SendBirdVideoView
         android:id="@+id/remote_video_view"
-        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     <ImageView
         android:id="@+id/avatar_as_bg"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:src="@drawable/dlvn_city_bg"
         android:scaleType="centerCrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+    <TextView
+        android:id="@+id/tv_reconnecting"
+        android:textColor="@color/white"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="320dp"
+        android:textSize="16sp"
+        android:visibility="gone"
+        android:text="Đã xảy ra sự cố kết nối. Đang kết nối lại..."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <RelativeLayout
         android:id="@+id/local_video_container"
         android:layout_width="100dp"
@@ -26,7 +35,6 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="12dp"
         android:clipChildren="true"
-        android:visibility="invisible"
         android:clipToOutline="true">
         <com.sendbird.calls.SendBirdVideoView
             android:id="@+id/local_video_view"
@@ -67,90 +75,6 @@
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <LinearLayout
-                android:visibility="gone"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/img_doctor_avatar"
-                    android:layout_width="62dp"
-                    android:layout_height="62dp"
-                    android:scaleType="centerCrop"
-                    android:clipToOutline="true"
-                    android:cropToPadding="true"
-                    android:backgroundTint="@color/black"
-                    android:background="@drawable/bg_circle"
-                    />
-                <LinearLayout
-                    android:layout_marginStart="9dp"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <com.google.android.flexbox.FlexboxLayout
-                        app:flexDirection="row"
-                        app:alignItems="center"
-                        app:justifyContent="space_between"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:text="BS Danh Mai"
-                            android:textSize="18sp"
-                            android:lineHeight="24sp"
-                            android:textStyle="bold"
-                            android:maxWidth="200dp"
-                            android:lineBreakStyle="none"
-                            android:maxLines="1"
-                            android:ellipsize="end"
-                            android:textColor="@color/black"
-                            android:id="@+id/tv_doctor_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-                        <FrameLayout
-                            android:layout_width="63dp"
-                            android:layout_height="28dp"
-                            android:paddingVertical="4dp"
-                            android:paddingHorizontal="12dp"
-                            android:backgroundTint="@color/daiichi_secondary"
-                            android:background="@drawable/corner_background">
-                            <TextView
-                                android:id="@+id/tv_call_timeout"
-                                android:textSize="14sp"
-                                android:lineHeight="16sp"
-                                android:textStyle="bold"
-                                android:text="14:23"
-                                android:textColor="@color/red_primary"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
-                        </FrameLayout>
-                    </com.google.android.flexbox.FlexboxLayout>
-                    <TextView
-                        android:maxLines="1"
-                        android:ellipsize="end"
-                        android:textSize="12sp"
-                        android:layout_marginTop="4dp"
-                        android:lineHeight="18sp"
-                        android:textStyle="bold"
-                        android:id="@+id/tv_callee_name"
-                        android:textColor="@color/gray_primary"
-                        android:lineBreakStyle="none"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Bui Dinh Manh (Toi)"/>
-                    <TextView
-                        android:maxLines="1"
-                        android:ellipsize="end"
-                        android:textSize="12sp"
-                        android:layout_marginTop="4dp"
-                        android:lineHeight="18sp"
-                        android:lineBreakStyle="none"
-                        android:textColor="@color/gray_primary"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Phong kham da khoa eDoctor"/>
-                </LinearLayout>
-            </LinearLayout>
-
             <com.google.android.flexbox.FlexboxLayout
                 app:flexDirection="row"
                 android:paddingVertical="4dp"
@@ -169,6 +93,7 @@
                 <TextView
                     android:text="00:20:45"
                     android:textSize="11sp"
+                    android:id="@+id/tv_call_timeout"
                     android:layout_marginLeft="4dp"
                     android:textColor="@color/white"
                     android:layout_width="wrap_content"

@@ -35,7 +35,6 @@ object SendbirdCallImpl {
     fun initSendbirdCall(context: Context, APP_ID: String) {
         if (SendBirdCall.init(context, APP_ID)) {
             Toast.makeText(context, "initSendbirdCall success", Toast.LENGTH_SHORT).show()
-            SendBirdCall.removeAllRecordingListeners()
 //            addListener(context)
             checkLoggedInUser(context)
         }
@@ -46,12 +45,11 @@ object SendbirdCallImpl {
     }
 
     fun addListener(context: Context) {
-//        SendBirdCall.removeAllListeners()
+        SendBirdCall.removeAllListeners()
 
         val UNIQUE_HANDLER_ID = UUID.randomUUID().toString()
         SendBirdCall.addListener(UNIQUE_HANDLER_ID, object : SendBirdCallListener() {
             override fun onRinging(directCall: DirectCall) {
-                Log.d("zzz", "on ringing on ringing")
                 val ongoingCallCount: Int = SendBirdCall.ongoingCallCount
                 if (ongoingCallCount >= 2) {
                     directCall.end()
@@ -62,12 +60,12 @@ object SendbirdCallImpl {
 
                 CallManager.getInstance()?.directCall = directCall
                 CallManager.getInstance()?.callState = "RINGING"
-                CallManager.getInstance()!!.handleSendbirdEvent(context)
+//                CallManager.getInstance()!!.handleSendbirdEvent(context)
 
                 if (CallNotificationHelper.action != null) {
                     if (CallNotificationHelper.action == "_decline") {
                         CallManager.getInstance()?.pushToken = null
-                        directCall?.end()
+                        directCall.end()
                     }
                 } else {
                     val intent = Intent(context, IncomingCallActivity::class.java)

@@ -6,6 +6,7 @@ import android.webkit.JavascriptInterface
 import androidx.core.content.ContextCompat.startActivity
 import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.EdoctorDlvnSdk
+import com.example.dlvn_sdk.sendbirdCall.CallManager
 import org.json.JSONObject
 
 
@@ -23,7 +24,13 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
     fun receiveMessage(data: String): Boolean {
         val json = JSONObject(data)
         when (json.getString("type")) {
-            Constants.WebviewParams.closeWebview -> mWebview?.requireActivity()?.runOnUiThread { mWebview?.selfClose() }
+            Constants.WebviewParams.closeWebview -> {
+                if (CallManager.getInstance()?.directCall != null) {
+                    CallManager.getInstance()?.closeWebViewActivity?.invoke()
+                } else {
+                    mWebview?.requireActivity()?.runOnUiThread { mWebview?.selfClose() }
+                }
+            }
             Constants.WebviewParams.requestLoginNative -> {
                 val data = JSONObject(json.get("data").toString())
                 if (data.has("currentUrl")) {

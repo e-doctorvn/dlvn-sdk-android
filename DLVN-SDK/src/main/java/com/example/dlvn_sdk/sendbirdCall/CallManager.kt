@@ -4,10 +4,13 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.example.dlvn_sdk.Constants.CallState
+import com.example.dlvn_sdk.Constants.CallAction
 import com.example.dlvn_sdk.service.CallService
 import com.sendbird.calls.AudioDevice
 import com.sendbird.calls.DirectCall
+import com.sendbird.calls.SendBirdCall
 import com.sendbird.calls.handler.DirectCallListener
 
 data class AcceptSetting(
@@ -41,29 +44,36 @@ class CallManager {
         }
     }
 
+    var closeWebViewActivity: (() -> Unit)? = {}
     var onCallStateChanged: ((state: CallState) -> Unit)? = {}
+    var onCallActionChanged: ((state: CallAction) -> Unit)? = {}
 
     fun handleSendbirdEvent(context: Context) {
         mContext = context
+        SendBirdCall.removeAllListeners()
         directCall?.setListener(object : DirectCallListener() {
             override fun onEstablished(call: DirectCall) {
                 super.onEstablished(call)
+                Log.d("zzz", "onEstablished")
             }
 
             override fun onConnected(directCall: DirectCall) {
-                if (callState != "CONNECTED") {
-                    finishCurrentActivity()
-                    val intent = Intent(context, VideoCallActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    context.startActivity(intent)
-                    callState = "CONNECTED"
-                    onCallStateChanged!!.invoke(CallState.CONNECTED)
-                }
+                Log.d("zzz", "onConnected")
+                onCallStateChanged!!.invoke(CallState.CONNECTED)
+//                if (callState != "CONNECTED") {
+//                    finishCurrentActivity()
+//                    val intent = Intent(context, VideoCallActivity::class.java)
+//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//                    context.startActivity(intent)
+//                    callState = "CONNECTED"
+//                    onCallStateChanged!!.invoke(CallState.CONNECTED)
+//                }
             }
 
             override fun onEnded(directCall: DirectCall) {
+                onCallStateChanged!!.invoke(CallState.ENDED)
                 CallService.stopService(context)
-                finishCurrentActivity()
+//                finishCurrentActivity()
                 resetCall()
             }
 
@@ -85,14 +95,17 @@ class CallManager {
 
             override fun onLocalVideoSettingsChanged(call: DirectCall) {
                 super.onLocalVideoSettingsChanged(call)
+                onCallActionChanged!!.invoke(CallAction.LOCAL_VIDEO)
             }
 
             override fun onReconnected(call: DirectCall) {
                 super.onReconnected(call)
+                onCallStateChanged!!.invoke(CallState.RECONNECTED)
             }
 
             override fun onReconnecting(call: DirectCall) {
                 super.onReconnecting(call)
+                onCallStateChanged!!.invoke(CallState.RECONNECTING)
             }
 
             override fun onRemoteAudioSettingsChanged(call: DirectCall) {
@@ -105,6 +118,7 @@ class CallManager {
 
             override fun onRemoteVideoSettingsChanged(call: DirectCall) {
                 super.onRemoteVideoSettingsChanged(call)
+                onCallActionChanged!!.invoke(CallAction.REMOTE_VIDEO)
             }
 
             override fun onUserHoldStatusChanged(

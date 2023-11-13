@@ -1,5 +1,6 @@
 package com.example.dlvn_sdk.webview
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
@@ -7,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.ColorFilter
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.net.http.SslError
@@ -36,10 +36,12 @@ import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
 import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.EdoctorDlvnSdk
 import com.example.dlvn_sdk.R
+import com.example.dlvn_sdk.helper.PermissionManager
 import com.example.dlvn_sdk.store.AppStore
 import java.io.File
 import java.io.IOException
@@ -206,6 +208,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
                 chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
                 startActivityForResult(chooserIntent, FCR)
+                activity!!.runOnUiThread { requestAllPermissions() }
                 return true
             }
         }
@@ -384,6 +387,21 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             myWebView.clearFormData()
             myWebView.clearHistory()
             myWebView.clearSslPreferences()
+        }
+    }
+
+    private fun requestAllPermissions() {
+        if (!PermissionManager.checkCameraPermission(requireContext())) {
+            val permissions = arrayOf(
+                Manifest.permission.CAMERA,
+            )
+            activity?.let {
+                ActivityCompat.requestPermissions(
+                    it,
+                    permissions,
+                    PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
+                )
+            }
         }
     }
 
