@@ -1,95 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.14" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:padding="3dp"
-        android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/btn_id"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        tools:ignore="MissingConstraints">
-
-        <Button
-            android:id="@+id/btn_login_Manh"
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:text="Login Manh"/>
-        <Button
-            android:visibility="gone"
-            android:id="@+id/btn_login_Danh"
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:text="Login Danh"/>
-
-    </LinearLayout>
+    tools:context=".MainActivity"
+    android:paddingHorizontal="20dp"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:id="@+id/background"
+    android:background="@color/white"
+    android:layout_gravity="center_horizontal">
 
     <Button
         android:id="@+id/btn_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="open webview"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_username"
+        android:textColor="@color/black"
+        android:text="User: undefined"
+        android:layout_marginVertical="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/ed_userid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints"
+        android:hint="UserID"
+        android:layout_marginTop="40dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/gray_primary"
+        android:backgroundTint="@color/gray_primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.368" />
+        app:layout_constraintVertical_bias="0.656"/>
+
+    <EditText
+        android:id="@+id/ed_access_token"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints"
+        android:hint="AccessToken"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/gray_primary"
+        android:textColorHint="@color/gray_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ed_userid"
+        app:layout_constraintVertical_bias="0.656"/>
 
     <Button
-        android:id="@+id/call_manh"
+        android:layout_marginTop="24dp"
+        android:id="@+id/btn_login_Manh"
         android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:text="Call Manh"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.512" />
-
-    <Button
-        android:id="@+id/call_danh"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:text="Call Danh"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.656" />
+        android:layout_height="wrap_content"
+        android:text="Login"/>
 
     <Button
         android:id="@+id/btn_dangxuat"
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:text="đăng xuất"
+        android:layout_marginTop="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/call_danh"
+        app:layout_constraintTop_toBottomOf="@+id/ed_access_token"
         app:layout_constraintVertical_bias="0.167"
         tools:ignore="MissingConstraints" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

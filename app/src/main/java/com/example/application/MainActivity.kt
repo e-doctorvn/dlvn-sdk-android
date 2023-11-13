@@ -1,8 +1,12 @@
 package com.example.application
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dlvn_sdk.EdoctorDlvnSdk
@@ -11,14 +15,16 @@ import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
     private var myBtn: Button? = null
-    private var callManh: Button? = null
-    private var callDanh: Button? = null
     private var loginManh: Button? = null
-    private var loginDanh: Button? = null
     private var btn_dangxuat: Button? = null
-    private var txtName: TextView? = null
+    private var inputUserId: EditText? = null
+    private var inputAccessToken: EditText? = null
+    private var background: LinearLayout? = null
+    private var tvUsername: TextView? = null
+
     private var edoctorDlvnSdk: EdoctorDlvnSdk? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -26,28 +32,16 @@ class MainActivity : AppCompatActivity() {
         edoctorDlvnSdk = EdoctorDlvnSdk(applicationContext, intent)
 
         myBtn = findViewById(R.id.btn_id)
-        callManh = findViewById(R.id.call_manh)
-        callDanh = findViewById(R.id.call_danh)
+        background = findViewById(R.id.background)
         loginManh = findViewById(R.id.btn_login_Manh)
-        loginDanh = findViewById(R.id.btn_login_Danh)
-        txtName = findViewById(R.id.textView)
         btn_dangxuat = findViewById(R.id.btn_dangxuat)
+        inputUserId = findViewById(R.id.ed_userid)
+        tvUsername = findViewById(R.id.tv_username)
+        inputAccessToken = findViewById(R.id.ed_access_token)
 
-        edoctorDlvnSdk!!.onSdkRequestLogin = {
-            Log.d("zzz", "Nhan duoc data ne")
-            Log.d("zzz", it)
+        background!!.setOnClickListener {
+            closeKeyboard()
         }
-
-        loginManh!!.setOnClickListener {
-            txtName!!.text = "Danh (EDR)"
-            edoctorDlvnSdk!!.authenticateSb(
-                this@MainActivity,
-                "dev_manh",
-                "45fda7a0a7920752243d302738c8be4dabba92b8"
-            )
-        }
-
-        callDanh!!.setOnClickListener { SendbirdCallImpl.startCall(this@MainActivity, "dev_danh") }
 
         myBtn!!.setOnClickListener {
             val params = JSONObject()
@@ -65,9 +59,33 @@ class MainActivity : AppCompatActivity() {
 //            }
         }
 
+        edoctorDlvnSdk?.onSdkRequestLogin = {
+            tvUsername?.text = "User: $it"
+        }
+
+        loginManh!!.setOnClickListener {
+            if (inputUserId!!.text.toString() != "" && inputAccessToken!!.text.toString() != "") {
+                edoctorDlvnSdk!!.authenticateSb(
+                    this@MainActivity,
+                    inputUserId!!.text.toString(),
+                    inputAccessToken!!.text.toString()
+                )
+            }
+        }
+
         btn_dangxuat!!.setOnClickListener {
-//            edoctorDlvnSdk!!.clearWebViewCache()
+            tvUsername?.text = "User: undefined"
+            edoctorDlvnSdk!!.clearWebViewCache()
             edoctorDlvnSdk!!.deAuthenticateSb()
+        }
+    }
+
+    private fun closeKeyboard() {
+        try {
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+        } catch (e: Error) {
+
         }
     }
 }

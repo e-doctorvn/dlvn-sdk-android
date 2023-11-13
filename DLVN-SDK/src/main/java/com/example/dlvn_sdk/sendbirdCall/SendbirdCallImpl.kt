@@ -7,11 +7,13 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
 import android.widget.Toast
+import com.example.dlvn_sdk.EdoctorDlvnSdk
 import com.example.dlvn_sdk.R
 import com.example.dlvn_sdk.helper.CallNotificationHelper
 import com.example.dlvn_sdk.helper.PrefUtils
 import com.example.dlvn_sdk.service.CallActionReceiver
 import com.example.dlvn_sdk.service.CallService
+import com.example.dlvn_sdk.store.AppStore
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.messaging.FirebaseMessaging
@@ -123,8 +125,11 @@ object SendbirdCallImpl {
                                 registerPushToken(token)
                                 PrefUtils.setAccessToken(context, accessToken)
                                 PrefUtils.setUserId(context, userId)
+                                AppStore.sdkInstance?.onSdkRequestLogin?.invoke(user?.nickname.toString())
                             }
                         })
+                } else {
+                    EdoctorDlvnSdk.showError("Login failed!")
                 }
             }
         })
