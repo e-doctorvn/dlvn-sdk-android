@@ -1,6 +1,5 @@
 package com.example.dlvn_sdk.service
 
-import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -46,14 +45,14 @@ class FCMService : FirebaseMessagingService(), LifecycleObserver {
             }
         } else {
             if (messageType == "dial") {
-                val temp = CallManager.getInstance()?.directCall?.callId
-                val user: String? = CallManager.getInstance()?.pushToken
-                if (user != null) {
+                val pushToken: String? = CallManager.getInstance()?.pushToken
+                if (pushToken != null) {
                     handleFirebaseMessageData(remoteMessage.data)
-                    Log.d("zzz", "app in background")
                 } else {
-                    CallNotificationHelper.showCallNotification(this, "zzzz")
-                    Log.d("zzz", "app in quit state")
+                    CallNotificationHelper.showCallNotification(
+                        this,
+                        CallManager.getInstance()?.directCall?.caller?.nickname ?: "Bác sĩ"
+                    )
                 }
             }
         }

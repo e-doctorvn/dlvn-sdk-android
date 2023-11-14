@@ -34,8 +34,9 @@ object SendbirdCallImpl {
     @JvmStatic
     fun initSendbirdCall(context: Context, APP_ID: String) {
         if (SendBirdCall.init(context, APP_ID)) {
-            Toast.makeText(context, "initSendbirdCall success", Toast.LENGTH_SHORT).show()
-//            addListener(context)
+            Toast
+                .makeText(context, "initSendbirdCall success", Toast.LENGTH_SHORT)
+                .show()
             checkLoggedInUser(context)
         }
     }

@@ -23,7 +23,7 @@
         android:layout_marginTop="320dp"
         android:textSize="16sp"
         android:visibility="gone"
-        android:text="Đã xảy ra sự cố kết nối. Đang kết nối lại..."
+        android:text="@string/incall_network_error_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <RelativeLayout
@@ -151,7 +151,7 @@
                         android:background="?attr/selectableItemBackgroundBorderless"/>
                     <TextView
                         android:id="@+id/tv_mic_stt"
-                        android:text="Bật mic"
+                        android:text="@string/incall_on_mic_label"
                         android:layout_marginTop="12dp"
                         android:textColor="@color/white"
                         android:layout_width="wrap_content"
@@ -172,7 +172,7 @@
                         android:background="?attr/selectableItemBackgroundBorderless"/>
                     <TextView
                         android:id="@+id/tv_cam_stt"
-                        android:text="Bật camera"
+                        android:text="@string/incall_on_cam_label"
                         android:layout_marginTop="12dp"
                         android:textColor="@color/white"
                         android:layout_width="wrap_content"
@@ -192,7 +192,7 @@
                         android:hapticFeedbackEnabled="true"
                         android:background="?attr/selectableItemBackgroundBorderless" />
                     <TextView
-                        android:text="Kết thúc"
+                        android:text="@string/incall_end_call_label"
                         android:layout_marginTop="12dp"
                         android:textColor="@color/white"
                         android:layout_width="wrap_content"

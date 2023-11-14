@@ -16,15 +16,12 @@ class CallActionReceiver : BroadcastReceiver() {
         if (action != null) {
             when (action) {
                 "DECLINE_CALL" -> {
-//                    Log.d("zzz", "Decline_Call" + "-" + CallManager.getInstance()?.directCall?.callId)
                     CallManager.getInstance()?.mContext = null
                     CallManager.getInstance()?.directCall?.end()
                 }
                 "CallAction" ->
                     when (key) {
                         "END_CALL" -> {
-                            Log.d("zzz", "End call from notification")
-                            val sdk = EdoctorDlvnSdk(context, intent)
                             CallNotificationHelper.cancelCallNotification()
                         }
                         "ACCEPT_CALL" -> {

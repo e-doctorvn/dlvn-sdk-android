@@ -145,11 +145,11 @@ class VideoCallActivity : AppCompatActivity() {
         if (!callManager?.acceptCallSetting!!.camera) {
             toggleLocalView(true)
             btnToggleCam!!.setImageResource(R.drawable.ic_cam_ina)
-            tvCamStatus!!.text = "Tắt camera"
+            tvCamStatus!!.text = getString(R.string.incall_off_cam_label)
         }
         if (!callManager?.acceptCallSetting!!.microphone) {
             btnToggleMic!!.setImageResource(R.drawable.ic_mic_ina)
-            tvMicStatus!!.text = "Tắt mic"
+            tvMicStatus!!.text = getString(R.string.incall_off_mic_label)
         }
 
         btnEndCall!!.setOnClickListener {
@@ -176,10 +176,10 @@ class VideoCallActivity : AppCompatActivity() {
         btnToggleMic!!.setOnClickListener {
             if (callManager!!.directCall?.isLocalAudioEnabled == true) {
                 btnToggleMic!!.setImageResource(R.drawable.ic_mic_ina)
-                tvMicStatus!!.text = "Tắt mic"
+                tvMicStatus!!.text = getString(R.string.incall_off_mic_label)
             } else {
                 btnToggleMic!!.setImageResource(R.drawable.ic_mic_atv)
-                tvMicStatus!!.text = "Bật mic"
+                tvMicStatus!!.text = getString(R.string.incall_on_mic_label)
             }
             directCall?.let { it1 -> callManager!!.toggleMic(it1) }
         }
@@ -243,15 +243,7 @@ class VideoCallActivity : AppCompatActivity() {
                 }
                 CallState.RECONNECTED -> {
                     tvReconnecting!!.visibility = View.GONE
-                    if (!directCall?.isLocalVideoEnabled!!) {
-                        toggleLocalView(true)
-                        btnToggleCam!!.setImageResource(R.drawable.ic_cam_ina)
-                        tvCamStatus!!.text = "Tắt camera"
-                    } else {
-                        toggleLocalView()
-                        btnToggleCam!!.setImageResource(R.drawable.ic_cam_atv)
-                        tvCamStatus!!.text = "Bật camera"
-                    }
+                    toggleCamStatus(directCall?.isLocalVideoEnabled!!)
                     if (!directCall?.isRemoteVideoEnabled!!) {
                         bgAvatar!!.visibility = View.VISIBLE
                         remoteView!!.visibility = View.GONE
@@ -267,15 +259,7 @@ class VideoCallActivity : AppCompatActivity() {
         callManager?.onCallActionChanged = {
             when (it) {
                 Constants.CallAction.LOCAL_VIDEO -> {
-                    if (!directCall?.isLocalVideoEnabled!!) {
-                        toggleLocalView(true)
-                        btnToggleCam!!.setImageResource(R.drawable.ic_cam_ina)
-                        tvCamStatus!!.text = "Tắt camera"
-                    } else {
-                        toggleLocalView()
-                        btnToggleCam!!.setImageResource(R.drawable.ic_cam_atv)
-                        tvCamStatus!!.text = "Bật camera"
-                    }
+                    toggleCamStatus(directCall?.isLocalVideoEnabled!!)
                 }
                 else -> {
                     if (!directCall?.isRemoteVideoEnabled!!) {
@@ -299,6 +283,18 @@ class VideoCallActivity : AppCompatActivity() {
         } else {
             localView?.visibility = View.VISIBLE
             localViewContainer?.visibility = View.VISIBLE
+        }
+    }
+
+    private fun toggleCamStatus(on: Boolean) {
+        if (!on) {
+            toggleLocalView(true)
+            btnToggleCam!!.setImageResource(R.drawable.ic_cam_ina)
+            tvCamStatus!!.text = getString(R.string.incall_off_cam_label)
+        } else {
+            toggleLocalView()
+            btnToggleCam!!.setImageResource(R.drawable.ic_cam_atv)
+            tvCamStatus!!.text = getString(R.string.incall_on_cam_label)
         }
     }
 

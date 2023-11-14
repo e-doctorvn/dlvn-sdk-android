@@ -1,4 +1,14 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="default_title">Tư vấn sức khoẻ</string>
     <string name="EDR_APP_ID">0BEF9C57-BA3B-474E-A40F-62B027AA47F6</string>
+    <string name="incoming_calling_label" tools:ignore="TypographyEllipsis">Đang gọi...</string>
+    <string name="incoming_decline_label">Từ chối</string>
+    <string name="incoming_accept_label">Đồng ý</string>
+    <string name="incall_network_error_label" tools:ignore="TypographyEllipsis">Đã xảy ra sự cố kết nối. Đang kết nối lại...</string>
+    <string name="incall_open_chat_label">Mở chat</string>
+    <string name="incall_on_mic_label">Bật mic</string>
+    <string name="incall_on_cam_label">Bật camera</string>
+    <string name="incall_off_mic_label">Tắt mic</string>
+    <string name="incall_off_cam_label">Tắt camera</string>
+    <string name="incall_end_call_label">Kết thúc</string>
 </resources>

@@ -251,9 +251,6 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     loading.visibility = View.GONE
                 }
                 checkTimeoutLoadWebView = true
-//                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-////                    initializeUpgradeDialog()
-//                }
             }
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {

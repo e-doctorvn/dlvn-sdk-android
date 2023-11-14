@@ -54,26 +54,16 @@ class CallManager {
         directCall?.setListener(object : DirectCallListener() {
             override fun onEstablished(call: DirectCall) {
                 super.onEstablished(call)
-                Log.d("zzz", "onEstablished")
             }
 
             override fun onConnected(directCall: DirectCall) {
-                Log.d("zzz", "onConnected")
                 onCallStateChanged!!.invoke(CallState.CONNECTED)
-//                if (callState != "CONNECTED") {
-//                    finishCurrentActivity()
-//                    val intent = Intent(context, VideoCallActivity::class.java)
-//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//                    context.startActivity(intent)
-//                    callState = "CONNECTED"
-//                    onCallStateChanged!!.invoke(CallState.CONNECTED)
-//                }
+                callState = "CONNECTED"
             }
 
             override fun onEnded(directCall: DirectCall) {
                 onCallStateChanged!!.invoke(CallState.ENDED)
                 CallService.stopService(context)
-//                finishCurrentActivity()
                 resetCall()
             }
 

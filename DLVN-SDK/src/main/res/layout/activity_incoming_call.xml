@@ -59,7 +59,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Đang gọi..."
+                android:text="@string/incoming_calling_label"
                 android:layout_marginTop="4dp"
                 android:textColor="@color/white"
                 android:textSize="16sp"
@@ -103,7 +103,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:elevation="4dp" />
                 <TextView
-                    android:text="Từ chối"
+                    android:text="@string/incoming_decline_label"
                     android:layout_marginTop="12dp"
                     android:textColor="@color/white"
                     android:layout_width="wrap_content"
@@ -125,7 +125,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:elevation="4dp" />
                 <TextView
-                    android:text="Đồng ý"
+                    android:text="@string/incoming_decline_label"
                     android:layout_marginTop="12dp"
                     android:textColor="@color/white"
                     android:layout_width="wrap_content"

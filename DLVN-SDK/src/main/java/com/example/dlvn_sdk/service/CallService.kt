@@ -137,11 +137,11 @@ class CallService : Service() {
             ).priority = NotificationCompat.PRIORITY_HIGH
         if (ongoingCallCount > 0) {
             if (serviceData.doAccept) {
-                builder.addAction(NotificationCompat.Action(R.drawable.end_call_24, "Decline", declinePendingIntent))
-                builder.addAction(NotificationCompat.Action(R.drawable.accept_call_24, "Accept", acceptPendingIntent))
+                builder.addAction(NotificationCompat.Action(R.drawable.end_call_24, "Từ chối", declinePendingIntent))
+                builder.addAction(NotificationCompat.Action(R.drawable.accept_call_24, "Chấp nhận", acceptPendingIntent))
             } else {
                 builder.setContentIntent(acceptPendingIntent)
-                builder.addAction(NotificationCompat.Action(0, "End", declinePendingIntent))
+                builder.addAction(NotificationCompat.Action(0, "Kết thúc", declinePendingIntent))
             }
         }
         return builder.build()

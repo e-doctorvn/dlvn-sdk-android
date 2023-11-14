@@ -42,14 +42,14 @@ object CallNotificationHelper {
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle("Incoming Call")
-            .setContentText("$callerName is calling")
+            .setContentText("$callerName đang gọi")
             .setSmallIcon(R.drawable.end_call_24)
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(fullScreenIntent)
             .setFullScreenIntent(fullScreenIntent, true)
-            .addAction(R.drawable.end_call_24, "Decline", declineIntent)
-            .addAction(R.drawable.accept_call_24, "Accept", fullScreenIntent)
+            .addAction(R.drawable.end_call_24, "Từ chối", declineIntent)
+            .addAction(R.drawable.accept_call_24, "Chấp nhận", fullScreenIntent)
             .setAutoCancel(true)
             .setOngoing(false)
 
