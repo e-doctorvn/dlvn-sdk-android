@@ -212,7 +212,7 @@ class CallService : Service() {
             Log.d("zzz", call.caller?.nickname.toString())
             val serviceData = ServiceData()
             serviceData.isHeadsUpNotification = true
-            serviceData.remoteNicknameOrUserId = call.caller?.nickname + " is calling"
+            serviceData.remoteNicknameOrUserId = "BS. " + call.caller?.nickname + " đang gọi"
             serviceData.callState = STATE.STATE_ACCEPTING
             serviceData.callId = call.callId
             serviceData.isVideoCall = call.isVideoCall
@@ -225,7 +225,7 @@ class CallService : Service() {
             startService(context, serviceData)
         }
 
-        fun startService(context: Context?, serviceData: ServiceData) {
+        private fun startService(context: Context?, serviceData: ServiceData) {
             if (context != null) {
                 val intent = Intent(context, CallService::class.java)
                 intent.putExtra(EXTRA_IS_HEADS_UP_NOTIFICATION, serviceData.isHeadsUpNotification)

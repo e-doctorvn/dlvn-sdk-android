@@ -1,6 +1,7 @@
 package com.example.dlvn_sdk.sendbirdCall
 
 //import com.example.dlvn_sdk.components.AudioOutputDialog
+
 import android.annotation.SuppressLint
 import android.app.ActivityOptions
 import android.app.PictureInPictureParams
@@ -11,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.DisplayMetrics
 import android.util.Log
 import android.util.Rational
 import android.view.View
@@ -28,11 +30,17 @@ import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.Constants.CallState
 import com.example.dlvn_sdk.R
 import com.example.dlvn_sdk.service.CallService
+import com.google.android.flexbox.FlexboxLayout
 import com.sendbird.calls.AcceptParams
 import com.sendbird.calls.CallOptions
 import com.sendbird.calls.DirectCall
 import com.sendbird.calls.SendBirdVideoView
 import jp.wasabeef.glide.transformations.BlurTransformation
+import org.webrtc.EglBase
+import org.webrtc.RendererCommon
+import org.webrtc.RendererCommon.RendererEvents
+import org.webrtc.SurfaceViewRenderer
+
 
 class VideoCallActivity : AppCompatActivity() {
     private var localView: SendBirdVideoView? = null
@@ -128,6 +136,13 @@ class VideoCallActivity : AppCompatActivity() {
         chatLoading = findViewById(R.id.wv_chat_loading)
         bottomContainer = findViewById(R.id.bottom_call_container)
         bottomOverlay = findViewById(R.id.call_control_overlay)
+
+        remoteView!!.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT)
+        remoteView!!.setZOrderMediaOverlay(false)
+        remoteView!!.setEnableHardwareScaler(true)
+        
+        localView!!.setZOrderMediaOverlay(true)
+        localView!!.setEnableHardwareScaler(true)
 
         mainHandler = Handler(Looper.getMainLooper())
         countdownCallTime()

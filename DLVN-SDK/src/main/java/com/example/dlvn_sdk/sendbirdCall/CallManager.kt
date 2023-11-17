@@ -121,14 +121,6 @@ class CallManager {
         })
     }
 
-    fun finishCurrentActivity() {
-        if (mContext != null) {
-            if (mContext is Activity) {
-                (mContext as Activity).finish()
-            }
-        }
-    }
-
     fun rotateCamera(call: DirectCall) {
         call.switchCamera() {
 

@@ -38,6 +38,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.EdoctorDlvnSdk
 import com.example.dlvn_sdk.R
@@ -97,6 +98,14 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         return cm.activeNetworkInfo != null && cm.activeNetworkInfo!!.isConnected
     }
 
+    override fun show(manager: FragmentManager, tag: String?) {
+        val fragment = manager.findFragmentByTag(tag)
+        if (fragment != null) {
+            manager.beginTransaction().remove(fragment).commit()
+        }
+        super.show(manager, tag)
+    }
+
     @SuppressLint("SetJavaScriptEnabled", "InternalInsetResource")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -150,10 +159,11 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             if (myWebView.canGoBack()) {
                 myWebView.goBack()
             } else {
-                myWebView.removeAllViews();
-                myWebView.destroy()
-                SdkWebView.isVisible = false
-                this.dismiss()
+//                myWebView.removeAllViews();
+//                myWebView.destroy()
+//                SdkWebView.isVisible = false
+//                this.dismiss()
+                selfClose()
             }
         }
         buttonRefresh.setOnClickListener {

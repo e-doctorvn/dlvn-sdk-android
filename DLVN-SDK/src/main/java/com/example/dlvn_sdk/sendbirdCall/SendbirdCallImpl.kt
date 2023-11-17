@@ -61,7 +61,7 @@ object SendbirdCallImpl {
 
                 CallManager.getInstance()?.directCall = directCall
                 CallManager.getInstance()?.callState = "RINGING"
-//                CallManager.getInstance()!!.handleSendbirdEvent(context)
+                CallManager.getInstance()!!.handleSendbirdEvent(context)
 
                 if (CallNotificationHelper.action != null) {
                     if (CallNotificationHelper.action == "_decline") {

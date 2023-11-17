@@ -11,8 +11,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.view.View
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.FrameLayout
@@ -30,10 +28,8 @@ import com.example.dlvn_sdk.helper.CallNotificationHelper
 import com.example.dlvn_sdk.helper.PermissionManager
 import com.example.dlvn_sdk.service.CallActionReceiver
 import com.example.dlvn_sdk.service.CallService
-import com.example.dlvn_sdk.store.AppStore
 import com.sendbird.calls.DirectCall
 import jp.wasabeef.glide.transformations.BlurTransformation
-
 
 class IncomingCallActivity : AppCompatActivity() {
     private var acceptCallBtn: ImageButton? = null
@@ -48,7 +44,8 @@ class IncomingCallActivity : AppCompatActivity() {
     private var callerAvatar: ImageView? = null
     private var mReceiver: CallActionReceiver? = null
     private lateinit var mainHandler: Handler
-    private var directCall: DirectCall? = CallManager.getInstance()?.directCall
+    private var callManager: CallManager? = CallManager.getInstance()
+    private var directCall: DirectCall? = callManager?.directCall
     private var timeoutValue: Int = 60
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,15 +63,8 @@ class IncomingCallActivity : AppCompatActivity() {
             )
         }
 
-        val isReconnecting: Boolean = intent.getBooleanExtra("isReconnecting", false)
-        if (!isReconnecting) {
-            requestAllPermissions()
-            CallManager.getInstance()?.handleSendbirdEvent(this@IncomingCallActivity)
-            CallNotificationHelper.cancelCallNotification()
-            listenReceiver(this)
-            CallService.stopService(this)
-        }
-        initView(isReconnecting)
+        handleCallService()
+        initView()
         initCallEventListener()
     }
 
@@ -122,7 +112,7 @@ class IncomingCallActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
-    private fun initView(isReconnecting: Boolean) {
+    private fun initView() {
         acceptCallBtn = findViewById(R.id.btn_answer_call)
         rejectCallBtn = findViewById(R.id.btn_reject_call)
         txtCaller = findViewById(R.id.tv_caller_name)
@@ -137,7 +127,7 @@ class IncomingCallActivity : AppCompatActivity() {
         if (directCall?.callee?.nickname != null) {
 //            txtCallee!!.text = directCall?.callee?.nickname
         }
-        txtCaller!!.text = directCall?.caller?.nickname + " gọi video"
+        txtCaller!!.text = "BS. " + directCall?.caller?.nickname + " gọi video"
 
         mainHandler = Handler(Looper.getMainLooper())
         countdownRingingTimeout()
@@ -153,7 +143,7 @@ class IncomingCallActivity : AppCompatActivity() {
             .apply(RequestOptions.bitmapTransform(BlurTransformation(180)))
             .into(bgIncoming!!)
 
-        setUpAnimation()
+//        setUpAnimation()
 
         acceptCallBtn!!.setOnClickListener {
             val context: Context = this@IncomingCallActivity
@@ -164,42 +154,24 @@ class IncomingCallActivity : AppCompatActivity() {
         }
 
         rejectCallBtn!!.setOnClickListener {
-            CallManager.getInstance()!!.directCall?.end()
+            callManager!!.directCall?.end()
             CallService.stopService(this)
         }
 
         btnToggleMic!!.setOnClickListener {
-            val value: Boolean = CallManager.getInstance()?.acceptCallSetting!!.microphone
+            val value: Boolean = callManager?.acceptCallSetting!!.microphone
             btnToggleMic!!.setImageResource(if (value) R.drawable.ic_mic_ina else R.drawable.ic_mic_atv)
-            CallManager.getInstance()?.acceptCallSetting!!.microphone = !value
+            callManager?.acceptCallSetting!!.microphone = !value
         }
         btnToggleCam!!.setOnClickListener {
-            val value: Boolean = CallManager.getInstance()?.acceptCallSetting!!.camera
+            val value: Boolean = callManager?.acceptCallSetting!!.camera
             btnToggleCam!!.setImageResource(if (value) R.drawable.ic_cam_ina else R.drawable.ic_cam_atv)
-            CallManager.getInstance()?.acceptCallSetting!!.camera = !value
+            callManager?.acceptCallSetting!!.camera = !value
         }
-
-//        if (isReconnecting) {
-//            acceptCallBtn!!.visibility = View.GONE
-//            btnToggleCam!!.visibility = View.INVISIBLE
-//            btnToggleMic!!.visibility = View.INVISIBLE
-//            bgColorIncoming!!.alpha = 0.5F
-//            bgColorIncoming!!.background = getDrawable(R.color.daiichi_secondary)
-//
-////            txtTimeout!!.textSize = 16F
-////            txtTimeout!!.text = "Xin vui lòng chờ trong giây lát"
-//
-//            CallManager.getInstance()!!.mContext = this@IncomingCallActivity
-//
-//            rejectCallBtn!!.setOnClickListener {
-//                finish()
-//                CallManager.getInstance()!!.resetCall()
-//            }
-//        }
     }
 
     private fun initCallEventListener() {
-        CallManager.getInstance()!!.onCallStateChanged = {
+        callManager!!.onCallStateChanged = {
             when (it) {
                 Constants.CallState.ESTABLISHED -> {}
                 Constants.CallState.CONNECTED -> {}
@@ -210,11 +182,11 @@ class IncomingCallActivity : AppCompatActivity() {
         }
     }
 
-    private fun listenReceiver(context: Context) {
-//        val filter = IntentFilter()
-//        filter.addAction("CallAction")
-//        mReceiver = CallActionReceiver()
-//        context.registerReceiver(mReceiver, filter)
+    private fun handleCallService() {
+        requestAllPermissions()
+//        callManager?.handleSendbirdEvent(this@IncomingCallActivity)
+        CallNotificationHelper.cancelCallNotification()
+        CallService.stopService(this)
     }
 
     private fun removeListenReceiver(context: Context) {
@@ -226,10 +198,9 @@ class IncomingCallActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val callManager = CallManager.getInstance()
         if (
             callManager?.callState == "ENDED"
-            && callManager.pushToken != null
+            && callManager?.pushToken != null
             || callManager?.directCall == null
         ) {
             finish()

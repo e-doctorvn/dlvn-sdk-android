@@ -42,8 +42,8 @@ class MainActivity : AppCompatActivity() {
             txtName!!.text = "Danh (EDR)"
             edoctorDlvnSdk!!.authenticateSb(
                 this@MainActivity,
-                "dev_manh",
-                "45fda7a0a7920752243d302738c8be4dabba92b8"
+                "dev_manh", // dev_0XJyZqTJN7ecrUOc
+                "45fda7a0a7920752243d302738c8be4dabba92b8" // 206d35ef4bf4bed04672e4254db6e06db812b3ec
             )
         }
 
@@ -60,9 +60,9 @@ class MainActivity : AppCompatActivity() {
 //            params.put("dcid", "FAB02ABB-91E9-47D1-B66C-A8FC4B08335B")
 //            params.put("token", "228b15fcd35f4188b393cfbe78378506")
 
-            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
+//            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
                 edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
-            }
+//            }
         }
 
         btn_dangxuat!!.setOnClickListener {

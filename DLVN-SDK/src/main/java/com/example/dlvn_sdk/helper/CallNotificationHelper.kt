@@ -41,8 +41,8 @@ object CallNotificationHelper {
         val declineIntent = PendingIntent.getBroadcast(context, 0, decline, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle("Incoming Call")
-            .setContentText("$callerName đang gọi")
+            .setContentTitle("Cuộc gọi đến")
+            .setContentText("BS. $callerName đang gọi")
             .setSmallIcon(R.drawable.end_call_24)
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container_view"
@@ -29,6 +30,7 @@
             android:clipToOutline="true"
             android:backgroundTint="@android:color/transparent"
             android:background="@drawable/corner_background"/>
+
         <ImageView
             android:id="@+id/cover_wv"
             android:scaleType="centerCrop"
@@ -37,12 +39,60 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/corner_background"/>
-<!--        <ImageView-->
-<!--            android:id="@+id/overlay_call_bg"-->
-<!--            android:visibility="invisible"-->
-<!--            android:src="@drawable/dlvn_city_bg"-->
-<!--            android:scaleType="centerCrop"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"/>-->
+
+<!--        Delete this block below -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
+            <RelativeLayout
+                android:clipToPadding="true"
+                android:clipToOutline="true"
+                android:clipChildren="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/corner_background_transparent">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_alignParentBottom="true"
+                    android:alpha="0.34"
+                    android:background="@color/black"/>
+                <com.google.android.flexbox.FlexboxLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    app:alignItems="center"
+                    app:flexDirection="row"
+                    android:paddingHorizontal="8dp"
+                    android:layout_alignParentBottom="true"
+                    app:justifyContent="space_between">
+                    <ImageButton
+                        android:id="@+id/btn_toggle_mic_pip"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:hapticFeedbackEnabled="true"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_mic_atv" />
+                    <ImageButton
+                        android:id="@+id/btn_toggle_cam_pip"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:hapticFeedbackEnabled="true"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_cam_atv" />
+                    <ImageButton
+                        android:id="@+id/btn_end_call_pip"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:hapticFeedbackEnabled="true"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_end_call" />
+                </com.google.android.flexbox.FlexboxLayout>
+            </RelativeLayout>
+        </LinearLayout>
     </com.example.dlvn_sdk.sendbirdCall.DraggableRelativeLayout>
 </RelativeLayout>

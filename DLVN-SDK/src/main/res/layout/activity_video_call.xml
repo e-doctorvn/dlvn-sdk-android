@@ -5,10 +5,18 @@
     android:id="@+id/video_call_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.sendbird.calls.SendBirdVideoView
-        android:id="@+id/remote_video_view"
+    <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        app:alignItems="center"
+        app:justifyContent="center"
+        android:scaleType="centerCrop">
+        <com.sendbird.calls.SendBirdVideoView
+            android:id="@+id/remote_video_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.flexbox.FlexboxLayout>
+
     <ImageView
         android:id="@+id/avatar_as_bg"
         android:visibility="invisible"
@@ -35,6 +43,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="12dp"
         android:clipChildren="true"
+        android:clipToPadding="true"
         android:clipToOutline="true">
         <com.sendbird.calls.SendBirdVideoView
             android:id="@+id/local_video_view"
@@ -42,7 +51,8 @@
             android:layout_height="match_parent"
             android:clipToOutline="true"
             android:backgroundTint="@android:color/transparent"
-            android:background="@drawable/corner_background"/>
+            />
+<!--        android:background="@drawable/corner_background"-->
         <ImageButton
             android:id="@+id/btn_rotate_cam"
             android:layout_width="wrap_content"
@@ -58,145 +68,162 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <RelativeLayout
-            android:alpha="0.34"
             android:id="@+id/call_control_overlay"
             android:layout_width="match_parent"
             android:layout_height="148dp"
             android:layout_alignParentBottom="true"
-            android:background="@color/black"/>
+            android:alpha="0.34"
+            android:background="@color/black" />
 
         <LinearLayout
             android:id="@+id/bottom_call_container"
-            android:orientation="vertical"
-            android:paddingTop="12dp"
-            android:paddingBottom="16dp"
-            android:paddingHorizontal="16dp"
-            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="16dp">
+
             <com.google.android.flexbox.FlexboxLayout
-                app:flexDirection="row"
-                android:paddingVertical="4dp"
-                android:paddingHorizontal="8dp"
-                app:alignItems="center"
-                app:justifyContent="center"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/corner_background_100">
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/corner_background_100"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                app:alignItems="center"
+                app:flexDirection="row"
+                app:justifyContent="center">
+
                 <ImageView
-                    android:src="@drawable/ic_call_recording"
                     android:layout_width="12dp"
-                    android:layout_height="12dp"/>
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_call_recording" />
+
                 <TextView
-                    android:text="00:20:45"
-                    android:textSize="11sp"
                     android:id="@+id/tv_call_timeout"
-                    android:layout_marginLeft="4dp"
-                    android:textColor="@color/white"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:text="00:20:45"
+                    android:textColor="@color/white"
+                    android:textSize="11sp" />
             </com.google.android.flexbox.FlexboxLayout>
 
             <com.google.android.flexbox.FlexboxLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
                 app:alignItems="center"
                 app:flexDirection="row"
-                android:layout_marginTop="0dp"
-                app:justifyContent="space_between"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                app:justifyContent="space_between">
+
                 <LinearLayout
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
                     <ImageButton
                         android:id="@+id/btn_open_chat"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_chat"
+                        android:background="?attr/selectableItemBackgroundBorderless"
                         android:hapticFeedbackEnabled="true"
-                        android:background="?attr/selectableItemBackgroundBorderless"/>
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_chat_atv" />
+
                     <ProgressBar
                         android:id="@+id/wv_chat_loading"
-                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
                     <TextView
-                        android:text="Mở chat"
-                        android:layout_marginTop="12dp"
-                        android:textColor="@color/white"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Mở chat"
+                        android:textColor="@color/white" />
                 </LinearLayout>
+
                 <LinearLayout
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
                     <ImageButton
                         android:id="@+id/btn_toggle_mic"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_mic_atv"
+                        android:background="?attr/selectableItemBackgroundBorderless"
                         android:hapticFeedbackEnabled="true"
-                        android:background="?attr/selectableItemBackgroundBorderless"/>
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_mic_atv" />
+
                     <TextView
                         android:id="@+id/tv_mic_stt"
-                        android:text="@string/incall_on_mic_label"
-                        android:layout_marginTop="12dp"
-                        android:textColor="@color/white"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/incall_on_mic_label"
+                        android:textColor="@color/white" />
                 </LinearLayout>
+
                 <LinearLayout
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
                     <ImageButton
                         android:id="@+id/btn_toggle_cam"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_cam_atv"
+                        android:background="?attr/selectableItemBackgroundBorderless"
                         android:hapticFeedbackEnabled="true"
-                        android:background="?attr/selectableItemBackgroundBorderless"/>
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_cam_atv" />
+
                     <TextView
                         android:id="@+id/tv_cam_stt"
-                        android:text="@string/incall_on_cam_label"
-                        android:layout_marginTop="12dp"
-                        android:textColor="@color/white"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/incall_on_cam_label"
+                        android:textColor="@color/white" />
                 </LinearLayout>
+
                 <LinearLayout
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
                     <ImageButton
                         android:id="@+id/btn_end_call"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_end_call"
+                        android:background="?attr/selectableItemBackgroundBorderless"
                         android:hapticFeedbackEnabled="true"
-                        android:background="?attr/selectableItemBackgroundBorderless" />
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_end_call" />
+
                     <TextView
-                        android:text="@string/incall_end_call_label"
-                        android:layout_marginTop="12dp"
-                        android:textColor="@color/white"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/incall_end_call_label"
+                        android:textColor="@color/white" />
                 </LinearLayout>
             </com.google.android.flexbox.FlexboxLayout>
         </LinearLayout>

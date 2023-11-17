@@ -1,8 +1,8 @@
 package com.example.dlvn_sdk.sendbirdCall
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -11,10 +11,8 @@ import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.R
 import com.example.dlvn_sdk.store.AppStore
 import com.example.dlvn_sdk.webview.SdkWebView
-import com.sendbird.calls.AudioDevice
 import com.sendbird.calls.DirectCall
 import com.sendbird.calls.SendBirdVideoView
-import com.sendbird.calls.handler.DirectCallListener
 import jp.wasabeef.glide.transformations.BlurTransformation
 
 class WebViewCallActivity: AppCompatActivity() {
@@ -22,6 +20,9 @@ class WebViewCallActivity: AppCompatActivity() {
     private var remoteView: SendBirdVideoView? = null
     private var remoteCoverView: ImageView? = null
     private var btnRemoteView: DraggableRelativeLayout? = null
+    private var btnEndCall: ImageButton? = null
+    private var btnToggleCam: ImageButton? = null
+
     private var callManager: CallManager? = CallManager.getInstance()
     private val directCall: DirectCall? = callManager?.directCall
 
@@ -45,6 +46,15 @@ class WebViewCallActivity: AppCompatActivity() {
         remoteView = findViewById(R.id.remote_view_wv)
         remoteCoverView = findViewById(R.id.cover_wv)
         btnRemoteView = findViewById(R.id.btn_remote_view_wv)
+
+        btnEndCall = findViewById(R.id.btn_end_call_pip)
+        btnToggleCam = findViewById(R.id.btn_toggle_cam_pip)
+        btnEndCall!!.setOnClickListener {
+            directCall?.end()
+        }
+        btnToggleCam!!.setOnClickListener {
+            callManager?.toggleCam(directCall!!)
+        }
 
         btnRemoteView!!.setOnClickListener {
             finish()
@@ -85,7 +95,13 @@ class WebViewCallActivity: AppCompatActivity() {
                         remoteCoverView!!.visibility = View.VISIBLE
                     }
                 }
-                else -> {}
+                else -> {
+                    if (!directCall?.isLocalVideoEnabled!!) {
+                        btnToggleCam!!.setImageResource(R.drawable.ic_cam_ina)
+                    } else {
+                        btnToggleCam!!.setImageResource(R.drawable.ic_cam_atv)
+                    }
+                }
             }
         }
 
