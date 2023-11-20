@@ -53,9 +53,9 @@ class MainActivity : AppCompatActivity() {
 //            params.put("dcid", "FAB02ABB-91E9-47D1-B66C-A8FC4B08335B")
 //            params.put("token", "228b15fcd35f4188b393cfbe78378506")
 
-//            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
+            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
                 edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
-//            }
+            }
         }
 
         btn_dangxuat!!.setOnClickListener {
