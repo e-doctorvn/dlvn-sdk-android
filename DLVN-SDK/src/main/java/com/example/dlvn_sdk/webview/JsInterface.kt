@@ -28,7 +28,12 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                 if (CallManager.getInstance()?.directCall != null) {
                     CallManager.getInstance()?.closeWebViewActivity?.invoke()
                 } else {
-                    mWebview?.requireActivity()?.runOnUiThread { mWebview?.selfClose() }
+                    // mWebview?.requireActivity()?.runOnUiThread { mWebview?.selfClose() }
+                    mWebview?.requireActivity()?.runOnUiThread {
+                        if (mWebview!!.domain == JSONObject(json.getString("data")).getString("url")) {
+                            mWebview!!.selfClose()
+                        }
+                    }
                 }
             }
             Constants.WebviewParams.requestLoginNative -> {
