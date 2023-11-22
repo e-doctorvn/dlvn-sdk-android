@@ -4,6 +4,7 @@ package com.example.dlvn_sdk.sendbirdCall
 
 import android.annotation.SuppressLint
 import android.app.ActivityOptions
+import android.app.AlertDialog
 import android.app.PictureInPictureParams
 import android.content.Intent
 import android.content.res.Configuration
@@ -12,9 +13,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.DisplayMetrics
-import android.util.Log
 import android.util.Rational
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -29,17 +29,15 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.Constants.CallState
 import com.example.dlvn_sdk.R
+import com.example.dlvn_sdk.helper.DimensionUtils
+import com.example.dlvn_sdk.model.Dimension
 import com.example.dlvn_sdk.service.CallService
-import com.google.android.flexbox.FlexboxLayout
 import com.sendbird.calls.AcceptParams
 import com.sendbird.calls.CallOptions
 import com.sendbird.calls.DirectCall
 import com.sendbird.calls.SendBirdVideoView
 import jp.wasabeef.glide.transformations.BlurTransformation
-import org.webrtc.EglBase
 import org.webrtc.RendererCommon
-import org.webrtc.RendererCommon.RendererEvents
-import org.webrtc.SurfaceViewRenderer
 
 
 class VideoCallActivity : AppCompatActivity() {
@@ -117,7 +115,7 @@ class VideoCallActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n", "UseCompatLoadingForDrawables")
     private fun initView() {
         bgAvatar = findViewById(R.id.avatar_as_bg)
         localViewContainer = findViewById(R.id.local_video_container)
@@ -136,6 +134,12 @@ class VideoCallActivity : AppCompatActivity() {
         chatLoading = findViewById(R.id.wv_chat_loading)
         bottomContainer = findViewById(R.id.bottom_call_container)
         bottomOverlay = findViewById(R.id.call_control_overlay)
+
+        val screenSize: Dimension = DimensionUtils.getScreenSize(this)
+
+        val layout = localViewContainer!!.layoutParams
+        layout.width = (screenSize.width * 0.27f).toInt()
+        layout.height = ((screenSize.width * 0.27f) * 1.5f).toInt()
 
         remoteView!!.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT)
         remoteView!!.setZOrderMediaOverlay(false)
@@ -324,6 +328,9 @@ class VideoCallActivity : AppCompatActivity() {
         override fun run() {
             if (totalCallTime > 0) {
                 totalCallTime -= 1
+                if (totalCallTime == 180) {
+                    initEndTimeDialog()
+                }
                 tvCallTimeout!!.text = formatCallTime()
             } else {
                 mainHandler.removeCallbacks(this)
@@ -335,5 +342,32 @@ class VideoCallActivity : AppCompatActivity() {
 
     private fun countdownCallTime() {
         mainHandler.post(countdown)
+    }
+
+    private fun initEndTimeDialog() {
+        val li = LayoutInflater.from(this)
+        val view: View = li.inflate(R.layout.end_time_dialog, null)
+
+        val alertDialogBuilder: AlertDialog.Builder =
+            AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+        alertDialogBuilder.setView(view)
+
+//        val btnCancel = view.findViewById<ImageView>(R.id.btn_end_time_ok)
+
+//        btnCancel.setOnClickListener {
+//            // TODO: 7/5/18 your click listener
+//        }
+
+        val alertDialogEndTime = alertDialogBuilder.create()
+        alertDialogEndTime.show()
+        alertDialogEndTime.window?.setLayout(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        val closeDialog = Runnable {
+            alertDialogEndTime.dismiss()
+        }
+
+        Handler(Looper.getMainLooper()).postDelayed(closeDialog, 3000)
     }
 }

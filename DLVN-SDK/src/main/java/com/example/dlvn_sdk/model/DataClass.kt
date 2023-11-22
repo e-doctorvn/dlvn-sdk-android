@@ -4,3 +4,8 @@ data class AuthenData(
     val token: String,
     val dcid: String
 )
+
+data class Dimension(
+    val width: Int,
+    val height: Int
+)

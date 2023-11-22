@@ -14,6 +14,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.dlvn_sdk.R
+import com.example.dlvn_sdk.sendbirdCall.CallManager
 import com.example.dlvn_sdk.sendbirdCall.IncomingCallActivity
 import com.example.dlvn_sdk.sendbirdCall.VideoCallActivity
 import com.example.dlvn_sdk.sendbirdCall.VideoCallActivity.STATE
@@ -209,7 +210,6 @@ class CallService : Service() {
         }
 
         fun onRinging(context: Context?, call: DirectCall) {
-            Log.d("zzz", call.caller?.nickname.toString())
             val serviceData = ServiceData()
             serviceData.isHeadsUpNotification = true
             serviceData.remoteNicknameOrUserId = "BS. " + call.caller?.nickname + " đang gọi"

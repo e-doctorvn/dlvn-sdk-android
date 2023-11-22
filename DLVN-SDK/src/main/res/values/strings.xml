@@ -11,4 +11,6 @@
     <string name="incall_off_mic_label">Tắt mic</string>
     <string name="incall_off_cam_label">Tắt camera</string>
     <string name="incall_end_call_label">Kết thúc</string>
+    <string name="end_time_ok_label">Đã hiểu</string>
+    <string name="end_time_warning_label">Còn 03 phút sẽ hết thời gian phiên tư vấn!</string>
 </resources>

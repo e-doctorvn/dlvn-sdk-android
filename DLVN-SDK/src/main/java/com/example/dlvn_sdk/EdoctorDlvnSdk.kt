@@ -5,6 +5,8 @@ package com.example.dlvn_sdk
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
@@ -93,6 +95,12 @@ class EdoctorDlvnSdk(
     }
 
     fun sampleFunc(name: String): String {
+//        val intent = Intent(
+//            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+//            Uri.fromParts("package", context.packageName, null)
+//        )
+//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//        context.startActivity(intent)
         return "Hello $name from SDK!!!"
     }
 

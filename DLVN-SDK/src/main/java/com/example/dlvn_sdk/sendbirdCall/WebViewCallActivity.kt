@@ -9,6 +9,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.R
+import com.example.dlvn_sdk.helper.DimensionUtils
+import com.example.dlvn_sdk.model.Dimension
 import com.example.dlvn_sdk.store.AppStore
 import com.example.dlvn_sdk.webview.SdkWebView
 import com.sendbird.calls.DirectCall
@@ -70,6 +72,12 @@ class WebViewCallActivity: AppCompatActivity() {
         } else {
             remoteCoverView!!.visibility = View.VISIBLE
         }
+
+        val screenSize: Dimension = DimensionUtils.getScreenSize(this)
+
+        val layout = btnRemoteView!!.layoutParams
+        layout.width = (screenSize.width * 0.27f).toInt()
+        layout.height = ((screenSize.width * 0.27f) * 1.5f).toInt()
     }
 
     private fun initCallEventListener() {
