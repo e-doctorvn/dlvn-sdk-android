@@ -218,10 +218,11 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
                 chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
                 startActivityForResult(chooserIntent, FCR)
-                activity!!.runOnUiThread { requestAllPermissions() }
+                requireActivity().runOnUiThread { requestAllPermissions() }
                 return true
             }
         }
+
         myWebView.webViewClient = object : WebViewClient() {
             override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
                 super.doUpdateVisitedHistory(view, url, isReload)
@@ -402,7 +403,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             val permissions = arrayOf(
                 Manifest.permission.CAMERA,
             )
-            activity?.let {
+            requireActivity().let {
                 ActivityCompat.requestPermissions(
                     it,
                     permissions,
