@@ -1,5 +1,6 @@
 package com.example.dlvn_sdk.webview
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
@@ -35,11 +36,13 @@ import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.EdoctorDlvnSdk
 import com.example.dlvn_sdk.R
+import com.example.dlvn_sdk.helper.PermissionManager
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -208,12 +211,14 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 val chooserIntent = Intent(Intent.ACTION_CHOOSER)
                 chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
                 chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser")
-//                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
                 chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
                 startActivityForResult(chooserIntent, FCR)
+                requireActivity().runOnUiThread { requestAllPermissions() }
                 return true
             }
         }
+
         myWebView.webViewClient = object : WebViewClient() {
             override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
                 super.doUpdateVisitedHistory(view, url, isReload)
@@ -389,6 +394,21 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             myWebView.clearFormData()
             myWebView.clearHistory()
             myWebView.clearSslPreferences()
+        }
+    }
+
+    private fun requestAllPermissions() {
+        if (!PermissionManager.checkCameraPermission(requireContext())) {
+            val permissions = arrayOf(
+                Manifest.permission.CAMERA,
+            )
+            requireActivity().let {
+                ActivityCompat.requestPermissions(
+                    it,
+                    permissions,
+                    PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
+                )
+            }
         }
     }
 
