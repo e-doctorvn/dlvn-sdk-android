@@ -24,6 +24,7 @@ class WebViewCallActivity: AppCompatActivity() {
     private var btnRemoteView: DraggableRelativeLayout? = null
     private var btnEndCall: ImageButton? = null
     private var btnToggleCam: ImageButton? = null
+    private var btnToggleMic: ImageButton? = null
 
     private var callManager: CallManager? = CallManager.getInstance()
     private val directCall: DirectCall? = callManager?.directCall
@@ -50,12 +51,21 @@ class WebViewCallActivity: AppCompatActivity() {
         btnRemoteView = findViewById(R.id.btn_remote_view_wv)
 
         btnEndCall = findViewById(R.id.btn_end_call_pip)
+        btnToggleMic = findViewById(R.id.btn_toggle_mic_pip)
         btnToggleCam = findViewById(R.id.btn_toggle_cam_pip)
         btnEndCall!!.setOnClickListener {
             directCall?.end()
         }
         btnToggleCam!!.setOnClickListener {
             callManager?.toggleCam(directCall!!)
+        }
+        btnToggleMic!!.setOnClickListener {
+            if (directCall!!.isLocalAudioEnabled) {
+                btnToggleMic!!.setImageResource(R.drawable.ic_mic_ina)
+            } else {
+                btnToggleMic!!.setImageResource(R.drawable.ic_mic_atv)
+            }
+            callManager?.toggleMic(directCall)
         }
 
         btnRemoteView!!.setOnClickListener {
@@ -67,10 +77,16 @@ class WebViewCallActivity: AppCompatActivity() {
             .load(resources.getDrawable(R.drawable.dlvn_city_bg))
             .apply(RequestOptions.bitmapTransform(BlurTransformation(180)))
             .into(remoteCoverView!!)
+
         if (directCall!!.isRemoteVideoEnabled) {
             remoteCoverView!!.visibility = View.INVISIBLE
         } else {
             remoteCoverView!!.visibility = View.VISIBLE
+        }
+        if (directCall.isLocalAudioEnabled) {
+            btnToggleMic!!.setImageResource(R.drawable.ic_mic_atv)
+        } else {
+            btnToggleMic!!.setImageResource(R.drawable.ic_mic_ina)
         }
 
         val screenSize: Dimension = DimensionUtils.getScreenSize(this)

@@ -159,10 +159,6 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             if (myWebView.canGoBack()) {
                 myWebView.goBack()
             } else {
-//                myWebView.removeAllViews();
-//                myWebView.destroy()
-//                SdkWebView.isVisible = false
-//                this.dismiss()
                 selfClose()
             }
         }

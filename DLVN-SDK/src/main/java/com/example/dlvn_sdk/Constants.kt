@@ -1,9 +1,6 @@
 package com.example.dlvn_sdk
 
 object Constants {
-//    - Thêm 3 nút ở view picture in picture webview [DONE]
-//    - Pop up thông báo sắp hết thời gian gọi [TO DO]
-//    - Render localView theo ty le man hinh [TO DO]
     const val healthConsultantUrlDev = "https://e-doctor.dev/tu-van-suc-khoe" //"http://192.168.120.250:3000/tu-van-suc-khoe"  //"https://khuat.dai-ichi-life.com.vn/tu-van-suc-khoe"
     const val healthConsultantUrlProd = "https://kh.dai-ichi-life.com.vn/tu-van-suc-khoe"
     const val edrApiUrlDev = "https://virtual-clinic.api.e-doctor.dev/"
