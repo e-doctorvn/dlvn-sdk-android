@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
     private var btn_dangxuat: Button? = null
     private var txtName: TextView? = null
     private var edoctorDlvnSdk: EdoctorDlvnSdk? = null
-    private val accessToken: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTY5MTQwMjY3MSwiZXhwIjoxNjkzMTMwNjcxfQ.o_YSfydvUboC_XjZfm_7pHtk53G0TASgazUL-1Zqh18"
+//    private val accessToken: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTY5MTQwMjY3MSwiZXhwIjoxNjkzMTMwNjcxfQ.o_YSfydvUboC_XjZfm_7pHtk53G0TASgazUL-1Zqh18"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,9 +53,9 @@ class MainActivity : AppCompatActivity() {
 //            params.put("dcid", "FAB02ABB-91E9-47D1-B66C-A8FC4B08335B")
 //            params.put("token", "228b15fcd35f4188b393cfbe78378506")
 
-            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
+//            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
                 edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
-            }
+//            }
         }
 
         btn_dangxuat!!.setOnClickListener {

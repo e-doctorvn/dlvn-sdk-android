@@ -1,3 +1,4 @@
 <resources>
     <string name="default_title">Tư vấn sức khoẻ</string>
+    <string name="request_permission_msg">Bạn vui lòng cấp quyền để thực hiện thao tác.</string>
 </resources>

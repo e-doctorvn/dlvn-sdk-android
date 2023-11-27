@@ -35,8 +35,9 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.example.dlvn_sdk.Constants
@@ -68,6 +69,10 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private var mUM: ValueCallback<Uri>? = null
     private var mUMA: ValueCallback<Array<Uri>>? = null
     private val FCR = 99
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {}
 
     init {
         sdkInstance = sdk
@@ -174,6 +179,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 }
             }
 
+            @RequiresApi(Build.VERSION_CODES.M)
             @SuppressLint("QueryPermissionsNeeded")
             override fun onShowFileChooser(
                 webView: WebView,
@@ -214,7 +220,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
                 chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
                 startActivityForResult(chooserIntent, FCR)
-                requireActivity().runOnUiThread { requestAllPermissions() }
+                requireActivity().runOnUiThread { requestCameraPermission() }
                 return true
             }
         }
@@ -396,20 +402,13 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             myWebView.clearSslPreferences()
         }
     }
-
-    private fun requestAllPermissions() {
-        if (!PermissionManager.checkCameraPermission(requireContext())) {
-            val permissions = arrayOf(
-                Manifest.permission.CAMERA,
-            )
-            requireActivity().let {
-                ActivityCompat.requestPermissions(
-                    it,
-                    permissions,
-                    PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
-                )
-            }
-        }
+    
+    private fun requestCameraPermission() {
+        PermissionManager.handleRequestPermission(
+            requireActivity(),
+            Manifest.permission.CAMERA,
+            requestPermissionLauncher
+        )
     }
 
     @Throws(IOException::class)
