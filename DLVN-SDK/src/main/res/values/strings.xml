@@ -13,4 +13,5 @@
     <string name="incall_end_call_label">Kết thúc</string>
     <string name="end_time_ok_label">Đã hiểu</string>
     <string name="end_time_warning_label">Còn 03 phút sẽ hết thời gian phiên tư vấn!</string>
+    <string name="request_permission_msg">Bạn vui lòng cấp quyền để thực hiện thao tác.</string>
 </resources>
