@@ -2,7 +2,10 @@
 
 EDR - DLVN Android SDK 
 
-Latest version: **1.0.12 (Updated: 20/11/2023)**
+Latest version: **1.0.13 (Updated: 27/11/2023)**
+
+## Version 1.0.13
+- Fix request camera permission when picking photos for question's attachment.
 
 ## Version 1.0.12
 - Fix auto redirecting to login page when open Q&A notification
