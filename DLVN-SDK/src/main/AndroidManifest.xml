@@ -13,8 +13,21 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
     <application>
+        <provider
+            android:name="com.example.dlvn_sdk.webview.GenericFileProvider"
+            android:authorities="${applicationId}.com.example.application.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
         <receiver android:name=".service.CallActionReceiver" />
 
         <service
@@ -44,5 +57,4 @@
             android:name=".sendbirdCall.WebViewCallActivity"
             android:label="@null"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-    </application>
 </manifest>

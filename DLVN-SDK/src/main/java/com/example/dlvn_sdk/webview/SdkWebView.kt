@@ -38,6 +38,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.example.dlvn_sdk.Constants
@@ -49,7 +50,6 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
-
 
 open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private lateinit var loading: ConstraintLayout
@@ -121,9 +121,6 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             R.layout.webview,
             container, false
         )
-//        dialog?.window?.decorView?.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
-//        dialog?.window?.statusBarColor = Color.TRANSPARENT
         dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
         myWebView = v.findViewById(R.id.webview)
@@ -190,30 +187,25 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     mUMA!!.onReceiveValue(null)
                 }
                 mUMA = filePathCallback
-                var takePictureIntent: Intent? = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                if (takePictureIntent!!.resolveActivity(requireActivity().packageManager) != null) {
-                    var photoFile: File? = null
-                    try {
-                        photoFile = createImageFile()
-                        takePictureIntent.putExtra("PhotoPath", mCM)
-                    } catch (ex: IOException) {
 
-                    }
-                    if (photoFile != null) {
-                        mCM = "file:" + photoFile.absolutePath
-                        takePictureIntent.putExtra(
-                            MediaStore.EXTRA_OUTPUT,
-                            Uri.fromFile(photoFile)
-                        )
-                    } else {
-                        takePictureIntent = null
-                    }
-                }
+                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                val photoFile: File = createImageFile()
+                mCM = Uri.fromFile(photoFile).toString()
+
+                val captureImgUri =
+                    FileProvider.getUriForFile(
+                        requireContext(),
+                        requireContext().applicationContext.packageName + ".com.example.application.provider",
+                        photoFile
+                    )
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
+                takePictureIntent.putExtra("return-data", true)
+
                 val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
                 contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
                 contentSelectionIntent.type = "*/*"
                 contentSelectionIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-                val intentArray: Array<Intent> = takePictureIntent?.let { arrayOf(it) } ?: arrayOf<Intent>()
+                val intentArray: Array<Intent> = arrayOf(takePictureIntent)
                 val chooserIntent = Intent(Intent.ACTION_CHOOSER)
                 chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
                 chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser")
@@ -224,6 +216,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 return true
             }
         }
+
 
         myWebView.webViewClient = object : WebViewClient() {
             override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
@@ -409,14 +402,14 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     }
 
     @Throws(IOException::class)
-    private fun createImageFile(): File? {
+    private fun createImageFile(): File {
         @SuppressLint("SimpleDateFormat") val timeStamp: String =
             SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val imageFileName = "img_" + timeStamp + "_"
-        val storageDir: File =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val storageDir: File = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(imageFileName, ".jpg", storageDir)
     }
+
     fun openFileChooser(uploadMsg: ValueCallback<Uri?>?) {
         this.openFileChooser(uploadMsg, "*/*")
     }
@@ -448,13 +441,12 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         intent: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, intent)
+
         var results: Array<Uri>? = null
+
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == FCR) {
-                if (null == mUMA) {
-                    return
-                }
-                if (intent == null) { //Capture Photo if no image available
+                if (intent?.dataString == null) { //Capture Photo if no image available
                     if (mCM != null) {
                         results = arrayOf(Uri.parse(mCM))
                     }
@@ -466,12 +458,14 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                         if (intent.clipData != null) {
                             results = Array(intent.clipData!!.itemCount) {
                                 intent.clipData!!.getItemAt(it).uri
+
                             }
                         }
                     }
                 }
             }
         }
+
         mUMA!!.onReceiveValue(results)
         mUMA = null
     }
