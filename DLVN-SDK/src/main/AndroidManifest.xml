@@ -57,4 +57,5 @@
             android:name=".sendbirdCall.WebViewCallActivity"
             android:label="@null"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
+    </application>
 </manifest>
