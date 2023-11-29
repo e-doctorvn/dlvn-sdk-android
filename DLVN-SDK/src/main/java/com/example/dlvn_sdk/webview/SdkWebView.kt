@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.ConnectivityManager
@@ -38,6 +39,9 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.example.dlvn_sdk.Constants
@@ -48,6 +52,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 
 open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
@@ -69,6 +74,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private var mUM: ValueCallback<Uri>? = null
     private var mUMA: ValueCallback<Array<Uri>>? = null
     private val FCR = 99
+    private val FCRC = 999
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -186,29 +192,73 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 filePathCallback: ValueCallback<Array<Uri>>,
                 fileChooserParams: FileChooserParams
             ): Boolean {
+
+                val perms = arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.CAMERA
+                )
+
+                //checking for storage permission to write images for upload
+                //checking for storage permission to write images for upload
+                if (ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.CAMERA
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(requireActivity(), perms, FCR)
+
+                    //checking for WRITE_EXTERNAL_STORAGE permission
+                } else if (ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        requireActivity(),
+                        arrayOf<String>(
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_MEDIA_IMAGES
+                        ),
+                        FCR
+                    )
+
+                    //checking for CAMERA permissions
+                } else if (ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.CAMERA
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        requireActivity(),
+                        arrayOf<String>(Manifest.permission.CAMERA),
+                        FCR
+                    )
+                }
+
+
                 if (mUMA != null) {
                     mUMA!!.onReceiveValue(null)
                 }
                 mUMA = filePathCallback
                 var takePictureIntent: Intent? = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                if (takePictureIntent!!.resolveActivity(requireActivity().packageManager) != null) {
-                    var photoFile: File? = null
-                    try {
-                        photoFile = createImageFile()
-                        takePictureIntent.putExtra("PhotoPath", mCM)
-                    } catch (ex: IOException) {
+                var photoFile: File? = null
+                photoFile = createImageFile()
+                mCM = Uri.fromFile(photoFile).toString()
 
-                    }
-                    if (photoFile != null) {
-                        mCM = "file:" + photoFile.absolutePath
-                        takePictureIntent.putExtra(
-                            MediaStore.EXTRA_OUTPUT,
-                            Uri.fromFile(photoFile)
-                        )
-                    } else {
-                        takePictureIntent = null
-                    }
-                }
+                val captureImgUri = FileProvider.getUriForFile(
+                    requireContext(),
+                    requireContext().applicationContext.packageName + ".com.example.application.provider",
+                    photoFile)
+                takePictureIntent?.putExtra(
+                    MediaStore.EXTRA_OUTPUT,
+                    captureImgUri
+                )
+                takePictureIntent?.putExtra("return-data", true)
+
                 val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
                 contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
                 contentSelectionIntent.type = "*/*"
@@ -220,10 +270,12 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
                 chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
                 startActivityForResult(chooserIntent, FCR)
+
                 requireActivity().runOnUiThread { requestCameraPermission() }
                 return true
             }
         }
+
 
         myWebView.webViewClient = object : WebViewClient() {
             override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
@@ -412,14 +464,14 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     }
 
     @Throws(IOException::class)
-    private fun createImageFile(): File? {
+    private fun createImageFile(): File {
         @SuppressLint("SimpleDateFormat") val timeStamp: String =
             SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val imageFileName = "img_" + timeStamp + "_"
-        val storageDir: File =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val storageDir: File = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(imageFileName, ".jpg", storageDir)
     }
+
     fun openFileChooser(uploadMsg: ValueCallback<Uri?>?) {
         this.openFileChooser(uploadMsg, "*/*")
     }
@@ -453,11 +505,12 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         super.onActivityResult(requestCode, resultCode, intent)
         var results: Array<Uri>? = null
         if (resultCode == Activity.RESULT_OK) {
+            Log.d("manh", "vao" + requestCode)
             if (requestCode == FCR) {
-                if (null == mUMA) {
-                    return
-                }
-                if (intent == null) { //Capture Photo if no image available
+//                if (null == mUMA) {
+//                    return
+//                }
+                if (intent?.dataString == null) { //Capture Photo if no image available
                     if (mCM != null) {
                         results = arrayOf(Uri.parse(mCM))
                     }
@@ -469,12 +522,14 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                         if (intent.clipData != null) {
                             results = Array(intent.clipData!!.itemCount) {
                                 intent.clipData!!.getItemAt(it).uri
+
                             }
                         }
                     }
                 }
             }
         }
+        Log.d("manh", results?.get(0).toString())
         mUMA!!.onReceiveValue(results)
         mUMA = null
     }
