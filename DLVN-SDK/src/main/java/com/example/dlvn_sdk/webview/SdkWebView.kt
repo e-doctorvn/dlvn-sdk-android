@@ -105,7 +105,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
     override fun show(manager: FragmentManager, tag: String?) {
         val fragment = manager.findFragmentByTag(tag)
-        if (fragment != null) {
+        if (fragment != null && fragment.isAdded) {
             manager.beginTransaction().remove(fragment).commit()
         }
         super.show(manager, tag)
@@ -200,6 +200,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     )
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
                 takePictureIntent.putExtra("return-data", true)
+                takePictureIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
 
                 val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
                 contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -392,7 +393,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             myWebView.clearSslPreferences()
         }
     }
-    
+
     private fun requestCameraPermission() {
         PermissionManager.handleRequestPermission(
             requireActivity(),
@@ -446,21 +447,20 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == FCR) {
-                if (intent?.dataString == null) { //Capture Photo if no image available
-                    if (mCM != null) {
-                        results = arrayOf(Uri.parse(mCM))
+                if (intent?.dataString == null) { // Multi select || Take photo
+                    if (intent != null) {
+                        if (intent.clipData != null) { // Multi select
+                            results = Array(intent.clipData!!.itemCount) {
+                                intent.clipData!!.getItemAt(it).uri
+                            }
+                        } else if (mCM != null) { // Take photo
+                            results = arrayOf(Uri.parse(mCM))
+                        }
                     }
-                } else {
+                } else { // Single select
                     val dataString = intent.dataString
                     if (dataString != null) {
                         results = arrayOf(Uri.parse(dataString))
-                    } else {
-                        if (intent.clipData != null) {
-                            results = Array(intent.clipData!!.itemCount) {
-                                intent.clipData!!.getItemAt(it).uri
-
-                            }
-                        }
                     }
                 }
             }

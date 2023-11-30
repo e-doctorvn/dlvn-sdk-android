@@ -15,6 +15,7 @@ import com.example.dlvn_sdk.Constants.webViewTag
 import com.example.dlvn_sdk.api.ApiService
 import com.example.dlvn_sdk.api.RetrofitClient
 import com.example.dlvn_sdk.helper.CallNotificationHelper
+import com.example.dlvn_sdk.graphql.GraphAction
 import com.example.dlvn_sdk.model.AccountInitResponse
 import com.example.dlvn_sdk.sendbirdCall.CallManager
 import com.example.dlvn_sdk.sendbirdCall.SendbirdCallImpl
@@ -143,11 +144,7 @@ class EdoctorDlvnSdk(
                 authParams!!.getString("token").let {
                     dlvnAccessToken = it.toString()
                 }
-                params.addProperty("query", "mutation DLVNAccountInit(\$data: String, \$signature: String, \$dcId: String){\n" +
-                        "  dlvnAccountInit(data: \$data, signature: \$signature, dcId: \$dcId) {\n" +
-                        "    accessToken\n" +
-                        "}\n" +
-                        "}")
+                params.addProperty("query", GraphAction.Mutation.dlvnAccountInit)
                 params.addProperty("variables", variables.toString())
 
                 apiService?.initAccount(params)?.enqueue(object : Callback<AccountInitResponse> {
