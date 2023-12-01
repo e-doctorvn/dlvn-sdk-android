@@ -69,11 +69,19 @@ class EdoctorDlvnSdk(
         }
         if (authParams != null && !isFetching && !webView.isVisible) {
             initDLVNAccount {
-                webView.show(fragmentManager, webViewTag)
+                try {
+                    webView.show(fragmentManager, webViewTag)
+                } catch (e: Error) {
+
+                }
             }
         } else {
             if (!isFetching && !webView.isVisible) {
-                webView.show(fragmentManager, webViewTag)
+                try {
+                    webView.show(fragmentManager, webViewTag)
+                } catch (e: Error) {
+
+                }
             }
         }
     }

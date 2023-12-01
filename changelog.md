@@ -2,10 +2,13 @@
 
 EDR - DLVN Android SDK 
 
-Latest version: **1.0.14 (Updated: 01/12/2023)**
+Latest version: **1.0.15 (Updated: 01/12/2023)**
+
+## Version 1.0.15
+- Try to fix app crashing when open SDK after reading DLVN's post.
 
 ## Version 1.0.14
-- Try to fix app crashing when open SDK after reading DLVN's post.
+- Try to fix app crashing when open SDK after reading DLVN's post. (Failed)
 
 ## Version 1.0.13
 - Fix request camera permission when picking photos for question's attachment.

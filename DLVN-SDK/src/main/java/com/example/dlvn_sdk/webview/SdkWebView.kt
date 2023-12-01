@@ -117,224 +117,228 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             R.layout.webview,
             container, false
         )
-        dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        try {
+            dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
-        myWebView = v.findViewById(R.id.webview)
-        loadingProgressBar = v.findViewById(R.id.loadingProgressBar)
-        loading = v.findViewById(R.id.loading)
-        buttonBack = v.findViewById(R.id.buttonBack)
-        buttonNext = v.findViewById(R.id.buttonNext)
-        header = v.findViewById(R.id.header)
-        wvTitle = v.findViewById(R.id.tv_wv_title)
-        buttonClose = v.findViewById(R.id.btn_close_wv)
-        buttonRefresh = v.findViewById(R.id.btn_refresh)
-        containerErrorNetwork = v.findViewById(R.id.containerErrorNetwork)
-        buttonClose.setColorFilter(Color.argb(255, 255, 255, 255))
-        buttonRefresh.setColorFilter(Color.argb(255, 255, 255, 255))
+            myWebView = v.findViewById(R.id.webview)
+            loadingProgressBar = v.findViewById(R.id.loadingProgressBar)
+            loading = v.findViewById(R.id.loading)
+            buttonBack = v.findViewById(R.id.buttonBack)
+            buttonNext = v.findViewById(R.id.buttonNext)
+            header = v.findViewById(R.id.header)
+            wvTitle = v.findViewById(R.id.tv_wv_title)
+            buttonClose = v.findViewById(R.id.btn_close_wv)
+            buttonRefresh = v.findViewById(R.id.btn_refresh)
+            containerErrorNetwork = v.findViewById(R.id.containerErrorNetwork)
+            buttonClose.setColorFilter(Color.argb(255, 255, 255, 255))
+            buttonRefresh.setColorFilter(Color.argb(255, 255, 255, 255))
 
-        header.visibility = View.GONE
+            header.visibility = View.GONE
 
-        if (EdoctorDlvnSdk.needClearCache) {
-            clearCacheAndCookies(requireContext())
-            EdoctorDlvnSdk.needClearCache = false
-        }
-
-        val cookieManager = CookieManager.getInstance()
-        cookieManager.setAcceptCookie(true)
-        cookieManager.setAcceptThirdPartyCookies(myWebView, true)
-
-        buttonBack?.setOnClickListener {
-            dismiss()
-        }
-        buttonNext?.setOnClickListener {
-            containerErrorNetwork.visibility = View.GONE
-            loading.visibility = View.VISIBLE
-            myWebView.reload()
-        }
-        buttonClose.setOnClickListener {
-//            header.visibility = View.GONE
-//            myWebView.loadUrl(domain)
-            if (myWebView.canGoBack()) {
-                myWebView.goBack()
-            } else {
-                selfClose()
+            if (EdoctorDlvnSdk.needClearCache) {
+                clearCacheAndCookies(requireContext())
+                EdoctorDlvnSdk.needClearCache = false
             }
-        }
-        buttonRefresh.setOnClickListener {
-            loading.visibility = View.VISIBLE
-            myWebView.reload()
-        }
 
-        myWebView.webChromeClient = object : WebChromeClient() {
-            override fun onPermissionRequest(request: PermissionRequest) {
-                activity!!.runOnUiThread {
-                    request.grant(request.resources)
+            val cookieManager = CookieManager.getInstance()
+            cookieManager.setAcceptCookie(true)
+            cookieManager.setAcceptThirdPartyCookies(myWebView, true)
+
+            buttonBack?.setOnClickListener {
+                dismiss()
+            }
+            buttonNext?.setOnClickListener {
+                containerErrorNetwork.visibility = View.GONE
+                loading.visibility = View.VISIBLE
+                myWebView.reload()
+            }
+            buttonClose.setOnClickListener {
+    //            header.visibility = View.GONE
+    //            myWebView.loadUrl(domain)
+                if (myWebView.canGoBack()) {
+                    myWebView.goBack()
+                } else {
+                    selfClose()
                 }
             }
-
-            @RequiresApi(Build.VERSION_CODES.M)
-            @SuppressLint("QueryPermissionsNeeded")
-            override fun onShowFileChooser(
-                webView: WebView,
-                filePathCallback: ValueCallback<Array<Uri>>,
-                fileChooserParams: FileChooserParams
-            ): Boolean {
-                if (mUMA != null) {
-                    mUMA!!.onReceiveValue(null)
-                }
-                mUMA = filePathCallback
-
-                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                val photoFile: File = createImageFile()
-                mCM = Uri.fromFile(photoFile).toString()
-
-                val captureImgUri =
-                    FileProvider.getUriForFile(
-                        requireContext(),
-                        requireContext().applicationContext.packageName + ".com.example.application.provider",
-                        photoFile
-                    )
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
-                takePictureIntent.putExtra("return-data", true)
-                takePictureIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-
-                val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
-                contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
-                contentSelectionIntent.type = "*/*"
-                contentSelectionIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-                val intentArray: Array<Intent> = arrayOf(takePictureIntent)
-                val chooserIntent = Intent(Intent.ACTION_CHOOSER)
-                chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
-                chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser")
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
-                chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
-                startActivityForResult(chooserIntent, FCR)
-                requireActivity().runOnUiThread { requestCameraPermission() }
-                return true
-            }
-        }
-
-
-        myWebView.webViewClient = object : WebViewClient() {
-            override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
-                super.doUpdateVisitedHistory(view, url, isReload)
-                if (view?.title?.contains("https") == false) {
-                    wvTitle.text = formatWebTitle(view.title!!)
-                }
+            buttonRefresh.setOnClickListener {
+                loading.visibility = View.VISIBLE
+                myWebView.reload()
             }
 
-            @SuppressLint("WebViewClientOnReceivedSslError")
-            override fun onReceivedSslError(
-                view: WebView?,
-                handler: SslErrorHandler?,
-                error: SslError?
-            ) {
-//                super.onReceivedSslError(view, handler, error)
-                handler?.proceed()
-            }
-
-            override fun onReceivedError(
-                view: WebView?,
-                errorCode: Int,
-                description: String?,
-                failingUrl: String?
-            ) {
-                if (errorCode == -2) {
-                    requireActivity().runOnUiThread {
-                        loading.visibility = View.GONE
-                        containerErrorNetwork.visibility = View.VISIBLE
+            myWebView.webChromeClient = object : WebChromeClient() {
+                override fun onPermissionRequest(request: PermissionRequest) {
+                    activity!!.runOnUiThread {
+                        request.grant(request.resources)
                     }
                 }
-                super.onReceivedError(view, errorCode, description, failingUrl)
-            }
 
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-                if (loading.visibility != View.GONE) {
-                    loading.visibility = View.GONE
-                }
-                checkTimeoutLoadWebView = true
-            }
-
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                super.onPageStarted(view, url, favicon)
-                if (EdoctorDlvnSdk.edrAccessToken != null && EdoctorDlvnSdk.dlvnAccessToken != null) {
-                    view?.evaluateJavascript("document.cookie=\"accessToken=${EdoctorDlvnSdk.edrAccessToken}; path=/\"") {}
-                    view?.evaluateJavascript("document.cookie=\"upload_token=${EdoctorDlvnSdk.edrAccessToken}; path=/\"") {}
-                    view?.evaluateJavascript("document.cookie=\"accessTokenDlvn=${EdoctorDlvnSdk.dlvnAccessToken}; path=/\"") {}
-                }
-                Thread {
-                    try {
-                        Thread.sleep(40000)
-                    } catch (e: InterruptedException) {
-                        e.printStackTrace()
+                @RequiresApi(Build.VERSION_CODES.M)
+                @SuppressLint("QueryPermissionsNeeded")
+                override fun onShowFileChooser(
+                    webView: WebView,
+                    filePathCallback: ValueCallback<Array<Uri>>,
+                    fileChooserParams: FileChooserParams
+                ): Boolean {
+                    if (mUMA != null) {
+                        mUMA!!.onReceiveValue(null)
                     }
-                    if (!checkTimeoutLoadWebView) {
-                        if (isVisible) {
-                            requireActivity().runOnUiThread {
-                                loading.visibility = View.GONE
-                                containerErrorNetwork.visibility = View.VISIBLE
-                            }
+                    mUMA = filePathCallback
+
+                    val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                    val photoFile: File = createImageFile()
+                    mCM = Uri.fromFile(photoFile).toString()
+
+                    val captureImgUri =
+                        FileProvider.getUriForFile(
+                            requireContext(),
+                            requireContext().applicationContext.packageName + ".com.example.application.provider",
+                            photoFile
+                        )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
+                    takePictureIntent.putExtra("return-data", true)
+                    takePictureIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+
+                    val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
+                    contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
+                    contentSelectionIntent.type = "*/*"
+                    contentSelectionIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                    val intentArray: Array<Intent> = arrayOf(takePictureIntent)
+                    val chooserIntent = Intent(Intent.ACTION_CHOOSER)
+                    chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
+                    chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser")
+                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
+                    chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
+                    startActivityForResult(chooserIntent, FCR)
+                    requireActivity().runOnUiThread { requestCameraPermission() }
+                    return true
+                }
+            }
+
+
+            myWebView.webViewClient = object : WebViewClient() {
+                override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
+                    super.doUpdateVisitedHistory(view, url, isReload)
+                    if (view?.title?.contains("https") == false) {
+                        wvTitle.text = formatWebTitle(view.title!!)
+                    }
+                }
+
+                @SuppressLint("WebViewClientOnReceivedSslError")
+                override fun onReceivedSslError(
+                    view: WebView?,
+                    handler: SslErrorHandler?,
+                    error: SslError?
+                ) {
+    //                super.onReceivedSslError(view, handler, error)
+                    handler?.proceed()
+                }
+
+                override fun onReceivedError(
+                    view: WebView?,
+                    errorCode: Int,
+                    description: String?,
+                    failingUrl: String?
+                ) {
+                    if (errorCode == -2) {
+                        requireActivity().runOnUiThread {
+                            loading.visibility = View.GONE
+                            containerErrorNetwork.visibility = View.VISIBLE
                         }
                     }
-                }.start()
-            }
+                    super.onReceivedError(view, errorCode, description, failingUrl)
+                }
 
-            override fun shouldOverrideUrlLoading(
-                view: WebView?,
-                request: WebResourceRequest?
-            ): Boolean {
-                val url = request?.url?.toString()
-                return if (url == null || url.startsWith("http://") || url.startsWith("https://")) false else try {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()))
-                    view!!.context.startActivity(intent)
-                    true
-                } catch (e: Exception) {
-                    Log.d(EdoctorDlvnSdk.LOG_TAG, "shouldOverrideUrlLoading Exception:$e")
-                    true
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    super.onPageFinished(view, url)
+                    if (loading.visibility != View.GONE) {
+                        loading.visibility = View.GONE
+                    }
+                    checkTimeoutLoadWebView = true
+                }
+
+                override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                    super.onPageStarted(view, url, favicon)
+                    if (EdoctorDlvnSdk.edrAccessToken != null && EdoctorDlvnSdk.dlvnAccessToken != null) {
+                        view?.evaluateJavascript("document.cookie=\"accessToken=${EdoctorDlvnSdk.edrAccessToken}; path=/\"") {}
+                        view?.evaluateJavascript("document.cookie=\"upload_token=${EdoctorDlvnSdk.edrAccessToken}; path=/\"") {}
+                        view?.evaluateJavascript("document.cookie=\"accessTokenDlvn=${EdoctorDlvnSdk.dlvnAccessToken}; path=/\"") {}
+                    }
+                    Thread {
+                        try {
+                            Thread.sleep(40000)
+                        } catch (e: InterruptedException) {
+                            e.printStackTrace()
+                        }
+                        if (!checkTimeoutLoadWebView) {
+                            if (isVisible) {
+                                requireActivity().runOnUiThread {
+                                    loading.visibility = View.GONE
+                                    containerErrorNetwork.visibility = View.VISIBLE
+                                }
+                            }
+                        }
+                    }.start()
+                }
+
+                override fun shouldOverrideUrlLoading(
+                    view: WebView?,
+                    request: WebResourceRequest?
+                ): Boolean {
+                    val url = request?.url?.toString()
+                    return if (url == null || url.startsWith("http://") || url.startsWith("https://")) false else try {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()))
+                        view!!.context.startActivity(intent)
+                        true
+                    } catch (e: Exception) {
+                        Log.d(EdoctorDlvnSdk.LOG_TAG, "shouldOverrideUrlLoading Exception:$e")
+                        true
+                    }
+                }
+
+                override fun shouldInterceptRequest(
+                    view: WebView?,
+                    request: WebResourceRequest?
+                ): WebResourceResponse? {
+                    return super.shouldInterceptRequest(view, request)
                 }
             }
 
-            override fun shouldInterceptRequest(
-                view: WebView?,
-                request: WebResourceRequest?
-            ): WebResourceResponse? {
-                return super.shouldInterceptRequest(view, request)
-            }
-        }
+            val jsInterface = JsInterface(this, sdkInstance)
+            val webSettings: WebSettings = myWebView.settings
+            webSettings.javaScriptEnabled = true
+            webSettings.blockNetworkLoads = false
+            webSettings.blockNetworkImage = false
+            webSettings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
+            webSettings.mediaPlaybackRequiresUserGesture = false
+            webSettings.setSupportMultipleWindows(true)
+            webSettings.setGeolocationEnabled(true)
+            webSettings.domStorageEnabled = true
+            webSettings.useWideViewPort = true
+            webSettings.databaseEnabled = true
+            webSettings.javaScriptCanOpenWindowsAutomatically = true
+            webSettings.allowContentAccess = true
+            webSettings.loadWithOverviewMode = true
+            webSettings.allowFileAccess = true
+            webSettings.cacheMode = WebSettings.LOAD_DEFAULT
+            webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+            cookieManager.setAcceptThirdPartyCookies(myWebView, true)
+            myWebView.setLayerType(View.LAYER_TYPE_NONE, null)
+            myWebView.addJavascriptInterface(jsInterface, "Android")
+            myWebView.addJavascriptInterface(jsInterface, "AndroidEdoctorCallback")
 
-        val jsInterface = JsInterface(this, sdkInstance)
-        val webSettings: WebSettings = myWebView.settings
-        webSettings.javaScriptEnabled = true
-        webSettings.blockNetworkLoads = false
-        webSettings.blockNetworkImage = false
-        webSettings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
-        webSettings.mediaPlaybackRequiresUserGesture = false
-        webSettings.setSupportMultipleWindows(true)
-        webSettings.setGeolocationEnabled(true)
-        webSettings.domStorageEnabled = true
-        webSettings.useWideViewPort = true
-        webSettings.databaseEnabled = true
-        webSettings.javaScriptCanOpenWindowsAutomatically = true
-        webSettings.allowContentAccess = true
-        webSettings.loadWithOverviewMode = true
-        webSettings.allowFileAccess = true
-        webSettings.cacheMode = WebSettings.LOAD_DEFAULT
-        webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-        cookieManager.setAcceptThirdPartyCookies(myWebView, true)
-        myWebView.setLayerType(View.LAYER_TYPE_NONE, null)
-        myWebView.addJavascriptInterface(jsInterface, "Android")
-        myWebView.addJavascriptInterface(jsInterface, "AndroidEdoctorCallback")
-
-        myWebView.loadUrl(
-            domain,
-            mapOf(
-                "Content-Type" to "application/json",
-//                "Authorization" to EdoctorDlvnSdk.edrAccessToken
+            myWebView.loadUrl(
+                domain,
+                mapOf(
+                    "Content-Type" to "application/json",
+    //                "Authorization" to EdoctorDlvnSdk.edrAccessToken
+                )
             )
-        )
-        if (!isNetworkConnected()) {
-            containerErrorNetwork.visibility = View.VISIBLE
+            if (!isNetworkConnected()) {
+                containerErrorNetwork.visibility = View.VISIBLE
+            }
+        } catch (e: Error) {
+
         }
         return v
     }
