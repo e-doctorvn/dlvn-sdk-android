@@ -40,7 +40,6 @@ import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
 import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.EdoctorDlvnSdk
 import com.example.dlvn_sdk.R
@@ -100,13 +99,13 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         return cm.activeNetworkInfo != null && cm.activeNetworkInfo!!.isConnected
     }
 
-    override fun show(manager: FragmentManager, tag: String?) {
-        val fragment = manager.findFragmentByTag(tag)
-        if (fragment != null && fragment.isAdded) {
-            manager.beginTransaction().remove(fragment).commit()
-        }
-        super.show(manager, tag)
-    }
+//    override fun show(manager: FragmentManager, tag: String?) {
+//        val fragment = manager.findFragmentByTag(tag)
+//        if (fragment != null && fragment.isAdded) {
+//            manager.beginTransaction().remove(fragment).commit()
+//        }
+//        super.show(manager, tag)
+//    }
 
     @SuppressLint("SetJavaScriptEnabled", "InternalInsetResource")
     override fun onCreateView(
@@ -351,7 +350,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         return object : Dialog(requireActivity(), theme) {
             override fun onBackPressed() {
                 if (myWebView.url == domain) {
-                    dismiss()
+                    selfClose()
                 } else if (myWebView.canGoBack()) {
                     myWebView.goBack()
                 } else {

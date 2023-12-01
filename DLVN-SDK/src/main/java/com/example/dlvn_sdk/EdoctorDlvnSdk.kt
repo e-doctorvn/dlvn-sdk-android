@@ -61,16 +61,18 @@ class EdoctorDlvnSdk(
     }
 
     fun openWebView(fragmentManager: FragmentManager, url: String?) {
-        val isAvailable = !isFetching && !webView.isVisible
         url?.let {
             webView.domain = url
         }
-        if (authParams != null && isAvailable) {
+        if (webView.isAdded && !webView.isVisible) {
+            webView.selfClose()
+        }
+        if (authParams != null && !isFetching && !webView.isVisible) {
             initDLVNAccount {
                 webView.show(fragmentManager, webViewTag)
             }
         } else {
-            if (isAvailable) {
+            if (!isFetching && !webView.isVisible) {
                 webView.show(fragmentManager, webViewTag)
             }
         }
