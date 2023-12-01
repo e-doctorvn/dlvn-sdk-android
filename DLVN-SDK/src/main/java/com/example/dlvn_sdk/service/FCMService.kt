@@ -1,5 +1,6 @@
 package com.example.dlvn_sdk.service
 
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -38,7 +39,8 @@ class FCMService : FirebaseMessagingService(), LifecycleObserver {
         val messageType =
             remoteMessage.data["sendbird_call"]?.let { JSONObject(it).getJSONObject("command").get("type").toString() }
 //        Log.d("zzz", messageType)
-//        val callId = JSONObject(remoteMessage.data["sendbird_call"]).getJSONObject("command").getJSONObject("payload").get("call_id").toString()
+//        val callId = remoteMessage.data["sendbird_call"]?.let { JSONObject(it).getJSONObject("command").getJSONObject("payload").get("custom_items") }
+//        callId?.toString()?.let { Log.d("zzz", it) }
         if (isAppInForeground) {
             if (handleFirebaseMessageData(remoteMessage.data)) {
 

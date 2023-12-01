@@ -90,6 +90,7 @@ class VideoCallActivity : AppCompatActivity() {
         remoteView?.let { callOptions.setRemoteVideoView(it) }
         acceptParams.setCallOptions(callOptions)
         directCall?.accept(acceptParams)
+//        callManager?.approveEclinicCall("", "")
     }
 
     override fun onResume() {
@@ -173,6 +174,7 @@ class VideoCallActivity : AppCompatActivity() {
 
         btnEndCall!!.setOnClickListener {
             directCall?.end()
+//            callManager!!.endEclinicCall("", "")
         }
 
         btnOpenChat!!.setOnClickListener {

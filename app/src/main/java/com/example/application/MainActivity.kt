@@ -1,6 +1,7 @@
 package com.example.application
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
@@ -65,7 +66,12 @@ class MainActivity : AppCompatActivity() {
 
 //            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
                 edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
+
+                Handler().postDelayed({
+                    edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
+                }, 2600)
 //            }
+//            edoctorDlvnSdk!!.getSendbirdAccount()
         }
 
         btn_dangxuat!!.setOnClickListener {

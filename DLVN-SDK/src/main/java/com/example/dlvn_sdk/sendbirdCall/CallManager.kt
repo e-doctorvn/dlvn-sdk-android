@@ -7,12 +7,22 @@ import android.content.Intent
 import android.util.Log
 import com.example.dlvn_sdk.Constants.CallState
 import com.example.dlvn_sdk.Constants.CallAction
+import com.example.dlvn_sdk.EdoctorDlvnSdk
+import com.example.dlvn_sdk.api.ApiService
+import com.example.dlvn_sdk.api.RetrofitClient
+import com.example.dlvn_sdk.graphql.GraphAction
 import com.example.dlvn_sdk.service.CallService
 import com.example.dlvn_sdk.store.AppStore
+import com.google.gson.JsonObject
 import com.sendbird.calls.AudioDevice
 import com.sendbird.calls.DirectCall
 import com.sendbird.calls.SendBirdCall
 import com.sendbird.calls.handler.DirectCallListener
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.create
 
 data class AcceptSetting(
     var microphone: Boolean = true,
@@ -24,13 +34,15 @@ class CallManager {
     var pushToken: String? = null
     var callState: String = "ENDED"
     var mContext: Context? = null
+    private var apiService: ApiService? = null
     var acceptCallSetting: AcceptSetting? = AcceptSetting()
 
-    fun resetCall() {
-        mContext = null
-        directCall = null
-        callState = "ENDED"
-        acceptCallSetting = AcceptSetting()
+    init {
+        if (apiService === null) {
+            apiService = RetrofitClient(EdoctorDlvnSdk.environment)
+                .getInstance()
+                ?.create<ApiService>()
+        }
     }
 
     companion object {
@@ -48,6 +60,13 @@ class CallManager {
     var closeWebViewActivity: (() -> Unit)? = {}
     var onCallStateChanged: ((state: CallState) -> Unit)? = {}
     var onCallActionChanged: ((state: CallAction) -> Unit)? = {}
+
+    fun resetCall() {
+        mContext = null
+        directCall = null
+        callState = "ENDED"
+        acceptCallSetting = AcceptSetting()
+    }
 
     fun handleSendbirdEvent(context: Context) {
         mContext = context
@@ -121,6 +140,71 @@ class CallManager {
             }
         })
     }
+
+    fun approveEclinicCall(eclinicId: String, appointmentScheduleId: String) {
+        val params = JsonObject()
+        val variables = JSONObject()
+        variables.put("eClinicId", eclinicId)
+        variables.put("appointmentScheduleId", appointmentScheduleId)
+        params.addProperty("query", GraphAction.Mutation.eClinicApproveCall)
+        params.addProperty("variables", variables.toString())
+
+        EdoctorDlvnSdk.edrAccessToken?.let {
+            apiService?.approveEClinicCall(it, params)?.enqueue(object : Callback<Any> {
+                override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onFailure(call: Call<Any>, t: Throwable) {
+                    TODO("Not yet implemented")
+                }
+            })
+        }
+    }
+
+    fun expireEclinicRinging(eclinicId: String, appointmentScheduleId: String) {
+        val params = JsonObject()
+        val variables = JSONObject()
+        variables.put("eClinicId", eclinicId)
+        variables.put("appointmentScheduleId", appointmentScheduleId)
+        params.addProperty("query", GraphAction.Mutation.eClinicExpireRinging)
+        params.addProperty("variables", variables.toString())
+
+        EdoctorDlvnSdk.edrAccessToken?.let {
+            apiService?.expireEClinicRinging(it, params)?.enqueue(object : Callback<Any> {
+                override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onFailure(call: Call<Any>, t: Throwable) {
+                    TODO("Not yet implemented")
+                }
+            })
+        }
+    }
+
+    fun endEclinicCall(eclinicId: String, appointmentScheduleId: String) {
+        val params = JsonObject()
+        val variables = JSONObject()
+        variables.put("eClinicId", eclinicId)
+        variables.put("appointmentScheduleId", appointmentScheduleId)
+        params.addProperty("query", GraphAction.Mutation.eClinicEndCall)
+        params.addProperty("variables", variables.toString())
+
+        EdoctorDlvnSdk.edrAccessToken?.let {
+            apiService?.endEClinicCall(it, params)?.enqueue(object : Callback<Any> {
+                override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onFailure(call: Call<Any>, t: Throwable) {
+                    TODO("Not yet implemented")
+                }
+            })
+        }
+    }
+
+
 
     fun rotateCamera(call: DirectCall) {
         call.switchCamera() {

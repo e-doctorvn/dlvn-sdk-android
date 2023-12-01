@@ -5,8 +5,6 @@ package com.example.dlvn_sdk
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
@@ -17,7 +15,8 @@ import com.example.dlvn_sdk.api.RetrofitClient
 import com.example.dlvn_sdk.helper.CallNotificationHelper
 import com.example.dlvn_sdk.graphql.GraphAction
 import com.example.dlvn_sdk.model.AccountInitResponse
-import com.example.dlvn_sdk.sendbirdCall.CallManager
+import com.example.dlvn_sdk.model.SBAccountResponse
+import com.example.dlvn_sdk.model.SendBirdAccount
 import com.example.dlvn_sdk.sendbirdCall.SendbirdCallImpl
 import com.example.dlvn_sdk.store.AppStore
 import com.example.dlvn_sdk.webview.SdkWebView
@@ -38,12 +37,13 @@ class EdoctorDlvnSdk(
     private var apiService: ApiService? = null
     private var authParams: JSONObject? = null
     private var isFetching: Boolean = false
+    private var sendBirdAccount: SendBirdAccount? = null
 
     companion object {
         const val LOG_TAG = "EDOCTOR_SDK"
         @SuppressLint("StaticFieldLeak")
         internal lateinit var context: Context
-        internal lateinit var accessToken: String
+        internal var environment: Env = Env.SANDBOX
         internal var needClearCache: Boolean = false
         internal var edrAccessToken: String? = null
         internal var dlvnAccessToken: String? = null
@@ -57,7 +57,6 @@ class EdoctorDlvnSdk(
 
     init {
         EdoctorDlvnSdk.context = context
-        accessToken = "hello"
         AppStore.sdkInstance = this
 
         if (apiService === null) {
@@ -66,6 +65,7 @@ class EdoctorDlvnSdk(
                 ?.create<ApiService>()
         }
         if (env == Env.LIVE) {
+            environment = Env.LIVE
             webView.domain = Constants.healthConsultantUrlProd
         }
 
@@ -80,28 +80,24 @@ class EdoctorDlvnSdk(
     }
 
     fun openWebView(fragmentManager: FragmentManager, url: String?) {
-        val isAvailable = !isFetching && !webView.isVisible
         url?.let {
             webView.domain = url
         }
-        if (authParams != null && isAvailable) {
+        if (webView.isAdded) {
+            webView.selfClose()
+        }
+        if (authParams != null && !isFetching && !webView.isVisible) {
             initDLVNAccount {
                 webView.show(fragmentManager, webViewTag)
             }
         } else {
-            if (isAvailable) {
+            if (!isFetching && !webView.isVisible) {
                 webView.show(fragmentManager, webViewTag)
             }
         }
     }
 
     fun sampleFunc(name: String): String {
-//        val intent = Intent(
-//            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-//            Uri.fromParts("package", context.packageName, null)
-//        )
-//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//        context.startActivity(intent)
         return "Hello $name from SDK!!!"
     }
 
@@ -169,6 +165,35 @@ class EdoctorDlvnSdk(
                 })
             } else {
                 showError("Call `DLVNSendData` before calling this function!")
+            }
+        } catch (e: Error) {
+
+        }
+    }
+
+    fun getSendbirdAccount() {
+        try {
+            val params = JsonObject()
+            params.addProperty("query", GraphAction.Query.sendBirdAccount)
+
+            edrAccessToken?.let {
+                apiService?.getSendbirdAccount(it, params)?.enqueue(object : Callback<SBAccountResponse> {
+                    override fun onResponse(
+                        call: Call<SBAccountResponse>,
+                        response: Response<SBAccountResponse>
+                    ) {
+                        if (response.body()?.account?.accountId != null) {
+                            val data = response.body()!!.account
+                            sendBirdAccount = SendBirdAccount(data.accountId, data.thirdParty.sendbird.token)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<SBAccountResponse>, t: Throwable) {
+                        Log.d(LOG_TAG, "An error happened!")
+                        showError(t.message.toString())
+                        t.printStackTrace()
+                    }
+                })
             }
         } catch (e: Error) {
 
