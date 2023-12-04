@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.util.Rational
 import android.view.LayoutInflater
 import android.view.View
@@ -90,7 +91,7 @@ class VideoCallActivity : AppCompatActivity() {
         remoteView?.let { callOptions.setRemoteVideoView(it) }
         acceptParams.setCallOptions(callOptions)
         directCall?.accept(acceptParams)
-//        callManager?.approveEclinicCall("", "")
+        callManager?.approveEclinicCall()
     }
 
     override fun onResume() {
@@ -173,8 +174,8 @@ class VideoCallActivity : AppCompatActivity() {
         }
 
         btnEndCall!!.setOnClickListener {
+            callManager!!.endEclinicCall()
             directCall?.end()
-//            callManager!!.endEclinicCall("", "")
         }
 
         btnOpenChat!!.setOnClickListener {

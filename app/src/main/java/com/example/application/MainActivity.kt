@@ -43,8 +43,10 @@ class MainActivity : AppCompatActivity() {
             txtName!!.text = "Danh (EDR)"
             edoctorDlvnSdk!!.authenticateSb(
                 this@MainActivity,
-                "dev_manh", // dev_0XJyZqTJN7ecrUOc
-                "45fda7a0a7920752243d302738c8be4dabba92b8" // 206d35ef4bf4bed04672e4254db6e06db812b3ec
+                "dev_xUqOcSQLXGsxR1i1",
+                "42bc707a751935047ec58391a6da05c42cc6deab"
+//                "dev_manh", // dev_0XJyZqTJN7ecrUOc
+//                "45fda7a0a7920752243d302738c8be4dabba92b8" // 206d35ef4bf4bed04672e4254db6e06db812b3ec
             )
         }
 
@@ -66,10 +68,6 @@ class MainActivity : AppCompatActivity() {
 
 //            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
                 edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
-
-                Handler().postDelayed({
-                    edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
-                }, 2600)
 //            }
 //            edoctorDlvnSdk!!.getSendbirdAccount()
         }

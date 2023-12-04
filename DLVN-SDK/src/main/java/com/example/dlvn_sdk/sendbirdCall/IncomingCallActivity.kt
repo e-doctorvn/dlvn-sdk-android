@@ -154,8 +154,8 @@ class IncomingCallActivity : AppCompatActivity() {
         }
 
         rejectCallBtn!!.setOnClickListener {
+            callManager!!.expireEclinicRinging()
             callManager!!.directCall?.end()
-//            callManager!!.expireEclinicRinging("", "")
             CallService.stopService(this)
         }
 

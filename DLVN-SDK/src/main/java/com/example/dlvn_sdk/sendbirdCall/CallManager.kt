@@ -141,66 +141,72 @@ class CallManager {
         })
     }
 
-    fun approveEclinicCall(eclinicId: String, appointmentScheduleId: String) {
+    fun approveEclinicCall() {
         val params = JsonObject()
         val variables = JSONObject()
-        variables.put("eClinicId", eclinicId)
-        variables.put("appointmentScheduleId", appointmentScheduleId)
-        params.addProperty("query", GraphAction.Mutation.eClinicApproveCall)
-        params.addProperty("variables", variables.toString())
+        if (directCall?.customItems?.contains("appointmentScheduleId") == true && directCall?.customItems?.contains("eClinicId")!!) {
+            variables.put("eClinicId", directCall?.customItems?.get("eClinicId"))
+            variables.put("appointmentScheduleId", directCall?.customItems?.get("appointmentScheduleId"))
+            params.addProperty("query", GraphAction.Mutation.eClinicApproveCall)
+            params.addProperty("variables", variables.toString())
 
-        EdoctorDlvnSdk.edrAccessToken?.let {
-            apiService?.approveEClinicCall(it, params)?.enqueue(object : Callback<Any> {
-                override fun onResponse(call: Call<Any>, response: Response<Any>) {
-                    TODO("Not yet implemented")
-                }
+            EdoctorDlvnSdk.edrAccessToken?.let {
+                apiService?.approveEClinicCall(it, params)?.enqueue(object : Callback<Any> {
+                    override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                        Log.d("zzz", response.body().toString())
+                    }
 
-                override fun onFailure(call: Call<Any>, t: Throwable) {
-                    TODO("Not yet implemented")
-                }
-            })
+                    override fun onFailure(call: Call<Any>, t: Throwable) {
+                        TODO("Not yet implemented")
+                    }
+                })
+            }
         }
     }
 
-    fun expireEclinicRinging(eclinicId: String, appointmentScheduleId: String) {
+    fun expireEclinicRinging() {
         val params = JsonObject()
         val variables = JSONObject()
-        variables.put("eClinicId", eclinicId)
-        variables.put("appointmentScheduleId", appointmentScheduleId)
-        params.addProperty("query", GraphAction.Mutation.eClinicExpireRinging)
-        params.addProperty("variables", variables.toString())
+        if (directCall?.customItems?.contains("appointmentScheduleId") == true && directCall?.customItems?.contains("eClinicId")!!) {
+            variables.put("eClinicId", directCall?.customItems?.get("eClinicId"))
+            variables.put("appointmentScheduleId", directCall?.customItems?.get("appointmentScheduleId"))
+            params.addProperty("query", GraphAction.Mutation.eClinicExpireRinging)
+            params.addProperty("variables", variables.toString())
 
-        EdoctorDlvnSdk.edrAccessToken?.let {
-            apiService?.expireEClinicRinging(it, params)?.enqueue(object : Callback<Any> {
-                override fun onResponse(call: Call<Any>, response: Response<Any>) {
-                    TODO("Not yet implemented")
-                }
+            EdoctorDlvnSdk.edrAccessToken?.let {
+                apiService?.expireEClinicRinging(it, params)?.enqueue(object : Callback<Any> {
+                    override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                        Log.d("zzz", response.body().toString())
+                    }
 
-                override fun onFailure(call: Call<Any>, t: Throwable) {
-                    TODO("Not yet implemented")
-                }
-            })
+                    override fun onFailure(call: Call<Any>, t: Throwable) {
+                        Log.d("zzz", t.message.toString())
+                    }
+                })
+            }
         }
     }
 
-    fun endEclinicCall(eclinicId: String, appointmentScheduleId: String) {
+    fun endEclinicCall() {
         val params = JsonObject()
         val variables = JSONObject()
-        variables.put("eClinicId", eclinicId)
-        variables.put("appointmentScheduleId", appointmentScheduleId)
-        params.addProperty("query", GraphAction.Mutation.eClinicEndCall)
-        params.addProperty("variables", variables.toString())
+        if (directCall?.customItems?.contains("appointmentScheduleId") == true && directCall?.customItems?.contains("eClinicId")!!) {
+            variables.put("eClinicId", directCall?.customItems?.get("eClinicId"))
+            variables.put("appointmentScheduleId", directCall?.customItems?.get("appointmentScheduleId"))
+            params.addProperty("query", GraphAction.Mutation.eClinicEndCall)
+            params.addProperty("variables", variables.toString())
 
-        EdoctorDlvnSdk.edrAccessToken?.let {
-            apiService?.endEClinicCall(it, params)?.enqueue(object : Callback<Any> {
-                override fun onResponse(call: Call<Any>, response: Response<Any>) {
-                    TODO("Not yet implemented")
-                }
+            EdoctorDlvnSdk.edrAccessToken?.let {
+                apiService?.endEClinicCall(it, params)?.enqueue(object : Callback<Any> {
+                    override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                        Log.d("zzz", response.body().toString())
+                    }
 
-                override fun onFailure(call: Call<Any>, t: Throwable) {
-                    TODO("Not yet implemented")
-                }
-            })
+                    override fun onFailure(call: Call<Any>, t: Throwable) {
+                        TODO("Not yet implemented")
+                    }
+                })
+            }
         }
     }
 

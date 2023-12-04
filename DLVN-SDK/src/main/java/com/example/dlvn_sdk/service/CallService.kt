@@ -59,21 +59,19 @@ class CallService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        if (intent != null) {
-            mServiceData.isHeadsUpNotification =
-                intent.getBooleanExtra(EXTRA_IS_HEADS_UP_NOTIFICATION, false)
-            mServiceData.remoteNicknameOrUserId =
-                intent.getStringExtra(EXTRA_REMOTE_NICKNAME_OR_USER_ID)
-            mServiceData.callState = intent.getSerializableExtra(EXTRA_CALL_STATE) as STATE?
-            mServiceData.callId = intent.getStringExtra(EXTRA_CALL_ID)
-            mServiceData.isVideoCall = intent.getBooleanExtra(EXTRA_IS_VIDEO_CALL, false)
-            mServiceData.calleeIdToDial = intent.getStringExtra(EXTRA_CALLEE_ID_TO_DIAL)
-            mServiceData.doDial = intent.getBooleanExtra(EXTRA_DO_DIAL, false)
-            mServiceData.doAccept = intent.getBooleanExtra(EXTRA_DO_ACCEPT, false)
-            mServiceData.doLocalVideoStart =
-                intent.getBooleanExtra(EXTRA_DO_LOCAL_VIDEO_START, false)
-            updateNotification(mServiceData)
-        }
+        mServiceData.isHeadsUpNotification =
+            intent.getBooleanExtra(EXTRA_IS_HEADS_UP_NOTIFICATION, false)
+        mServiceData.remoteNicknameOrUserId =
+            intent.getStringExtra(EXTRA_REMOTE_NICKNAME_OR_USER_ID)
+        mServiceData.callState = intent.getSerializableExtra(EXTRA_CALL_STATE) as STATE?
+        mServiceData.callId = intent.getStringExtra(EXTRA_CALL_ID)
+        mServiceData.isVideoCall = intent.getBooleanExtra(EXTRA_IS_VIDEO_CALL, false)
+        mServiceData.calleeIdToDial = intent.getStringExtra(EXTRA_CALLEE_ID_TO_DIAL)
+        mServiceData.doDial = intent.getBooleanExtra(EXTRA_DO_DIAL, false)
+        mServiceData.doAccept = intent.getBooleanExtra(EXTRA_DO_ACCEPT, false)
+        mServiceData.doLocalVideoStart =
+            intent.getBooleanExtra(EXTRA_DO_LOCAL_VIDEO_START, false)
+        updateNotification(mServiceData)
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -222,6 +220,7 @@ class CallService : Service() {
             serviceData.isEndAction = false
             serviceData.isAcceptAction = false
             serviceData.doLocalVideoStart = false
+            Log.d("zzz", "startService inside onRinging")
             startService(context, serviceData)
         }
 

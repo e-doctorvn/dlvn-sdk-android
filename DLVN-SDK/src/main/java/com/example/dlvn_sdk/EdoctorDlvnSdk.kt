@@ -83,7 +83,7 @@ class EdoctorDlvnSdk(
         url?.let {
             webView.domain = url
         }
-        if (webView.isAdded) {
+        if (webView.isAdded && !webView.isVisible) {
             webView.selfClose()
         }
         if (authParams != null && !isFetching && !webView.isVisible) {

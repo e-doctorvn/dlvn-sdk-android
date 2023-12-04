@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.example.dlvn_sdk.EdoctorDlvnSdk
 import com.example.dlvn_sdk.helper.CallNotificationHelper
 import com.example.dlvn_sdk.sendbirdCall.CallManager
 
@@ -17,6 +16,7 @@ class CallActionReceiver : BroadcastReceiver() {
             when (action) {
                 "DECLINE_CALL" -> {
                     CallManager.getInstance()?.mContext = null
+                    CallManager.getInstance()?.expireEclinicRinging()
                     CallManager.getInstance()?.directCall?.end()
                 }
                 "CallAction" ->
