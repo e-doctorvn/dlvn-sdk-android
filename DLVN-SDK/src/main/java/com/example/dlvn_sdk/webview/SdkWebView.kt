@@ -102,14 +102,6 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         return cm.activeNetworkInfo != null && cm.activeNetworkInfo!!.isConnected
     }
 
-//    override fun show(manager: FragmentManager, tag: String?) {
-//        val fragment = manager.findFragmentByTag(tag)
-//        if (fragment != null && fragment.isAdded) {
-//            manager.beginTransaction().remove(fragment).commit()
-//        }
-//        super.show(manager, tag)
-//    }
-
     @SuppressLint("SetJavaScriptEnabled", "InternalInsetResource")
     override fun onCreateView(
         inflater: LayoutInflater,
