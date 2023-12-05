@@ -2,7 +2,10 @@
 
 EDR - DLVN Android SDK 
 
-Latest version: **1.0.16 (Updated: 05/12/2023)**
+Latest version: **1.0.17 (Updated: 05/12/2023)**
+
+## Version 1.0.17
+- Fix Vietnamese message of error toast when opening SDK
 
 ## Version 1.0.16
 - Update using `sessionStorage` for token saving from SDK to web.

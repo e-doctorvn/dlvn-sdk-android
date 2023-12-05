@@ -131,7 +131,11 @@ class EdoctorDlvnSdk(
 
                     override fun onFailure(call: Call<AccountInitResponse>, t: Throwable) {
                         Log.d(LOG_TAG, "An error happened!")
-                        showError(t.message.toString())
+                        var message = "Đã có lỗi xảy ra.\nVui lòng thử lại."
+                        if (t.message?.contains("Unable to resolve host") == true) {
+                            message = "Không có kết nối internet.\nVui lòng kiểm tra lại."
+                        }
+                        showError(message)
                         t.printStackTrace()
                         isFetching = false
                     }
