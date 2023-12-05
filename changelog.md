@@ -5,6 +5,7 @@ EDR - DLVN Android SDK
 Latest version: **1.0.16 (Updated: 05/12/2023)**
 
 ## Version 1.0.16
+- Update using `sessionStorage` for token saving from SDK to web.
 - Fix app crashing when showing 'Request permission pop-up' in picking attachment.
 - Fix uploading taken photo from camera in picking attachment.
 
