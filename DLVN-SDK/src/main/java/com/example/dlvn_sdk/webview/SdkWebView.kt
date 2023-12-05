@@ -35,6 +35,9 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -48,6 +51,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
+
 
 open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private lateinit var loading: ConstraintLayout
@@ -64,14 +68,11 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private var sdkInstance: EdoctorDlvnSdk
     private var checkTimeoutLoadWebView = false
     var domain = Constants.healthConsultantUrlDev
+    private val FCR = 99
     private var mCM: String? = null
     private var mUM: ValueCallback<Uri>? = null
     private var mUMA: ValueCallback<Array<Uri>>? = null
-    private val FCR = 99
-    private val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) {}
+    private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
 
     init {
         sdkInstance = sdk
@@ -89,6 +90,9 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             dialog?.window?.decorView?.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
         }
+        requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {}
         setStyle(STYLE_NO_FRAME, R.style.EDRDialogStyle)
     }
 
@@ -98,14 +102,6 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return cm.activeNetworkInfo != null && cm.activeNetworkInfo!!.isConnected
     }
-
-//    override fun show(manager: FragmentManager, tag: String?) {
-//        val fragment = manager.findFragmentByTag(tag)
-//        if (fragment != null && fragment.isAdded) {
-//            manager.beginTransaction().remove(fragment).commit()
-//        }
-//        super.show(manager, tag)
-//    }
 
     @SuppressLint("SetJavaScriptEnabled", "InternalInsetResource")
     override fun onCreateView(
@@ -189,10 +185,11 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     val photoFile: File = createImageFile()
                     mCM = Uri.fromFile(photoFile).toString()
 
+
                     val captureImgUri =
                         FileProvider.getUriForFile(
                             requireContext(),
-                            requireContext().applicationContext.packageName + ".com.example.application.provider",
+                            "com.example.application.provider",
                             photoFile
                         )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
@@ -260,9 +257,12 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                     super.onPageStarted(view, url, favicon)
                     if (EdoctorDlvnSdk.edrAccessToken != null && EdoctorDlvnSdk.dlvnAccessToken != null) {
-                        view?.evaluateJavascript("document.cookie=\"accessToken=${EdoctorDlvnSdk.edrAccessToken}; path=/\"") {}
-                        view?.evaluateJavascript("document.cookie=\"upload_token=${EdoctorDlvnSdk.edrAccessToken}; path=/\"") {}
-                        view?.evaluateJavascript("document.cookie=\"accessTokenDlvn=${EdoctorDlvnSdk.dlvnAccessToken}; path=/\"") {}
+//                        view?.evaluateJavascript("document.cookie=\"accessToken=${EdoctorDlvnSdk.edrAccessToken}; path=/\"") {}
+//                        view?.evaluateJavascript("document.cookie=\"upload_token=${EdoctorDlvnSdk.edrAccessToken}; path=/\"") {}
+//                        view?.evaluateJavascript("document.cookie=\"accessTokenDlvn=${EdoctorDlvnSdk.dlvnAccessToken}; path=/\"") {}
+                        view?.evaluateJavascript("sessionStorage.setItem(\"accessToken\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
+                        view?.evaluateJavascript("sessionStorage.setItem(\"upload_token\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
+                        view?.evaluateJavascript("sessionStorage.setItem(\"accessTokenDlvn\", \"${EdoctorDlvnSdk.dlvnAccessToken}\");") {}
                     }
                     Thread {
                         try {
@@ -395,11 +395,13 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     }
 
     private fun requestCameraPermission() {
-        PermissionManager.handleRequestPermission(
-            requireActivity(),
-            Manifest.permission.CAMERA,
-            requestPermissionLauncher
-        )
+        requestPermissionLauncher?.let {
+            PermissionManager.handleRequestPermission(
+                requireActivity(),
+                Manifest.permission.CAMERA,
+                it
+            )
+        }
     }
 
     @Throws(IOException::class)
