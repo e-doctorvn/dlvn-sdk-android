@@ -2,20 +2,24 @@
 
 EDR - DLVN Android SDK 
 
-Latest version: **1.0.15 (Updated: 01/12/2023)**
+Latest version: **1.0.16 (Updated: 05/12/2023)**
+
+## Version 1.0.16
+- Fix app crashing when showing 'Request permission pop-up' in picking attachment.
+- Fix uploading taken photo from camera in picking attachment.
 
 ## Version 1.0.15
-- Try to fix app crashing when open SDK after reading DLVN's post.
+- Try to fix app crashing when open SDK after reading DLVN's post. **(Worked)**
 
 ## Version 1.0.14
-- Try to fix app crashing when open SDK after reading DLVN's post. (Failed)
+- Try to fix app crashing when open SDK after reading DLVN's post. **(Failed)**
 
 ## Version 1.0.13
 - Fix request camera permission when picking photos for question's attachment.
 
 ## Version 1.0.12
 - Fix auto redirecting to login page when open Q&A notification
-- Fix `go back`` function in many pages
+- Fix `go back` function in many pages
 
 ## Version 1.0.11
 - Handle `Back` and `Share` buttons from DLVN's article
