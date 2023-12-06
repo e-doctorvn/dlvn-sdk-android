@@ -35,10 +35,12 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
 import com.example.dlvn_sdk.Constants
 import com.example.dlvn_sdk.EdoctorDlvnSdk
@@ -66,14 +68,10 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     var webViewCallActivity: Context? = null
     private var checkTimeoutLoadWebView = false
     var domain = Constants.healthConsultantUrlDev
-    private var mCM: String? = null
-    private var mUM: ValueCallback<Uri>? = null
-    private var mUMA: ValueCallback<Array<Uri>>? = null
     private val FCR = 99
-    private val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) {}
+    private var mCM: String? = null
+    private var mUMA: ValueCallback<Array<Uri>>? = null
+    private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
 
     init {
         sdkInstance = sdk
@@ -92,6 +90,9 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             dialog?.window?.decorView?.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
         }
+        requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {}
         setStyle(STYLE_NO_FRAME, R.style.EDRDialogStyle)
     }
 
@@ -148,8 +149,6 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 myWebView.reload()
             }
             buttonClose.setOnClickListener {
-    //            header.visibility = View.GONE
-    //            myWebView.loadUrl(domain)
                 if (myWebView.canGoBack()) {
                     myWebView.goBack()
                 } else {
@@ -182,7 +181,8 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
                     val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                     val photoFile: File = createImageFile()
-                    mCM = Uri.fromFile(photoFile).toString()
+                    mCM = photoFile.toUri().toString()
+
 
                     val captureImgUri =
                         FileProvider.getUriForFile(
@@ -191,7 +191,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                             photoFile
                         )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
-                    takePictureIntent.putExtra("return-data", true)
+                    takePictureIntent.putExtra("return-data", false)
                     takePictureIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
 
                     val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
@@ -212,13 +212,6 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
 
             myWebView.webViewClient = object : WebViewClient() {
-                override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
-                    super.doUpdateVisitedHistory(view, url, isReload)
-                    if (view?.title?.contains("https") == false) {
-                        wvTitle.text = formatWebTitle(view.title!!)
-                    }
-                }
-
                 @SuppressLint("WebViewClientOnReceivedSslError")
                 override fun onReceivedSslError(
                     view: WebView?,
@@ -255,9 +248,9 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                     super.onPageStarted(view, url, favicon)
                     if (EdoctorDlvnSdk.edrAccessToken != null && EdoctorDlvnSdk.dlvnAccessToken != null) {
-                        view?.evaluateJavascript("document.cookie=\"accessToken=${EdoctorDlvnSdk.edrAccessToken}; path=/\"") {}
-                        view?.evaluateJavascript("document.cookie=\"upload_token=${EdoctorDlvnSdk.edrAccessToken}; path=/\"") {}
-                        view?.evaluateJavascript("document.cookie=\"accessTokenDlvn=${EdoctorDlvnSdk.dlvnAccessToken}; path=/\"") {}
+                        view?.evaluateJavascript("sessionStorage.setItem(\"accessTokenEdr\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
+                        view?.evaluateJavascript("sessionStorage.setItem(\"upload_token\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
+                        view?.evaluateJavascript("sessionStorage.setItem(\"accessTokenDlvn\", \"${EdoctorDlvnSdk.dlvnAccessToken}\");") {}
                     }
                     Thread {
                         try {
@@ -359,18 +352,11 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         }
     }
 
-    private fun formatWebTitle(title: String): String {
-        if (title.contains(" -")) {
-            return title.substring(0, title.indexOf(" -"))
-        }
-        return  title
-    }
-
     fun selfClose() {
-        myWebView.removeAllViews();
+        this.dismiss()
+        myWebView.removeAllViews()
         myWebView.destroy()
         SdkWebView.isVisible = false
-        this.dismiss()
         super.onDestroy()
         this.onDestroy()
     }
@@ -390,11 +376,13 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     }
 
     private fun requestCameraPermission() {
-        PermissionManager.handleRequestPermission(
-            requireActivity(),
-            Manifest.permission.CAMERA,
-            requestPermissionLauncher
-        )
+        requestPermissionLauncher?.let {
+            PermissionManager.handleRequestPermission(
+                requireActivity(),
+                Manifest.permission.CAMERA,
+                it
+            )
+        }
     }
 
     @Throws(IOException::class)
@@ -450,6 +438,10 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                             }
                         } else if (mCM != null) { // Take photo
                             results = arrayOf(Uri.parse(mCM))
+                        }
+                    } else { // Take photo
+                        mCM?.let {
+                            results = arrayOf(Uri.parse(it))
                         }
                     }
                 } else { // Single select

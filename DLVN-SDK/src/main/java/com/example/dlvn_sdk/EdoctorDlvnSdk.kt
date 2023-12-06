@@ -5,8 +5,10 @@ package com.example.dlvn_sdk
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.FragmentManager
 import com.example.dlvn_sdk.Constants.Env
 import com.example.dlvn_sdk.Constants.webViewTag
@@ -92,7 +94,11 @@ class EdoctorDlvnSdk(
             }
         } else {
             if (!isFetching && !webView.isVisible) {
-                webView.show(fragmentManager, webViewTag)
+                if (isNetworkConnected()) {
+                    webView.show(fragmentManager, webViewTag)
+                } else {
+                    showError(context.getString(R.string.no_internet_msg))
+                }
             }
         }
     }
@@ -151,14 +157,18 @@ class EdoctorDlvnSdk(
                             edrAccessToken = response.body()!!.dlvnAccountInit.accessToken
                             mCallback(response.body())
                         } else {
-                            showError("Đã có lỗi xảy ra!")
+                            showError(context.getString(R.string.common_error_msg))
                         }
                         isFetching = false
                     }
 
                     override fun onFailure(call: Call<AccountInitResponse>, t: Throwable) {
                         Log.d(LOG_TAG, "An error happened!")
-                        showError(t.message.toString())
+                        var message = context.getString(R.string.common_error_msg)
+                        if (t.message?.contains("Unable to resolve host") == true) {
+                            message = context.getString(R.string.no_internet_msg)
+                        }
+                        showError(message)
                         t.printStackTrace()
                         isFetching = false
                     }
@@ -208,5 +218,10 @@ class EdoctorDlvnSdk(
         needClearCache = true
 
         webView.clearCacheAndCookies(context)
+    }
+
+    private fun isNetworkConnected(): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return cm.activeNetworkInfo != null && cm.activeNetworkInfo!!.isConnected
     }
 }

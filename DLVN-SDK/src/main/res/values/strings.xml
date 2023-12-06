@@ -14,4 +14,6 @@
     <string name="end_time_ok_label">Đã hiểu</string>
     <string name="end_time_warning_label">Còn 03 phút sẽ hết thời gian phiên tư vấn!</string>
     <string name="request_permission_msg">Bạn vui lòng cấp quyền để thực hiện thao tác.</string>
+    <string name="no_internet_msg">Không có kết nối internet.\nVui lòng kiểm tra lại.</string>
+    <string name="common_error_msg">Đã có lỗi xảy ra.\nVui lòng thử lại.</string>
 </resources>
