@@ -184,7 +184,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     val captureImgUri =
                         FileProvider.getUriForFile(
                             requireContext(),
-                            "com.example.application.provider",
+                            requireContext().applicationContext.packageName + ".com.example.application.provider",
                             photoFile
                         )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
