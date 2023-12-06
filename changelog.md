@@ -2,7 +2,10 @@
 
 EDR - DLVN Android SDK 
 
-Latest version: **1.0.17 (Updated: 05/12/2023)**
+Latest version: **1.0.18 (Updated: 06/12/2023)**
+
+## Version 1.0.17
+- Fix rename `accessToken` of EDR
 
 ## Version 1.0.17
 - Fix Vietnamese message of error toast when opening SDK
