@@ -209,13 +209,6 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
 
             myWebView.webViewClient = object : WebViewClient() {
-                override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
-                    super.doUpdateVisitedHistory(view, url, isReload)
-                    if (view?.title?.contains("https") == false) {
-                        wvTitle.text = formatWebTitle(view.title!!)
-                    }
-                }
-
                 @SuppressLint("WebViewClientOnReceivedSslError")
                 override fun onReceivedSslError(
                     view: WebView?,
@@ -252,7 +245,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                     super.onPageStarted(view, url, favicon)
                     if (EdoctorDlvnSdk.edrAccessToken != null && EdoctorDlvnSdk.dlvnAccessToken != null) {
-                        view?.evaluateJavascript("sessionStorage.setItem(\"accessToken\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
+                        view?.evaluateJavascript("sessionStorage.setItem(\"accessTokenEdr\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
                         view?.evaluateJavascript("sessionStorage.setItem(\"upload_token\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
                         view?.evaluateJavascript("sessionStorage.setItem(\"accessTokenDlvn\", \"${EdoctorDlvnSdk.dlvnAccessToken}\");") {}
                     }
@@ -356,18 +349,11 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         }
     }
 
-    private fun formatWebTitle(title: String): String {
-        if (title.contains(" -")) {
-            return title.substring(0, title.indexOf(" -"))
-        }
-        return  title
-    }
-
     fun selfClose() {
-        myWebView.removeAllViews();
+        this.dismiss()
+        myWebView.removeAllViews()
         myWebView.destroy()
         SdkWebView.isVisible = false
-        this.dismiss()
         super.onDestroy()
         this.onDestroy()
     }

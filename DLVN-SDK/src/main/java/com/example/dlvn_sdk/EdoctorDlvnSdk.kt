@@ -4,8 +4,10 @@ package com.example.dlvn_sdk
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.FragmentManager
 import com.example.dlvn_sdk.Constants.Env
 import com.example.dlvn_sdk.Constants.webViewTag
@@ -73,7 +75,11 @@ class EdoctorDlvnSdk(
             }
         } else {
             if (!isFetching && !webView.isVisible) {
-                webView.show(fragmentManager, webViewTag)
+                if (isNetworkConnected()) {
+                    webView.show(fragmentManager, webViewTag)
+                } else {
+                    showError("Không có kết nối internet.\nVui lòng kiểm tra lại.")
+                }
             }
         }
     }
@@ -156,5 +162,10 @@ class EdoctorDlvnSdk(
         needClearCache = true
 
         webView.clearCacheAndCookies(context)
+    }
+
+    private fun isNetworkConnected(): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return cm.activeNetworkInfo != null && cm.activeNetworkInfo!!.isConnected
     }
 }
