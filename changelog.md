@@ -2,7 +2,10 @@
 
 EDR - DLVN Android SDK 
 
-Latest version: **1.0.18 (Updated: 06/12/2023)**
+Latest version: **1.0.19 (Updated: 06/12/2023)**
+
+## Version 1.0.19
+- Fix Jitpack error
 
 ## Version 1.0.18
 - Fix rename `accessToken` of EDR

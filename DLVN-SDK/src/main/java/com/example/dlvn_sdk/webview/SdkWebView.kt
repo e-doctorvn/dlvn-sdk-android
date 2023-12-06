@@ -436,7 +436,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                         } else if (mCM != null) { // Take photo
                             results = arrayOf(Uri.parse(mCM))
                         }
-                    } else {
+                    } else { // Take photo
                         mCM?.let {
                             results = arrayOf(Uri.parse(it))
                         }

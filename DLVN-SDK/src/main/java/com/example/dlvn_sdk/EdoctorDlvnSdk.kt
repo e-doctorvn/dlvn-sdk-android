@@ -78,7 +78,7 @@ class EdoctorDlvnSdk(
                 if (isNetworkConnected()) {
                     webView.show(fragmentManager, webViewTag)
                 } else {
-                    showError("Không có kết nối internet.\nVui lòng kiểm tra lại.")
+                    showError(context.getString(R.string.no_internet_msg))
                 }
             }
         }
@@ -130,16 +130,16 @@ class EdoctorDlvnSdk(
                             edrAccessToken = response.body()!!.dlvnAccountInit.accessToken
                             mCallback(response.body())
                         } else {
-                            showError("Đã có lỗi xảy ra!")
+                            showError(context.getString(R.string.common_error_msg))
                         }
                         isFetching = false
                     }
 
                     override fun onFailure(call: Call<AccountInitResponse>, t: Throwable) {
                         Log.d(LOG_TAG, "An error happened!")
-                        var message = "Đã có lỗi xảy ra.\nVui lòng thử lại."
+                        var message = context.getString(R.string.common_error_msg)
                         if (t.message?.contains("Unable to resolve host") == true) {
-                            message = "Không có kết nối internet.\nVui lòng kiểm tra lại."
+                            message = context.getString(R.string.no_internet_msg)
                         }
                         showError(message)
                         t.printStackTrace()
