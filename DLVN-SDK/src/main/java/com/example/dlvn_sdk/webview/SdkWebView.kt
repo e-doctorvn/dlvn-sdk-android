@@ -3,6 +3,7 @@ package com.example.dlvn_sdk.webview
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -50,6 +51,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
+
 
 open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private lateinit var loading: ConstraintLayout
@@ -215,8 +217,19 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     handler: SslErrorHandler?,
                     error: SslError?
                 ) {
-    //                super.onReceivedSslError(view, handler, error)
-                    handler?.proceed()
+                    var dialog: AlertDialog? = null
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                    builder.setMessage("Quý khách có muốn tiếp tục với liên kết này không?")
+                    builder.setPositiveButton("Tiếp tục") { _, _ ->
+                        handler!!.proceed()
+                        dialog?.dismiss()
+                    }
+                    builder.setNegativeButton("Đóng") { _, _ ->
+                        handler!!.cancel()
+                        dialog?.dismiss()
+                    }
+                    dialog = builder.create()
+                    dialog.show()
                 }
 
                 override fun onReceivedError(
