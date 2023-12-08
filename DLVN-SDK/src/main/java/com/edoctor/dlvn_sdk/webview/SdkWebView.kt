@@ -219,7 +219,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 ) {
                     var dialog: AlertDialog? = null
                     val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-                    builder.setMessage("Quý khách có muốn tiếp tục với liên kết này không?")
+                    builder.setMessage(getString(R.string.ssl_error_confirm_msg))
                     builder.setPositiveButton("Tiếp tục") { _, _ ->
                         handler!!.proceed()
                         dialog?.dismiss()
