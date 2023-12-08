@@ -1,4 +1,4 @@
-package com.example.dlvn_sdk.model
+package com.edoctor.dlvn_sdk.model
 
 data class DLVNAccountInit(
     val accessToken: String

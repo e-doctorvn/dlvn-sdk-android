@@ -1,7 +1,7 @@
-package com.example.dlvn_sdk.api
+package com.edoctor.dlvn_sdk.api
 
-import com.example.dlvn_sdk.model.AccountInitResponse
-import com.example.dlvn_sdk.model.User
+import com.edoctor.dlvn_sdk.model.AccountInitResponse
+import com.edoctor.dlvn_sdk.model.User
 import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.http.Body

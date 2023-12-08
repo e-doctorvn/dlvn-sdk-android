@@ -1,4 +1,4 @@
-package com.example.dlvn_sdk.webview
+package com.edoctor.dlvn_sdk.webview
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -43,10 +43,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
-import com.example.dlvn_sdk.Constants
-import com.example.dlvn_sdk.EdoctorDlvnSdk
-import com.example.dlvn_sdk.R
-import com.example.dlvn_sdk.helper.PermissionManager
+import com.edoctor.dlvn_sdk.Constants
+import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
+import com.edoctor.dlvn_sdk.R
+import com.edoctor.dlvn_sdk.helper.PermissionManager
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -82,7 +82,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        SdkWebView.isVisible = true
+        Companion.isVisible = true
         dialog?.window?.setFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -186,7 +186,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     val captureImgUri =
                         FileProvider.getUriForFile(
                             requireContext(),
-                            requireContext().applicationContext.packageName + ".com.example.application.provider",
+                            requireContext().applicationContext.packageName + ".com.edoctor.application.provider",
                             photoFile
                         )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
@@ -344,7 +344,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     override fun onDestroy() {
         myWebView.removeAllViews();
         myWebView.destroy()
-        SdkWebView.isVisible = false
+        Companion.isVisible = false
         super.onDestroy()
     }
 
@@ -366,7 +366,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         this.dismiss()
         myWebView.removeAllViews()
         myWebView.destroy()
-        SdkWebView.isVisible = false
+        Companion.isVisible = false
         super.onDestroy()
         this.onDestroy()
     }

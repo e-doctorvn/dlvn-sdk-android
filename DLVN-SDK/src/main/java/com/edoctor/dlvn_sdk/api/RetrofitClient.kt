@@ -1,9 +1,9 @@
-package com.example.dlvn_sdk.api
+package com.edoctor.dlvn_sdk.api
 
 import android.util.Log
-import com.example.dlvn_sdk.Constants
-import com.example.dlvn_sdk.Constants.Env
-import com.example.dlvn_sdk.graphql.DataConverterFactory
+import com.edoctor.dlvn_sdk.Constants
+import com.edoctor.dlvn_sdk.Constants.Env
+import com.edoctor.dlvn_sdk.graphql.DataConverterFactory
 import com.google.gson.GsonBuilder
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient

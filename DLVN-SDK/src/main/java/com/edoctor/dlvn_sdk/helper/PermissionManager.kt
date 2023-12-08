@@ -1,4 +1,4 @@
-package com.example.dlvn_sdk.helper
+package com.edoctor.dlvn_sdk.helper
 
 import android.app.Activity
 import android.content.Context
@@ -9,9 +9,8 @@ import android.provider.Settings
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.dlvn_sdk.EdoctorDlvnSdk
-import com.example.dlvn_sdk.R
-
+import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
+import com.edoctor.dlvn_sdk.R
 
 object PermissionManager {
     fun handleRequestPermission(activity: Activity, permission: String, requestPermissionLauncher: ActivityResultLauncher<String>) {

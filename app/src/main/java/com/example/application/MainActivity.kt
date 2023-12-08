@@ -5,7 +5,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.dlvn_sdk.EdoctorDlvnSdk
+import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
@@ -53,9 +53,9 @@ class MainActivity : AppCompatActivity() {
 //            params.put("dcid", "FAB02ABB-91E9-47D1-B66C-A8FC4B08335B")
 //            params.put("token", "228b15fcd35f4188b393cfbe78378506")
 
-//            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
+            if (edoctorDlvnSdk!!.DLVNSendData(params)) {
                 edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
-//            }
+            }
         }
 
         btn_dangxuat!!.setOnClickListener {

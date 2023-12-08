@@ -1,4 +1,4 @@
-package com.example.dlvn_sdk;
+package com.edoctor.dlvn_sdk;
 
 import org.junit.Test;
 

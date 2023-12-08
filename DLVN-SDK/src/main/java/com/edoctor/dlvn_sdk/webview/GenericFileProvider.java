@@ -1,4 +1,4 @@
-package com.example.dlvn_sdk.webview;
+package com.edoctor.dlvn_sdk.webview;
 
 import androidx.core.content.FileProvider;
 

@@ -1,4 +1,4 @@
-package com.example.dlvn_sdk.graphql
+package com.edoctor.dlvn_sdk.graphql
 import okhttp3.ResponseBody
 import retrofit2.Converter
 

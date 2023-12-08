@@ -14,8 +14,8 @@
 
     <application android:requestLegacyExternalStorage="true">
         <provider
-            android:name="com.example.dlvn_sdk.webview.GenericFileProvider"
-            android:authorities="${applicationId}.com.example.application.provider"
+            android:name="com.edoctor.dlvn_sdk.webview.GenericFileProvider"
+            android:authorities="${applicationId}.com.edoctor.application.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
