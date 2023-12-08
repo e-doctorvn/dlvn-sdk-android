@@ -1,8 +1,9 @@
-package com.example.dlvn_sdk.webview
+package com.edoctor.dlvn_sdk.webview
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -47,10 +48,15 @@ import com.example.dlvn_sdk.EdoctorDlvnSdk
 import com.example.dlvn_sdk.R
 import com.example.dlvn_sdk.helper.PermissionManager
 import com.example.dlvn_sdk.store.AppStore
+import com.edoctor.dlvn_sdk.Constants
+import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
+import com.edoctor.dlvn_sdk.R
+import com.edoctor.dlvn_sdk.helper.PermissionManager
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
+
 
 open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private lateinit var loading: ConstraintLayout
@@ -83,7 +89,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        SdkWebView.isVisible = true
+        Companion.isVisible = true
         dialog?.window?.setFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -187,7 +193,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     val captureImgUri =
                         FileProvider.getUriForFile(
                             requireContext(),
-                            requireContext().applicationContext.packageName + ".com.example.application.provider",
+                            requireContext().applicationContext.packageName + ".com.edoctor.application.provider",
                             photoFile
                         )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
@@ -218,8 +224,19 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     handler: SslErrorHandler?,
                     error: SslError?
                 ) {
-    //                super.onReceivedSslError(view, handler, error)
-                    handler?.proceed()
+                    var dialog: AlertDialog? = null
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                    builder.setMessage(getString(R.string.ssl_error_confirm_msg))
+                    builder.setPositiveButton("Tiếp tục") { _, _ ->
+                        handler!!.proceed()
+                        dialog?.dismiss()
+                    }
+                    builder.setNegativeButton("Đóng") { _, _ ->
+                        handler!!.cancel()
+                        dialog?.dismiss()
+                    }
+                    dialog = builder.create()
+                    dialog.show()
                 }
 
                 override fun onReceivedError(
@@ -334,7 +351,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     override fun onDestroy() {
         myWebView.removeAllViews();
         myWebView.destroy()
-        SdkWebView.isVisible = false
+        Companion.isVisible = false
         super.onDestroy()
     }
 
@@ -356,7 +373,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         this.dismiss()
         myWebView.removeAllViews()
         myWebView.destroy()
-        SdkWebView.isVisible = false
+        Companion.isVisible = false
         super.onDestroy()
         this.onDestroy()
     }

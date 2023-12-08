@@ -1,4 +1,4 @@
-package com.example.dlvn_sdk.helper
+package com.edoctor.dlvn_sdk.helper
 
 import android.Manifest
 import android.app.Activity
@@ -12,9 +12,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.dlvn_sdk.EdoctorDlvnSdk
-import com.example.dlvn_sdk.R
-
+import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
+import com.edoctor.dlvn_sdk.R
 
 object PermissionManager {
     private const val CAMERA_PERMISSION_REQUEST_CODE = 1001

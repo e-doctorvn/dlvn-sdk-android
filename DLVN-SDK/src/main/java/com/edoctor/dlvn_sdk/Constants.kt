@@ -1,4 +1,4 @@
-package com.example.dlvn_sdk
+package com.edoctor.dlvn_sdk
 
 object Constants {
     const val healthConsultantUrlDev = "https://e-doctor.dev/tu-van-suc-khoe" //"http://192.168.120.250:3000/tu-van-suc-khoe"  //"https://khuat.dai-ichi-life.com.vn/tu-van-suc-khoe"

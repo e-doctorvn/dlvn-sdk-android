@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.example.dlvn_sdk'
+    namespace 'com.edoctor.dlvn_sdk'
     compileSdk 33
 
     defaultConfig {
