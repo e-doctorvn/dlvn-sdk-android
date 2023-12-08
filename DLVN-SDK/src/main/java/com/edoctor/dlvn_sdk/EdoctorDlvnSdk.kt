@@ -183,7 +183,7 @@ class EdoctorDlvnSdk(
 
     fun getSendbirdAccount() {
         try {
-            if (sendBirdAccount == null) {
+            if (sendBirdAccount?.token == null) {
                 val params = JsonObject()
                 params.addProperty("query", GraphAction.Query.sendBirdAccount)
 
@@ -200,7 +200,7 @@ class EdoctorDlvnSdk(
                                         data.accountId,
                                         data.thirdParty.sendbird.token
                                     )
-                                    authenticateSb(
+                                    SendbirdCallImpl.authenticate(
                                         context,
                                         sendBirdAccount?.accountId.toString(),
                                         sendBirdAccount?.token.toString()
@@ -229,10 +229,6 @@ class EdoctorDlvnSdk(
         needClearCache = true
 
         webView.clearCacheAndCookies(context)
-    }
-
-    private fun getSendbirdStoredData() {
-
     }
 
     private fun isNetworkConnected(): Boolean {

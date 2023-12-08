@@ -32,6 +32,7 @@ import java.util.UUID
 
 object SendbirdCallImpl {
     private const val TAG = "RNSendBirdCalls"
+    private var didTokenSave = false
 
     @JvmStatic
     fun initSendbirdCall(context: Context, APP_ID: String) {
@@ -93,6 +94,7 @@ object SendbirdCallImpl {
         CallManager.getInstance()!!.pushToken?.let {
             SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
                 SendBirdCall.deauthenticate() {
+                    didTokenSave = false
                     PrefUtils.removeSendbirdAuthData(context)
                     Toast.makeText(context, "Logged out SB", Toast.LENGTH_SHORT).show()
                 }
@@ -124,8 +126,11 @@ object SendbirdCallImpl {
                                 val token: String? = task.result
                                 CallManager.getInstance()!!.pushToken = token
                                 registerPushToken(token)
-                                PrefUtils.setAccessToken(context, accessToken)
-                                PrefUtils.setUserId(context, userId)
+                                if (!didTokenSave) {
+                                    PrefUtils.setAccessToken(context, accessToken)
+                                    PrefUtils.setUserId(context, userId)
+                                    didTokenSave = true
+                                }
                             }
                         })
                 }
@@ -170,8 +175,9 @@ object SendbirdCallImpl {
         val accessToken: String? = PrefUtils.getAccessToken(context)
         val userId: String? = PrefUtils.getUserId(context)
 
-        if (accessToken != null && userId != null) {
-            if (EdoctorDlvnSdk.sendBirdAccount == null) {
+        if (accessToken != null && accessToken != "" && userId != null && userId != "") {
+            didTokenSave = true
+            if (EdoctorDlvnSdk.sendBirdAccount?.token == null) {
                 EdoctorDlvnSdk.sendBirdAccount = SendBirdAccount(userId, accessToken)
             }
             authenticate(context, userId, accessToken)

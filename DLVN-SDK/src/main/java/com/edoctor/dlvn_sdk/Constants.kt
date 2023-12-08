@@ -1,7 +1,7 @@
 package com.edoctor.dlvn_sdk
 
 object Constants {
-    const val healthConsultantUrlDev = "https://e-doctor.dev/tu-van-suc-khoe" //"http://192.168.120.250:3000/tu-van-suc-khoe"  //"https://khuat.dai-ichi-life.com.vn/tu-van-suc-khoe"
+    const val healthConsultantUrlDev = "http://192.168.120.144:3000/phase2/tu-van-suc-khoe" //"http://192.168.120.250:3000/tu-van-suc-khoe"  //"https://khuat.dai-ichi-life.com.vn/tu-van-suc-khoe"
     const val healthConsultantUrlProd = "https://kh.dai-ichi-life.com.vn/tu-van-suc-khoe"
     const val edrApiUrlDev = "https://virtual-clinic.api.e-doctor.dev/"
     const val edrApiUrlProd = "https://virtual-clinic.api.edoctor.io/"
