@@ -38,7 +38,6 @@ class EdoctorDlvnSdk(
     private var apiService: ApiService? = null
     private var authParams: JSONObject? = null
     private var isFetching: Boolean = false
-    private var sendBirdAccount: SendBirdAccount? = null
 
     companion object {
         const val LOG_TAG = "EDOCTOR_SDK"
@@ -48,6 +47,7 @@ class EdoctorDlvnSdk(
         internal var needClearCache: Boolean = false
         internal var edrAccessToken: String? = null
         internal var dlvnAccessToken: String? = null
+        internal var sendBirdAccount: SendBirdAccount? = null
 
         fun showError(message: String?) {
             if (message != null && message != "null" && message != "") {
@@ -155,6 +155,7 @@ class EdoctorDlvnSdk(
                             needClearCache = false
                             edrAccessToken = response.body()!!.dlvnAccountInit.accessToken
                             mCallback(response.body())
+                            getSendbirdAccount()
                         } else {
                             showError(context.getString(R.string.common_error_msg))
                         }
@@ -182,27 +183,38 @@ class EdoctorDlvnSdk(
 
     fun getSendbirdAccount() {
         try {
-            val params = JsonObject()
-            params.addProperty("query", GraphAction.Query.sendBirdAccount)
+            if (sendBirdAccount == null) {
+                val params = JsonObject()
+                params.addProperty("query", GraphAction.Query.sendBirdAccount)
 
-            edrAccessToken?.let {
-                apiService?.getSendbirdAccount(it, params)?.enqueue(object : Callback<SBAccountResponse> {
-                    override fun onResponse(
-                        call: Call<SBAccountResponse>,
-                        response: Response<SBAccountResponse>
-                    ) {
-                        if (response.body()?.account?.accountId != null) {
-                            val data = response.body()!!.account
-                            sendBirdAccount = SendBirdAccount(data.accountId, data.thirdParty.sendbird.token)
-                        }
-                    }
+                edrAccessToken?.let {
+                    apiService?.getSendbirdAccount(it, params)
+                        ?.enqueue(object : Callback<SBAccountResponse> {
+                            override fun onResponse(
+                                call: Call<SBAccountResponse>,
+                                response: Response<SBAccountResponse>
+                            ) {
+                                if (response.body()?.account?.accountId != null) {
+                                    val data = response.body()!!.account
+                                    sendBirdAccount = SendBirdAccount(
+                                        data.accountId,
+                                        data.thirdParty.sendbird.token
+                                    )
+                                    authenticateSb(
+                                        context,
+                                        sendBirdAccount?.accountId.toString(),
+                                        sendBirdAccount?.token.toString()
+                                    )
+                                }
+                            }
 
-                    override fun onFailure(call: Call<SBAccountResponse>, t: Throwable) {
-                        Log.d(LOG_TAG, "An error happened!")
-                        showError(t.message.toString())
-                        t.printStackTrace()
-                    }
-                })
+                            override fun onFailure(call: Call<SBAccountResponse>, t: Throwable) {
+                                Log.d(LOG_TAG, "An error happened!")
+                                showError(t.message.toString())
+                                t.printStackTrace()
+                            }
+                        })
+                }
             }
         } catch (e: Error) {
 
@@ -217,6 +229,10 @@ class EdoctorDlvnSdk(
         needClearCache = true
 
         webView.clearCacheAndCookies(context)
+    }
+
+    private fun getSendbirdStoredData() {
+
     }
 
     private fun isNetworkConnected(): Boolean {

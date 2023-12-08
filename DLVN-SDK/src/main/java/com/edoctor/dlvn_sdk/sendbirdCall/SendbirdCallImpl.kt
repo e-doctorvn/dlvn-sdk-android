@@ -7,9 +7,11 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
 import android.widget.Toast
+import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import com.edoctor.dlvn_sdk.R
 import com.edoctor.dlvn_sdk.helper.CallNotificationHelper
 import com.edoctor.dlvn_sdk.helper.PrefUtils
+import com.edoctor.dlvn_sdk.model.SendBirdAccount
 import com.edoctor.dlvn_sdk.service.CallActionReceiver
 import com.edoctor.dlvn_sdk.service.CallService
 import com.google.android.gms.tasks.OnCompleteListener
@@ -169,6 +171,9 @@ object SendbirdCallImpl {
         val userId: String? = PrefUtils.getUserId(context)
 
         if (accessToken != null && userId != null) {
+            if (EdoctorDlvnSdk.sendBirdAccount == null) {
+                EdoctorDlvnSdk.sendBirdAccount = SendBirdAccount(userId, accessToken)
+            }
             authenticate(context, userId, accessToken)
         }
     }
