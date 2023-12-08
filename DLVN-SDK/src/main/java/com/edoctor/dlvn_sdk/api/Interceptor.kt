@@ -1,6 +1,5 @@
 package com.edoctor.dlvn_sdk.api
 
-import android.util.Log
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import okhttp3.Interceptor
 import okhttp3.Request

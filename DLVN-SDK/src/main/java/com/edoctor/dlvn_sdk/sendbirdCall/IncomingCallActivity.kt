@@ -1,4 +1,4 @@
-package com.example.dlvn_sdk.sendbirdCall
+package com.edoctor.dlvn_sdk.sendbirdCall
 
 import android.Manifest
 import android.animation.ValueAnimator
@@ -22,12 +22,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.dlvn_sdk.Constants
-import com.example.dlvn_sdk.R
-import com.example.dlvn_sdk.helper.CallNotificationHelper
-import com.example.dlvn_sdk.helper.PermissionManager
-import com.example.dlvn_sdk.service.CallActionReceiver
-import com.example.dlvn_sdk.service.CallService
+import com.edoctor.dlvn_sdk.Constants
+import com.edoctor.dlvn_sdk.R
+import com.edoctor.dlvn_sdk.helper.CallNotificationHelper
+import com.edoctor.dlvn_sdk.helper.PermissionManager
+import com.edoctor.dlvn_sdk.service.CallActionReceiver
+import com.edoctor.dlvn_sdk.service.CallService
 import com.sendbird.calls.DirectCall
 import jp.wasabeef.glide.transformations.BlurTransformation
 

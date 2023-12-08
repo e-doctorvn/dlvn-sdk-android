@@ -1,7 +1,5 @@
-package com.example.dlvn_sdk.helper
+package com.edoctor.dlvn_sdk.helper
 
-//import android.R
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -9,8 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import com.example.dlvn_sdk.R
-import com.example.dlvn_sdk.service.CallActionReceiver
+import com.edoctor.dlvn_sdk.R
+import com.edoctor.dlvn_sdk.service.CallActionReceiver
 
 
 object CallNotificationHelper {

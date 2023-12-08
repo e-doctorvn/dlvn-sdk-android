@@ -1,4 +1,4 @@
-package com.example.dlvn_sdk.service
+package com.edoctor.dlvn_sdk.service
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -13,11 +13,10 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.example.dlvn_sdk.R
-import com.example.dlvn_sdk.sendbirdCall.CallManager
-import com.example.dlvn_sdk.sendbirdCall.IncomingCallActivity
-import com.example.dlvn_sdk.sendbirdCall.VideoCallActivity
-import com.example.dlvn_sdk.sendbirdCall.VideoCallActivity.STATE
+import com.edoctor.dlvn_sdk.R
+import com.edoctor.dlvn_sdk.sendbirdCall.IncomingCallActivity
+import com.edoctor.dlvn_sdk.sendbirdCall.VideoCallActivity
+import com.edoctor.dlvn_sdk.sendbirdCall.VideoCallActivity.STATE
 import com.sendbird.calls.DirectCall
 import com.sendbird.calls.SendBirdCall.ongoingCallCount
 

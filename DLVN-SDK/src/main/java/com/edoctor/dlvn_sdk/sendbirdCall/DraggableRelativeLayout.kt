@@ -1,4 +1,4 @@
-package com.example.dlvn_sdk.sendbirdCall
+package com.edoctor.dlvn_sdk.sendbirdCall
 
 import android.content.Context
 import android.util.AttributeSet

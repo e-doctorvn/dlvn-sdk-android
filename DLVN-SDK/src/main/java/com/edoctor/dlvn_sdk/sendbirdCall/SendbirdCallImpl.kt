@@ -1,4 +1,4 @@
-package com.example.dlvn_sdk.sendbirdCall
+package com.edoctor.dlvn_sdk.sendbirdCall
 
 import android.app.Activity
 import android.app.ActivityOptions
@@ -7,11 +7,11 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
 import android.widget.Toast
-import com.example.dlvn_sdk.R
-import com.example.dlvn_sdk.helper.CallNotificationHelper
-import com.example.dlvn_sdk.helper.PrefUtils
-import com.example.dlvn_sdk.service.CallActionReceiver
-import com.example.dlvn_sdk.service.CallService
+import com.edoctor.dlvn_sdk.R
+import com.edoctor.dlvn_sdk.helper.CallNotificationHelper
+import com.edoctor.dlvn_sdk.helper.PrefUtils
+import com.edoctor.dlvn_sdk.service.CallActionReceiver
+import com.edoctor.dlvn_sdk.service.CallService
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.messaging.FirebaseMessaging

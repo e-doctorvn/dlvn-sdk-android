@@ -1,11 +1,10 @@
-package com.example.dlvn_sdk.service
+package com.edoctor.dlvn_sdk.service
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import com.example.dlvn_sdk.helper.CallNotificationHelper
-import com.example.dlvn_sdk.sendbirdCall.CallManager
+import com.edoctor.dlvn_sdk.helper.CallNotificationHelper
+import com.edoctor.dlvn_sdk.sendbirdCall.CallManager
 
 class CallActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {

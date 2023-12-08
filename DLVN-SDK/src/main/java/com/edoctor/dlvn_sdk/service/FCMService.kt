@@ -1,12 +1,11 @@
-package com.example.dlvn_sdk.service
+package com.edoctor.dlvn_sdk.service
 
-import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.example.dlvn_sdk.helper.CallNotificationHelper
-import com.example.dlvn_sdk.sendbirdCall.CallManager
+import com.edoctor.dlvn_sdk.helper.CallNotificationHelper
+import com.edoctor.dlvn_sdk.sendbirdCall.CallManager
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.sendbird.calls.SendBirdCall.handleFirebaseMessageData

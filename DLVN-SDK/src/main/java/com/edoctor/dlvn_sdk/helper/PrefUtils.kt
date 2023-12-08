@@ -1,9 +1,7 @@
-package com.example.dlvn_sdk.helper
+package com.edoctor.dlvn_sdk.helper
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import kotlinx.coroutines.CoroutineScope
 
 object PrefUtils {
     private const val PREF_NAME = "sendbird_calls"

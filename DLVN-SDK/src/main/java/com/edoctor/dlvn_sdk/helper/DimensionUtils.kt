@@ -1,4 +1,4 @@
-package com.example.dlvn_sdk.helper
+package com.edoctor.dlvn_sdk.helper
 
 import android.app.Activity
 import android.content.Context
@@ -6,7 +6,7 @@ import android.os.Build
 import android.util.DisplayMetrics
 import android.view.Display
 import androidx.core.hardware.display.DisplayManagerCompat
-import com.example.dlvn_sdk.model.Dimension
+import com.edoctor.dlvn_sdk.model.Dimension
 
 object DimensionUtils {
     fun getScreenSize(context: Context): Dimension {

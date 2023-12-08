@@ -1,4 +1,4 @@
-package com.example.dlvn_sdk.sendbirdCall
+package com.edoctor.dlvn_sdk.sendbirdCall
 
 import android.os.Bundle
 import android.view.View
@@ -7,12 +7,12 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.dlvn_sdk.Constants
-import com.example.dlvn_sdk.R
-import com.example.dlvn_sdk.helper.DimensionUtils
-import com.example.dlvn_sdk.model.Dimension
-import com.example.dlvn_sdk.store.AppStore
-import com.example.dlvn_sdk.webview.SdkWebView
+import com.edoctor.dlvn_sdk.Constants
+import com.edoctor.dlvn_sdk.R
+import com.edoctor.dlvn_sdk.helper.DimensionUtils
+import com.edoctor.dlvn_sdk.model.Dimension
+import com.edoctor.dlvn_sdk.store.AppStore
+import com.edoctor.dlvn_sdk.webview.SdkWebView
 import com.sendbird.calls.DirectCall
 import com.sendbird.calls.SendBirdVideoView
 import jp.wasabeef.glide.transformations.BlurTransformation

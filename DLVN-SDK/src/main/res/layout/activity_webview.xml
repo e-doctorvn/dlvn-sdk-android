@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <com.example.dlvn_sdk.sendbirdCall.DraggableRelativeLayout
+    <com.edoctor.dlvn_sdk.sendbirdCall.DraggableRelativeLayout
         android:id="@+id/btn_remote_view_wv"
         android:layout_width="120dp"
         android:layout_height="180dp"
@@ -94,5 +94,5 @@
                 </com.google.android.flexbox.FlexboxLayout>
             </RelativeLayout>
         </LinearLayout>
-    </com.example.dlvn_sdk.sendbirdCall.DraggableRelativeLayout>
+    </com.edoctor.dlvn_sdk.sendbirdCall.DraggableRelativeLayout>
 </RelativeLayout>
