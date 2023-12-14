@@ -54,7 +54,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 
-open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
+class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private lateinit var loading: ConstraintLayout
     private lateinit var loadingProgressBar: ProgressBar
     lateinit var myWebView: WebView
@@ -184,7 +184,6 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                     val photoFile: File = createImageFile()
                     mCM = photoFile.toUri().toString()
-
 
                     val captureImgUri =
                         FileProvider.getUriForFile(

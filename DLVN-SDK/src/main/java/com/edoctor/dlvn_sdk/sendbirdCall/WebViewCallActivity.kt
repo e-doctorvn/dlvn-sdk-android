@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.edoctor.dlvn_sdk.Constants
+import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import com.edoctor.dlvn_sdk.R
 import com.edoctor.dlvn_sdk.helper.DimensionUtils
 import com.edoctor.dlvn_sdk.model.Dimension
@@ -33,6 +34,7 @@ class WebViewCallActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_webview)
         if (savedInstanceState == null) {
+            webView.domain = getChatRoomUrl()
             webView.webViewCallActivity = this@WebViewCallActivity
 
             supportFragmentManager
@@ -132,5 +134,13 @@ class WebViewCallActivity: AppCompatActivity() {
         callManager?.closeWebViewActivity = {
             finish()
         }
+    }
+
+    private fun getChatRoomUrl(): String {
+        return if (EdoctorDlvnSdk.environment == Constants.Env.SANDBOX) {
+            Constants.healthConsultantUrlDev
+        } else {
+            Constants.healthConsultantUrlProd
+        } + "/phong-tu-van"
     }
 }
