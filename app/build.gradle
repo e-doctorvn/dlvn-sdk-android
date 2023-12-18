@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.example.application'
+    namespace 'com.edoctor.application'
     compileSdk 34
 
     defaultConfig {

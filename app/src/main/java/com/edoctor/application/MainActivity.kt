@@ -1,4 +1,4 @@
-package com.example.application
+package com.edoctor.application
 
 import android.os.Bundle
 import android.util.Log
