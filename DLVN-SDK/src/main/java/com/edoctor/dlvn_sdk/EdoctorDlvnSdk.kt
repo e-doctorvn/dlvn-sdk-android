@@ -58,16 +58,13 @@ class EdoctorDlvnSdk(
         }
         if (env == Env.LIVE) {
             webView.domain = Constants.healthConsultantUrlProd
+            webView.defaultDomain = Constants.healthConsultantUrlProd
         }
     }
 
     fun openWebView(fragmentManager: FragmentManager, url: String?) {
-        url?.let {
-            webView.domain = url
-        }
-        if (webView.isAdded && !webView.isVisible) {
-            webView.selfClose()
-        }
+        webView.domain = url ?: webView.defaultDomain
+
         if (authParams != null && !isFetching && !webView.isVisible) {
             initDLVNAccount {
                 webView.show(fragmentManager, webViewTag)

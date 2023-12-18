@@ -2,7 +2,16 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.0.21 (Updated: 14/12/2023)**
+Latest version: **1.0.23 (Updated: 18/12/2023)**
+
+## Version 1.0.23
+
+- Fix old URL was cached in WebView
+- Update support DLVN & external links in post detail
+
+## Version 1.0.22
+
+- Fix import of new package's name
 
 ## Version 1.0.21
 
