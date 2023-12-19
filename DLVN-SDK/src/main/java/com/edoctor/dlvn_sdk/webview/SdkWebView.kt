@@ -54,7 +54,6 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 
-
 class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private lateinit var loading: ConstraintLayout
     private lateinit var loadingProgressBar: ProgressBar
