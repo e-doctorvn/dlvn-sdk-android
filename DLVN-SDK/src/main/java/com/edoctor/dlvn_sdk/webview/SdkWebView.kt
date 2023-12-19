@@ -15,6 +15,7 @@ import android.net.http.SslError
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Message
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -70,6 +71,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     var webViewCallActivity: Context? = null
     private var checkTimeoutLoadWebView = false
     var domain = Constants.healthConsultantUrlDev
+    var defaultDomain = Constants.healthConsultantUrlDev
     private val FCR = 99
     private var mCM: String? = null
     private var mUMA: ValueCallback<Array<Uri>>? = null
@@ -163,6 +165,25 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             }
 
             myWebView.webChromeClient = object : WebChromeClient() {
+                override fun onCreateWindow(
+                    view: WebView?,
+                    isDialog: Boolean,
+                    isUserGesture: Boolean,
+                    resultMsg: Message?
+                ): Boolean {
+                    val result = view!!.hitTestResult
+                    val data = result.extra
+                    val context = view.context
+
+                    if (data.toString().contains(Constants.dlvnDomain)) {
+                        view.loadUrl(data.toString() + "?from=eDoctor&screen=eDoctorHome")
+                        return true
+                    } else {
+                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(data))
+                        context.startActivity(browserIntent)
+                    }
+                    return false
+                }
                 override fun onPermissionRequest(request: PermissionRequest) {
                     activity!!.runOnUiThread {
                         request.grant(request.resources)
@@ -285,6 +306,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     view: WebView?,
                     request: WebResourceRequest?
                 ): Boolean {
+                    Log.d("zzz", request?.url.toString())
                     val url = request?.url?.toString()
                     return if (url == null || url.startsWith("http://") || url.startsWith("https://")) false else try {
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()))

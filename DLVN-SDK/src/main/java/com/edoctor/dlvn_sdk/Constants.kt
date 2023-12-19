@@ -6,6 +6,7 @@ object Constants {
     const val edrApiUrlDev = "https://virtual-clinic.api.e-doctor.dev/"
     const val edrApiUrlProd = "https://virtual-clinic.api.edoctor.io/"
     const val webViewTag = "EDR-WebView"
+    const val dlvnDomain = "dai-ichi-life.com.vn"
     object WebviewParams {
         const val closeWebview: String = "close-webview"
         const val goBackFromDlvn: String = "go-back"
