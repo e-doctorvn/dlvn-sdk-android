@@ -229,6 +229,7 @@ class EdoctorDlvnSdk(
         needClearCache = true
 
         webView.clearCacheAndCookies(context)
+        SendbirdCallImpl.deAuthenticate(context)
     }
 
     private fun isNetworkConnected(): Boolean {

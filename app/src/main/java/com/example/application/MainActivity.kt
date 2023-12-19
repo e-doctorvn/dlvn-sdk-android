@@ -70,8 +70,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btn_dangxuat!!.setOnClickListener {
-//            edoctorDlvnSdk!!.clearWebViewCache()
-            edoctorDlvnSdk!!.deAuthenticateSb()
+            edoctorDlvnSdk!!.clearWebViewCache()
         }
     }
 }
