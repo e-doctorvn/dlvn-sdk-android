@@ -9,66 +9,6 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="match_parent">
-        <View
-            android:id="@+id/wv_activityStatusBarScrim"
-            android:layout_width="match_parent"
-            android:layout_height="26dp"
-            android:visibility="gone"
-            android:background="@drawable/wv_status_bar_background"/>
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/header"
-            android:minHeight="50dp"
-            android:visibility="visible"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/wv_header_background"
-            app:layout_constraintTop_toTopOf="parent">
-            <ImageButton
-                android:id="@+id/btn_close_wv"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:scaleType="centerCrop"
-                android:layout_marginLeft="12dp"
-                android:src="@drawable/ic_close_wv"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="BACK"
-                android:background="?attr/selectableItemBackgroundBorderless" />
-
-            <TextView
-                android:id="@+id/tv_wv_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/default_title"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:maxWidth="240dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btn_refresh"
-                app:layout_constraintLeft_toLeftOf="@+id/btn_close_wv"
-                app:layout_constraintStart_toEndOf="@+id/btn_close_wv"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageButton
-                android:id="@+id/btn_refresh"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:scaleType="centerCrop"
-                android:layout_marginRight="12dp"
-                android:src="@drawable/ic_refresh_wv"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="RELOAD"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
         <WebView
             android:id="@+id/webview"
             android:layout_weight="1"
@@ -118,7 +58,7 @@
             android:id="@+id/titleError"
             android:textColor="@color/black"
             android:textSize="18dp"
-            android:text="Lỗi kết nối mạng vui lòng thử lại"
+            android:text="Lỗi kết nối mạng. Vui lòng thử lại"
             android:layout_height="wrap_content"
             />
         <LinearLayout
@@ -127,15 +67,15 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:orientation="horizontal"
-            >
-
+            android:gravity="center_horizontal">
             <Button
                 android:id="@+id/buttonBack"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:layout_weight="0.5"
-                android:text="Thoát"
+                android:textColor="@color/black"
+                android:text="@string/btn_back_label"
+                android:background="@color/dlvn_primary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 />
             <Button
@@ -143,8 +83,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:layout_weight="0.5"
-                android:text="Thử lại"
+                android:layout_weight="1"
+                android:visibility="gone"
+                android:textColor="@color/black"
+                android:text="@string/btn_retry_label"
+                android:background="@color/dlvn_primary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 />
         </LinearLayout>

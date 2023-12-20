@@ -15,6 +15,7 @@ import android.net.http.SslError
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.os.Message
 import android.provider.MediaStore
 import android.util.Log
@@ -53,18 +54,13 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 
-
 open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private lateinit var loading: ConstraintLayout
     private lateinit var loadingProgressBar: ProgressBar
     lateinit var myWebView: WebView
-    private lateinit var wvTitle: TextView
     private var buttonBack: Button? = null
     private var buttonNext: Button? = null
-    private lateinit var buttonClose: ImageButton
-    private lateinit var buttonRefresh: ImageButton
     lateinit var containerErrorNetwork: ConstraintLayout
-    lateinit var header: ConstraintLayout
 
     private var sdkInstance: EdoctorDlvnSdk
     private var checkTimeoutLoadWebView = false
@@ -72,6 +68,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     var defaultDomain = Constants.healthConsultantUrlDev
     private val FCR = 99
     private var mCM: String? = null
+    var hideLoading: Boolean = false
     private var mUMA: ValueCallback<Array<Uri>>? = null
     private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
 
@@ -104,6 +101,11 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         return cm.activeNetworkInfo != null && cm.activeNetworkInfo!!.isConnected
     }
 
+    fun reload() {
+        hideLoading = true
+        myWebView.loadUrl(domain, mapOf("Content-Type" to "application/json"))
+    }
+
     @SuppressLint("SetJavaScriptEnabled", "InternalInsetResource")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -122,15 +124,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             loading = v.findViewById(R.id.loading)
             buttonBack = v.findViewById(R.id.buttonBack)
             buttonNext = v.findViewById(R.id.buttonNext)
-            header = v.findViewById(R.id.header)
-            wvTitle = v.findViewById(R.id.tv_wv_title)
-            buttonClose = v.findViewById(R.id.btn_close_wv)
-            buttonRefresh = v.findViewById(R.id.btn_refresh)
             containerErrorNetwork = v.findViewById(R.id.containerErrorNetwork)
-            buttonClose.setColorFilter(Color.argb(255, 255, 255, 255))
-            buttonRefresh.setColorFilter(Color.argb(255, 255, 255, 255))
-
-            header.visibility = View.GONE
 
             if (EdoctorDlvnSdk.needClearCache) {
                 clearCacheAndCookies(requireContext())
@@ -146,17 +140,6 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             }
             buttonNext?.setOnClickListener {
                 containerErrorNetwork.visibility = View.GONE
-                loading.visibility = View.VISIBLE
-                myWebView.reload()
-            }
-            buttonClose.setOnClickListener {
-                if (myWebView.canGoBack()) {
-                    myWebView.goBack()
-                } else {
-                    selfClose()
-                }
-            }
-            buttonRefresh.setOnClickListener {
                 loading.visibility = View.VISIBLE
                 myWebView.reload()
             }
@@ -230,7 +213,6 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 }
             }
 
-
             myWebView.webViewClient = object : WebViewClient() {
                 @SuppressLint("WebViewClientOnReceivedSslError")
                 override fun onReceivedSslError(
@@ -269,11 +251,14 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 }
 
                 override fun onPageFinished(view: WebView?, url: String?) {
-                    super.onPageFinished(view, url)
-                    if (loading.visibility != View.GONE) {
-                        loading.visibility = View.GONE
-                    }
-                    checkTimeoutLoadWebView = true
+                    Handler().postDelayed({
+                        if (loading.visibility != View.GONE && hideLoading) {
+                            hideLoading = false
+                            loading.visibility = View.GONE
+                            checkTimeoutLoadWebView = true
+                        }
+                        super.onPageFinished(view, url)
+                    }, 1250)
                 }
 
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -285,7 +270,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     }
                     Thread {
                         try {
-                            Thread.sleep(40000)
+                            Thread.sleep(30000)
                         } catch (e: InterruptedException) {
                             e.printStackTrace()
                         }
@@ -349,10 +334,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
             myWebView.loadUrl(
                 domain,
-                mapOf(
-                    "Content-Type" to "application/json",
-    //                "Authorization" to EdoctorDlvnSdk.edrAccessToken
-                )
+                mapOf("Content-Type" to "application/json")
             )
             if (!isNetworkConnected()) {
                 containerErrorNetwork.visibility = View.VISIBLE
@@ -386,6 +368,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
     fun selfClose() {
         this.dismiss()
+        hideLoading = false
         myWebView.removeAllViews()
         myWebView.destroy()
         Companion.isVisible = false

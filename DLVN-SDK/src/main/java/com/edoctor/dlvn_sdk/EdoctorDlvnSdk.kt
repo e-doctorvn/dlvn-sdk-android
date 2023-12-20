@@ -66,12 +66,18 @@ class EdoctorDlvnSdk(
         webView.domain = url ?: webView.defaultDomain
 
         if (authParams != null && !isFetching && !webView.isVisible) {
-            initDLVNAccount {
+            if (isNetworkConnected()) {
                 webView.show(fragmentManager, webViewTag)
+                initDLVNAccount {
+                    webView.reload()
+                }
+            } else {
+                showError(context.getString(R.string.no_internet_msg))
             }
         } else {
             if (!isFetching && !webView.isVisible) {
                 if (isNetworkConnected()) {
+                    webView.hideLoading = true
                     webView.show(fragmentManager, webViewTag)
                 } else {
                     showError(context.getString(R.string.no_internet_msg))
@@ -120,7 +126,6 @@ class EdoctorDlvnSdk(
 
                 apiService?.initAccount(params)?.enqueue(object : Callback<AccountInitResponse> {
                     override fun onResponse(call: Call<AccountInitResponse>, response: Response<AccountInitResponse>) {
-                        Log.d("zzz", response.body().toString())
                         if (response.body()?.dlvnAccountInit?.accessToken != null) {
                             needClearCache = false
                             edrAccessToken = response.body()!!.dlvnAccountInit.accessToken
