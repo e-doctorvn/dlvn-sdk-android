@@ -259,7 +259,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                             checkTimeoutLoadWebView = true
                         }
                         super.onPageFinished(view, url)
-                    },1350)
+                    },1400)
                 }
 
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -293,6 +293,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     val url = request?.url?.toString()
                     try {
                         if (url.toString().contains(Constants.dlvnDomain)) {
+                            view?.loadUrl(url.toString() + "?from=eDoctor&screen=eDoctorHome")
                             return false
                         } else {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
