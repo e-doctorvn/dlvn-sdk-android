@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.0.24 (Updated: 20/12/2023)**
+Latest version: **1.0.25 (Updated: 21/12/2023)**
+
+## Version 1.0.25
+
+- Fix build error
 
 ## Version 1.0.24
 
