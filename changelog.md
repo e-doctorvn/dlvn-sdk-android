@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.0.23 (Updated: 18/12/2023)**
+Latest version: **1.0.24 (Updated: 20/12/2023)**
+
+## Version 1.0.24
+
+- Fix app crashing issued by Google Store, by: move `show` WebView outside `initDLVNAccount`'s response
 
 ## Version 1.0.23
 
