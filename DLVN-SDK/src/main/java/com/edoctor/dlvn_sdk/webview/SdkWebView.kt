@@ -51,6 +51,7 @@ import com.edoctor.dlvn_sdk.R
 import com.edoctor.dlvn_sdk.helper.PermissionManager
 import java.io.File
 import java.io.IOException
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -258,7 +259,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                             checkTimeoutLoadWebView = true
                         }
                         super.onPageFinished(view, url)
-                    }, 1250)
+                    },1350)
                 }
 
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -289,16 +290,19 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     view: WebView?,
                     request: WebResourceRequest?
                 ): Boolean {
-                    Log.d("zzz", request?.url.toString())
                     val url = request?.url?.toString()
-                    return if (url == null || url.startsWith("http://") || url.startsWith("https://")) false else try {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()))
-                        view!!.context.startActivity(intent)
-                        true
+                    try {
+                        if (url.toString().contains(Constants.dlvnDomain)) {
+                            return false
+                        } else {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            view!!.context.startActivity(intent)
+                        }
+                        return true
                     } catch (e: Exception) {
                         Log.d(EdoctorDlvnSdk.LOG_TAG, "shouldOverrideUrlLoading Exception:$e")
-                        true
                     }
+                    return true
                 }
 
                 override fun shouldInterceptRequest(
