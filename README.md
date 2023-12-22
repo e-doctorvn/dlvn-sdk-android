@@ -2,7 +2,7 @@
 
 EDR - DLVN Android SDK
 
-## Version 1.0.25
+## Version 1.0.26
 
 ## Requirements
 
@@ -25,7 +25,7 @@ This dependency requires:
 
   ```sh
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.0.25'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.0.26'
     }
   ```
 
