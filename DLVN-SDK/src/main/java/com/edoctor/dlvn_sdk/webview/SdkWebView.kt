@@ -261,7 +261,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                             checkTimeoutLoadWebView = true
                         }
                         super.onPageFinished(view, url)
-                    },1400)
+                    },2000)
                 }
 
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
