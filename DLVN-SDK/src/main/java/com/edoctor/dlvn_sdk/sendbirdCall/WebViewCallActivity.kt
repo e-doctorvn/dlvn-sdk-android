@@ -34,6 +34,7 @@ class WebViewCallActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_webview)
         if (savedInstanceState == null) {
+            webView.hideLoading = true
             webView.domain = getChatRoomUrl()
             webView.webViewCallActivity = this@WebViewCallActivity
 
