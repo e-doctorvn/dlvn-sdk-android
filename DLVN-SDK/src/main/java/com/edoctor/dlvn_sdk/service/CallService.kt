@@ -68,7 +68,7 @@ class CallService : Service() {
         mServiceData.isVideoCall = intent.getBooleanExtra(EXTRA_IS_VIDEO_CALL, false)
         mServiceData.calleeIdToDial = intent.getStringExtra(EXTRA_CALLEE_ID_TO_DIAL)
         mServiceData.doDial = intent.getBooleanExtra(EXTRA_DO_DIAL, false)
-        mServiceData.doAccept = intent.getBooleanExtra(EXTRA_DO_ACCEPT, false)
+        mServiceData.doAccept = intent.getBooleanExtra(EXTRA_DO_ACCEPT, true)
         mServiceData.doLocalVideoStart =
             intent.getBooleanExtra(EXTRA_DO_LOCAL_VIDEO_START, false)
         updateNotification(mServiceData)
@@ -138,9 +138,6 @@ class CallService : Service() {
             if (serviceData.doAccept) {
                 builder.addAction(NotificationCompat.Action(R.drawable.end_call_24, "Từ chối", declinePendingIntent))
                 builder.addAction(NotificationCompat.Action(R.drawable.accept_call_24, "Chấp nhận", acceptPendingIntent))
-            } else {
-                builder.setContentIntent(acceptPendingIntent)
-                builder.addAction(NotificationCompat.Action(0, "Kết thúc", declinePendingIntent))
             }
         }
         return builder.build()
@@ -148,7 +145,6 @@ class CallService : Service() {
 
     private fun updateNotification(serviceData: ServiceData) {
         mServiceData.set(serviceData)
-//        mServiceData.doAccept = true
         startForeground(NOTIFICATION_ID, getNotification(mServiceData))
     }
 
@@ -267,7 +263,7 @@ data class ServiceData(
     var isVideoCall: Boolean = false,
     var calleeIdToDial: String? = null,
     var doDial: Boolean = false,
-    var doAccept: Boolean = false,
+    var doAccept: Boolean = true,
     var isEndAction: Boolean = false,
     var doLocalVideoStart: Boolean = false,
 ) {

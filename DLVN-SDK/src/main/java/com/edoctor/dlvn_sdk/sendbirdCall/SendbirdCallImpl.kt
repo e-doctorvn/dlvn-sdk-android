@@ -1,6 +1,8 @@
 package com.edoctor.dlvn_sdk.sendbirdCall
 
 import android.app.Activity
+import android.app.ActivityManager
+import android.app.ActivityManager.RunningAppProcessInfo
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
@@ -30,6 +32,7 @@ import com.sendbird.calls.handler.SendBirdCallListener
 import com.sendbird.calls.internal.PushTokenType
 import java.util.UUID
 
+
 object SendbirdCallImpl {
     private const val TAG = "RNSendBirdCalls"
     private var didTokenSave = false
@@ -53,22 +56,28 @@ object SendbirdCallImpl {
 
         val UNIQUE_HANDLER_ID = UUID.randomUUID().toString()
         SendBirdCall.addListener(UNIQUE_HANDLER_ID, object : SendBirdCallListener() {
-            override fun onRinging(directCall: DirectCall) {
+            override fun onRinging(call: DirectCall) {
                 val ongoingCallCount: Int = SendBirdCall.ongoingCallCount
                 if (ongoingCallCount >= 2) {
-                    directCall.end()
+                    call.end()
                     return
                 }
-                CallService.onRinging(context, directCall)
 
-                CallManager.getInstance()?.directCall = directCall
+                val myProcess = RunningAppProcessInfo()
+                ActivityManager.getMyMemoryState(myProcess)
+
+                if (myProcess.importance != RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                    CallService.onRinging(context, call)
+                }
+
+                CallManager.getInstance()?.directCall = call
                 CallManager.getInstance()?.callState = "RINGING"
                 CallManager.getInstance()!!.handleSendbirdEvent(context)
 
                 if (CallNotificationHelper.action != null) {
                     if (CallNotificationHelper.action == "_decline") {
                         CallManager.getInstance()?.pushToken = null
-                        directCall.end()
+                        call.end()
                     }
                 } else {
                     val intent = Intent(context, IncomingCallActivity::class.java)
@@ -81,7 +90,7 @@ object SendbirdCallImpl {
                 }
             }
 
-            override fun onInvitationReceived(roomInvitation: RoomInvitation) {}
+            override fun onInvitationReceived(invitation: RoomInvitation) {}
         })
         SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RINGING, R.raw.ringing)
         SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RECONNECTING, R.raw.reconnecting)
@@ -99,15 +108,6 @@ object SendbirdCallImpl {
                 }
             }
         }
-//        CallManager.getInstance()!!.pushToken?.let {
-//            SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
-//                SendBirdCall.deauthenticate() {
-//                    didTokenSave = false
-//                    PrefUtils.removeSendbirdAuthData(context)
-//                    Toast.makeText(context, "Logged out SB", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//        }
     }
 
     @JvmStatic
@@ -118,38 +118,30 @@ object SendbirdCallImpl {
                 if (e == null) {
                     addListener(context)
                     Toast.makeText(context, "Login $userId Success", Toast.LENGTH_SHORT).show()
-                    val token = PrefUtils.getPushToken(context)
-                    CallManager.getInstance()!!.pushToken = token
-                    registerPushToken(token)
-                    if (!didTokenSave) {
-                        PrefUtils.setAccessToken(context, accessToken)
-                        PrefUtils.setUserId(context, userId)
-                        didTokenSave = true
-                    }
-//                    FirebaseMessaging.getInstance().token
-//                        .addOnCompleteListener(object : OnCompleteListener<String?> {
-//                            override fun onComplete(task: Task<String?>) {
-//                                if (!task.isSuccessful) {
-//                                    Log.w(
-//                                        TAG,
-//                                        "Fetching FCM registration token failed",
-//                                        task.exception
-//                                    )
-//                                    Log.d("zzz", "Fetching FCM registration token failed")
-//                                    return
-//                                }
-//
-//                                val token: String? = task.result
-//                                CallManager.getInstance()!!.pushToken = token
-//                                registerPushToken(token)
-//                                PrefUtils.setPushToken(context, token)
-//                                if (!didTokenSave) {
-//                                    PrefUtils.setAccessToken(context, accessToken)
-//                                    PrefUtils.setUserId(context, userId)
-//                                    didTokenSave = true
-//                                }
-//                            }
-//                        })
+                    FirebaseMessaging.getInstance().token
+                        .addOnCompleteListener(object : OnCompleteListener<String?> {
+                            override fun onComplete(task: Task<String?>) {
+                                if (!task.isSuccessful) {
+                                    Log.w(
+                                        TAG,
+                                        "Fetching FCM registration token failed",
+                                        task.exception
+                                    )
+                                    Log.d("zzz", "Fetching FCM registration token failed")
+                                    return
+                                }
+
+                                val token: String? = task.result
+                                CallManager.getInstance()!!.pushToken = token
+                                registerPushToken(token)
+                                PrefUtils.setPushToken(context, token)
+                                if (!didTokenSave) {
+                                    PrefUtils.setAccessToken(context, accessToken)
+                                    PrefUtils.setUserId(context, userId)
+                                    didTokenSave = true
+                                }
+                            }
+                        })
                 }
             }
         })
@@ -162,7 +154,6 @@ object SendbirdCallImpl {
             ) { e ->
                 if (e == null) {
                     // The push token is registered successfully.
-                    Log.d("zzz", "The push token is registered successfully")
                 }
             }
         }

@@ -67,18 +67,18 @@ class CallManager {
 
     fun handleSendbirdEvent(context: Context) {
         mContext = context
-        SendBirdCall.removeAllListeners()
+//        SendBirdCall.removeAllListeners()
         directCall?.setListener(object : DirectCallListener() {
             override fun onEstablished(call: DirectCall) {
                 super.onEstablished(call)
             }
 
-            override fun onConnected(directCall: DirectCall) {
+            override fun onConnected(call: DirectCall) {
                 onCallStateChanged!!.invoke(CallState.CONNECTED)
                 callState = "CONNECTED"
             }
 
-            override fun onEnded(directCall: DirectCall) {
+            override fun onEnded(call: DirectCall) {
                 onCallStateChanged!!.invoke(CallState.ENDED)
                 CallService.stopService(context)
                 resetCall()

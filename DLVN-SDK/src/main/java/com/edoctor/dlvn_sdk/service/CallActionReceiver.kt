@@ -14,7 +14,7 @@ class CallActionReceiver : BroadcastReceiver() {
         if (action != null) {
             when (action) {
                 "DECLINE_CALL" -> {
-                    CallManager.getInstance()?.mContext = null
+//                    CallManager.getInstance()?.mContext = null
                     CallManager.getInstance()?.expireEclinicRinging()
                     CallManager.getInstance()?.directCall?.end()
                 }
