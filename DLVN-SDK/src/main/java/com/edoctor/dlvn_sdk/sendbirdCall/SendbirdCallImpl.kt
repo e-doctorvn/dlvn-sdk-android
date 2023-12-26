@@ -59,7 +59,6 @@ object SendbirdCallImpl {
                     directCall.end()
                     return
                 }
-
                 CallService.onRinging(context, directCall)
 
                 CallManager.getInstance()?.directCall = directCall
@@ -91,7 +90,7 @@ object SendbirdCallImpl {
     @JvmStatic
     fun deAuthenticate(context: Context) {
         removeAllListeners()
-        CallManager.getInstance()!!.pushToken?.let {
+        PrefUtils.getPushToken(context)?.let {
             SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
                 SendBirdCall.deauthenticate() {
                     didTokenSave = false
@@ -100,6 +99,15 @@ object SendbirdCallImpl {
                 }
             }
         }
+//        CallManager.getInstance()!!.pushToken?.let {
+//            SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
+//                SendBirdCall.deauthenticate() {
+//                    didTokenSave = false
+//                    PrefUtils.removeSendbirdAuthData(context)
+//                    Toast.makeText(context, "Logged out SB", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//        }
     }
 
     @JvmStatic
@@ -110,29 +118,38 @@ object SendbirdCallImpl {
                 if (e == null) {
                     addListener(context)
                     Toast.makeText(context, "Login $userId Success", Toast.LENGTH_SHORT).show()
-                    FirebaseMessaging.getInstance().token
-                        .addOnCompleteListener(object : OnCompleteListener<String?> {
-                            override fun onComplete(task: Task<String?>) {
-                                if (!task.isSuccessful) {
-                                    Log.w(
-                                        TAG,
-                                        "Fetching FCM registration token failed",
-                                        task.exception
-                                    )
-                                    Log.d("zzz", "Fetching FCM registration token failed")
-                                    return
-                                }
-
-                                val token: String? = task.result
-                                CallManager.getInstance()!!.pushToken = token
-                                registerPushToken(token)
-                                if (!didTokenSave) {
-                                    PrefUtils.setAccessToken(context, accessToken)
-                                    PrefUtils.setUserId(context, userId)
-                                    didTokenSave = true
-                                }
-                            }
-                        })
+                    val token = PrefUtils.getPushToken(context)
+                    CallManager.getInstance()!!.pushToken = token
+                    registerPushToken(token)
+                    if (!didTokenSave) {
+                        PrefUtils.setAccessToken(context, accessToken)
+                        PrefUtils.setUserId(context, userId)
+                        didTokenSave = true
+                    }
+//                    FirebaseMessaging.getInstance().token
+//                        .addOnCompleteListener(object : OnCompleteListener<String?> {
+//                            override fun onComplete(task: Task<String?>) {
+//                                if (!task.isSuccessful) {
+//                                    Log.w(
+//                                        TAG,
+//                                        "Fetching FCM registration token failed",
+//                                        task.exception
+//                                    )
+//                                    Log.d("zzz", "Fetching FCM registration token failed")
+//                                    return
+//                                }
+//
+//                                val token: String? = task.result
+//                                CallManager.getInstance()!!.pushToken = token
+//                                registerPushToken(token)
+//                                PrefUtils.setPushToken(context, token)
+//                                if (!didTokenSave) {
+//                                    PrefUtils.setAccessToken(context, accessToken)
+//                                    PrefUtils.setUserId(context, userId)
+//                                    didTokenSave = true
+//                                }
+//                            }
+//                        })
                 }
             }
         })
@@ -145,6 +162,7 @@ object SendbirdCallImpl {
             ) { e ->
                 if (e == null) {
                     // The push token is registered successfully.
+                    Log.d("zzz", "The push token is registered successfully")
                 }
             }
         }

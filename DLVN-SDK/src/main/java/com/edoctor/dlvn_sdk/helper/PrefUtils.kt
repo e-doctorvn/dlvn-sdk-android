@@ -55,5 +55,6 @@ object PrefUtils {
         val editor = getSharedPreferences(context).edit()
         editor.remove(PREF_KEY_ACCESS_TOKEN).apply()
         editor.remove(PREF_KEY_USER_ID).apply()
+        editor.remove(PREF_KEY_PUSH_TOKEN).apply()
     }
 }

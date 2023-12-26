@@ -11,9 +11,11 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.util.Rational
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -30,6 +32,7 @@ import com.edoctor.dlvn_sdk.Constants.CallState
 import com.edoctor.dlvn_sdk.R
 import com.edoctor.dlvn_sdk.helper.DimensionUtils
 import com.edoctor.dlvn_sdk.model.Dimension
+import com.google.android.flexbox.FlexboxLayout.LayoutParams
 import com.sendbird.calls.AcceptParams
 import com.sendbird.calls.CallOptions
 import com.sendbird.calls.DirectCall
@@ -228,11 +231,15 @@ class VideoCallActivity : AppCompatActivity() {
             toggleLocalView(true)
             bottomContainer!!.visibility = View.INVISIBLE
             bottomOverlay!!.visibility = View.INVISIBLE
+            remoteView!!.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+            remoteView!!.requestLayout()
         } else {
             // Restore the full-screen UI.
             toggleLocalView()
             bottomContainer!!.visibility = View.VISIBLE
             bottomOverlay!!.visibility = View.VISIBLE
+            remoteView!!.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+            remoteView!!.requestLayout()
         }
     }
 

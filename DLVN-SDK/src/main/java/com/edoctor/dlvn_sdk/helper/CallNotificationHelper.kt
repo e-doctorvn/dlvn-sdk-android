@@ -7,7 +7,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.edoctor.dlvn_sdk.Constants
 import com.edoctor.dlvn_sdk.R
+import com.edoctor.dlvn_sdk.sendbirdCall.VideoCallActivity
 import com.edoctor.dlvn_sdk.service.CallActionReceiver
 
 
@@ -27,7 +29,7 @@ object CallNotificationHelper {
             notificationManager!!.createNotificationChannel(channel)
         }
 
-        val mainActivityClass = Class.forName(context.packageName + ".MainActivity")
+        val mainActivityClass = Class.forName(Constants.sdkMainClassname)
         val intent = Intent(context, mainActivityClass).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }

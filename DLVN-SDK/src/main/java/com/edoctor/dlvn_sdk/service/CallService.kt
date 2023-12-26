@@ -14,6 +14,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.edoctor.dlvn_sdk.R
+import com.edoctor.dlvn_sdk.helper.CallNotificationHelper
 import com.edoctor.dlvn_sdk.sendbirdCall.IncomingCallActivity
 import com.edoctor.dlvn_sdk.sendbirdCall.VideoCallActivity
 import com.edoctor.dlvn_sdk.sendbirdCall.VideoCallActivity.STATE
@@ -147,6 +148,7 @@ class CallService : Service() {
 
     private fun updateNotification(serviceData: ServiceData) {
         mServiceData.set(serviceData)
+//        mServiceData.doAccept = true
         startForeground(NOTIFICATION_ID, getNotification(mServiceData))
     }
 
@@ -219,7 +221,6 @@ class CallService : Service() {
             serviceData.isEndAction = false
             serviceData.isAcceptAction = false
             serviceData.doLocalVideoStart = false
-            Log.d("zzz", "startService inside onRinging")
             startService(context, serviceData)
         }
 
