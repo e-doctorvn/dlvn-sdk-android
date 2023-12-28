@@ -18,6 +18,7 @@ This dependency requires:
   ```sh
     repositories {
         maven { url "https://jitpack.io" }
+        maven { url "https://repo.sendbird.com/public/maven" }
     }
   ```
 
@@ -26,6 +27,7 @@ This dependency requires:
   ```sh
     dependencies {
         implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.1.0'
+        implementation 'com.google.firebase:firebase-messaging:23.4.0'
     }
   ```
 
