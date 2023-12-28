@@ -1,5 +1,6 @@
 package com.edoctor.dlvn_sdk.sendbirdCall
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
@@ -48,6 +49,7 @@ class WebViewCallActivity: AppCompatActivity() {
         initCallEventListener()
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun initView() {
         remoteView = findViewById(R.id.remote_view_wv)
         remoteCoverView = findViewById(R.id.cover_wv)

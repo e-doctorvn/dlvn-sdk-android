@@ -261,10 +261,6 @@ class VideoCallActivity : AppCompatActivity() {
                     remoteView!!.visibility = View.INVISIBLE
                     bgAvatar!!.visibility = View.VISIBLE
                     tvReconnecting!!.visibility = View.VISIBLE
-//                    val reconnecting = Intent(applicationContext, IncomingCallActivity::class.java)
-//                    reconnecting.putExtra("isReconnecting", true)
-//                    reconnecting.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//                    startActivity(reconnecting)
                 }
                 CallState.RECONNECTED -> {
                     tvReconnecting!!.visibility = View.GONE

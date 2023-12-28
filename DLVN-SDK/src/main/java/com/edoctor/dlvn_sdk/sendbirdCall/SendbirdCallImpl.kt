@@ -32,7 +32,6 @@ import com.sendbird.calls.handler.SendBirdCallListener
 import com.sendbird.calls.internal.PushTokenType
 import java.util.UUID
 
-
 object SendbirdCallImpl {
     private const val TAG = "RNSendBirdCalls"
     private var didTokenSave = false

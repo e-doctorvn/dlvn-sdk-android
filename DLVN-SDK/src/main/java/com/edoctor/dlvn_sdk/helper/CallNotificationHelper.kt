@@ -29,7 +29,7 @@ object CallNotificationHelper {
             notificationManager!!.createNotificationChannel(channel)
         }
 
-        val mainActivityClass = Class.forName(Constants.sdkMainClassname) // context.packageName + ".MainActivity"
+        val mainActivityClass = Class.forName(context.packageName + ".MainActivity") // context.packageName + ".MainActivity"
         val intent = Intent(context, mainActivityClass).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }

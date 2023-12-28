@@ -71,18 +71,21 @@ class IncomingCallActivity : AppCompatActivity() {
 
     // Yêu cầu tất cả các quyền cần thiết
     private fun requestAllPermissions() {
-        if (!PermissionManager.checkCameraPermission(this) ||
-            !PermissionManager.checkMicrophonePermission(this) ||
-            !PermissionManager.checkNotificationPermission(this)
-        ) {
-            val permissions = arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.POST_NOTIFICATIONS,
-            )
+        val missingPermissions = mutableListOf<String>()
+        if (!PermissionManager.checkCameraPermission(this)) {
+            missingPermissions.add(Manifest.permission.CAMERA)
+        }
+        if (!PermissionManager.checkMicrophonePermission(this)) {
+            missingPermissions.add(Manifest.permission.RECORD_AUDIO)
+        }
+        if (!PermissionManager.checkNotificationPermission(this)) {
+            missingPermissions.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        if (missingPermissions.isNotEmpty()) {
             ActivityCompat.requestPermissions(
                 this,
-                permissions,
+                missingPermissions.toTypedArray(),
                 PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
             )
         }
