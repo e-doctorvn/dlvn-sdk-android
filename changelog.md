@@ -2,9 +2,13 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.0.26 (Updated: 21/12/2023)**
+Latest version: **1.1.0 (Updated: 28/12/2023)**
 
-## Version 1.0.26
+## Version 1.1.0
+
+- Add SendbirdCalls SDK to implement native calling => DLVN UAT pre-test
+
+## Version 1.0.26 - Without native calling (21/12/2023)
 
 - Enhance loading when open SDK
 

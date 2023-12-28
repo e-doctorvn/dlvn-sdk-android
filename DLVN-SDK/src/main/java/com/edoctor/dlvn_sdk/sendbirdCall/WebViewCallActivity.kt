@@ -144,6 +144,6 @@ class WebViewCallActivity: AppCompatActivity() {
             Constants.healthConsultantUrlDev
         } else {
             Constants.healthConsultantUrlProd
-        } + "/phong-tu-van?appointmentScheduleId="
+        } + "/phong-tu-van"
     }
 }
