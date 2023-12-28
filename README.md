@@ -37,11 +37,12 @@ This dependency requires:
 import com.example.dlvn_sdk.EdoctorDlvnSdk
 
 // Initialize SDK instance with context before using any functions
-val dlvnSdk = EdoctorDlvnSdk(context: Context, env: Env)
+val dlvnSdk = EdoctorDlvnSdk(context: Context, intent: Intent, env: Env)
 ```
 
 In this constructor:
 
+- `Intent` is the intent from MainActivity of application.
 - `env` is an enum of `Env { LIVE, SANDBOX }`. It already has the **_default value_** of `Env.SANDBOX`, so adding it to the constructor is **optional**.
 
 ## Environment notes
