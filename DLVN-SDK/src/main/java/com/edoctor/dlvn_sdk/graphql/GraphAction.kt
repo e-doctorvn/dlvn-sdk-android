@@ -44,5 +44,21 @@ object GraphAction {
                 "    }\n" +
                 "  }\n" +
                 "}"
+        const val appointmentDetail = "query AppointmentDetail(\$appointmentScheduleId: String) {\n" +
+                "  appointmentSchedules(appointmentScheduleId: \$appointmentScheduleId) {\n" +
+                "    doctor {\n" +
+                "      avatar\n" +
+                "      degree {\n" +
+                "        shortName\n" +
+                "      }\n" +
+                "      fullName\n" +
+                "    }\n" +
+                "    thirdParty {\n" +
+                "      sendbird {\n" +
+                "        channelUrl\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}"
     }
 }

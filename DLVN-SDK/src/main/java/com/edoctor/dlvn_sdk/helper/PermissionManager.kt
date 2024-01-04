@@ -29,13 +29,12 @@ object PermissionManager {
             ) == PackageManager.PERMISSION_GRANTED -> {
 
             }
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                activity, permission) -> {
+            ActivityCompat.shouldShowRequestPermissionRationale(activity, permission) -> {
                 requestPermissionLauncher.launch(permission)
                 setPermissionAsked(activity, permission)
             }
             else -> {
-                if (getRatinaleDisplayStatus(activity, permission)) {
+                if (getRationalDisplayStatus(activity, permission)) {
                     EdoctorDlvnSdk.showError(activity.getString(R.string.request_permission_msg))
                     activity.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                         data = Uri.fromParts("package", activity.packageName, null)
@@ -47,14 +46,14 @@ object PermissionManager {
         }
     }
 
-    private fun setPermissionAsked(context: Context, permission: String?) {
+    fun setPermissionAsked(context: Context, permission: String?) {
         val genPrefs = context.getSharedPreferences("GENERIC_PREFERENCES", Context.MODE_PRIVATE)
         val editor = genPrefs.edit()
         editor.putBoolean(permission, true)
         editor.apply()
     }
 
-    fun getRatinaleDisplayStatus(context: Context, permission: String?): Boolean {
+    fun getRationalDisplayStatus(context: Context, permission: String?): Boolean {
         val genPrefs = context.getSharedPreferences("GENERIC_PREFERENCES", Context.MODE_PRIVATE)
         return genPrefs.getBoolean(permission, false)
     }

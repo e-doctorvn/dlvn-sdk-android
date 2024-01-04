@@ -12,10 +12,14 @@
     <string name="incall_off_cam_label">Tắt camera</string>
     <string name="incall_end_call_label">Kết thúc</string>
     <string name="end_time_ok_label">Đã hiểu</string>
+    <string name="setting_label">Cài đặt</string>
     <string name="end_time_warning_label">Còn 03 phút sẽ hết thời gian phiên tư vấn!</string>
     <string name="btn_back_label">Trở lại</string>
     <string name="btn_retry_label">Thử lại</string>
-    <string name="request_permission_msg">Bạn vui lòng cấp quyền để thực hiện thao tác.</string>
+    <string name="btn_close_label">Đóng</string>
+    <string name="request_permission_msg">Quý khách vui lòng cấp quyền Máy ảnh để thực hiện thao tác.</string>
+    <string name="request_rational_calling_permissions_msg">Quý khách vui lòng cấp những quyền sau để sử dụng chức năng gọi video.</string>
+    <string name="request_calling_permissions_msg">Quý khách vui lòng cấp quyền Máy ảnh, Ghi âm và Thông báo để sử dụng chức năng gọi video.</string>
     <string name="no_internet_msg">Không có kết nối internet.\nVui lòng kiểm tra lại.</string>
     <string name="common_error_msg">Đã có lỗi xảy ra.\nVui lòng thử lại.</string>
     <string name="ssl_error_confirm_msg">Quý khách có muốn tiếp tục với liên kết này không?</string>

@@ -20,6 +20,7 @@ import com.edoctor.dlvn_sdk.api.ApiService
 import com.edoctor.dlvn_sdk.api.RetrofitClient
 import com.edoctor.dlvn_sdk.graphql.GraphAction
 import com.edoctor.dlvn_sdk.model.AccountInitResponse
+import com.edoctor.dlvn_sdk.model.AppointmentDetailResponse
 import com.edoctor.dlvn_sdk.webview.SdkWebView
 import com.google.gson.JsonObject
 import org.json.JSONObject
@@ -129,13 +130,13 @@ class EdoctorDlvnSdk(
         SendbirdCallImpl.authenticate(context, userId, accessToken)
     }
 
-    fun deAuthenticateSb() {
+    private fun deAuthenticateSb() {
         SendbirdCallImpl.deAuthenticate(context)
     }
 
     private fun initDLVNAccount(mCallback: (result: Any?) -> Unit) {
         try {
-            if (authParams != null) {
+            if (authParams != null) { // && dlvnAccessToken == null
                 isFetching = true
 
                 val params = JsonObject()
@@ -200,7 +201,7 @@ class EdoctorDlvnSdk(
                                     val data = response.body()!!.account
                                     sendBirdAccount = SendBirdAccount(
                                         data.accountId,
-                                        data.thirdParty.sendbird.token
+                                        data.thirdParty.sendbird.token,
                                     )
                                     SendbirdCallImpl.authenticate(
                                         context,
@@ -219,7 +220,6 @@ class EdoctorDlvnSdk(
                 }
             }
         } catch (e: Error) {
-
         }
     }
 
@@ -232,6 +232,14 @@ class EdoctorDlvnSdk(
 
         webView.clearCacheAndCookies(context)
         SendbirdCallImpl.deAuthenticate(context)
+    }
+
+    private fun configCall(params: JSONObject) {
+        if (DLVNSendData(params)) {
+            initDLVNAccount {
+                Log.d("zzz", "initDLVNAccount success")
+            }
+        }
     }
 
     private fun isNetworkConnected(): Boolean {

@@ -2,6 +2,7 @@ package com.edoctor.dlvn_sdk.sendbirdCall
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -34,9 +35,9 @@ class WebViewCallActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_webview)
+        webView.domain = getChatRoomUrl()
         if (savedInstanceState == null) {
             webView.hideLoading = true
-            webView.domain = getChatRoomUrl()
             webView.webViewCallActivity = this@WebViewCallActivity
 
             supportFragmentManager
@@ -144,6 +145,6 @@ class WebViewCallActivity: AppCompatActivity() {
             Constants.healthConsultantUrlDev
         } else {
             Constants.healthConsultantUrlProd
-        } + "/phong-tu-van"
+        } + "/phong-tu-van?channel=${callManager?.appointmentDetail?.channelUrl}"
     }
 }

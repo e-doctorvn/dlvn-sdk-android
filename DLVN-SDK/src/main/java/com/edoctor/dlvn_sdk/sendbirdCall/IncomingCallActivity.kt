@@ -4,14 +4,16 @@ import android.Manifest
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.ActivityOptions
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
+import android.provider.Settings
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.FrameLayout
@@ -19,16 +21,20 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.edoctor.dlvn_sdk.Constants
+import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import com.edoctor.dlvn_sdk.R
 import com.edoctor.dlvn_sdk.helper.CallNotificationHelper
 import com.edoctor.dlvn_sdk.helper.PermissionManager
 import com.edoctor.dlvn_sdk.service.CallActionReceiver
 import com.edoctor.dlvn_sdk.service.CallService
+import com.google.android.material.snackbar.Snackbar
 import com.sendbird.calls.DirectCall
 import jp.wasabeef.glide.transformations.BlurTransformation
 
@@ -43,12 +49,15 @@ class IncomingCallActivity : AppCompatActivity() {
 //    private var txtTimeout: TextView? = null
     private var bgIncoming: ImageView? = null
     private var callerAvatar: ImageView? = null
-    private var mReceiver: CallActionReceiver? = null
+
+    private var timeoutValue: Int = 60
     private lateinit var mainHandler: Handler
+    private var mReceiver: CallActionReceiver? = null
     private var callManager: CallManager? = CallManager.getInstance()
     private var directCall: DirectCall? = callManager?.directCall
-    private var timeoutValue: Int = 60
+    private val NEEDED_CALLING_PERMISSIONS = "CAMERA_MICROPHONE_NOTIFICATION"
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_incoming_call)
@@ -70,51 +79,63 @@ class IncomingCallActivity : AppCompatActivity() {
     }
 
     // Yêu cầu tất cả các quyền cần thiết
+
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun requestAllPermissions() {
-        val missingPermissions = mutableListOf<String>()
-        if (!PermissionManager.checkCameraPermission(this)) {
-            missingPermissions.add(Manifest.permission.CAMERA)
-        }
-        if (!PermissionManager.checkMicrophonePermission(this)) {
-            missingPermissions.add(Manifest.permission.RECORD_AUDIO)
-        }
-        if (!PermissionManager.checkNotificationPermission(this)) {
-            missingPermissions.add(Manifest.permission.POST_NOTIFICATIONS)
-        }
-
-        if (missingPermissions.isNotEmpty()) {
-            ActivityCompat.requestPermissions(
-                this,
-                missingPermissions.toTypedArray(),
-                PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
-            )
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PermissionManager.ALL_PERMISSIONS_REQUEST_CODE) {
-            // Kiểm tra xem tất cả các quyền đã được cấp hay chưa
-            var allPermissionsGranted = true
-            for (result in grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {
-                    allPermissionsGranted = false
-                    break
+        if (
+            ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+            + ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            + ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            if (
+                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)
+                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)
+                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS)
+            ) {
+                Snackbar.make(
+                    this.findViewById(android.R.id.content),
+                    getString(R.string.request_rational_calling_permissions_msg),
+                    Snackbar.LENGTH_INDEFINITE
+                ).setTextMaxLines(3).setAction(getString(R.string.incoming_accept_label)) {
+                    requestPermissions(
+                        arrayOf(
+                            Manifest.permission.RECORD_AUDIO,
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ),
+                        PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
+                    )
+                    PermissionManager.setPermissionAsked(this, NEEDED_CALLING_PERMISSIONS)
+                }.show()
+            } else {
+                if (PermissionManager.getRationalDisplayStatus(this, NEEDED_CALLING_PERMISSIONS)) {
+                    Snackbar.make(
+                        this.findViewById(android.R.id.content),
+                        getString(R.string.request_calling_permissions_msg),
+                        Snackbar.LENGTH_INDEFINITE
+                    ).setTextMaxLines(3).setAction(getString(R.string.setting_label)) {
+                        startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", packageName, null)
+                        })
+                    }.show()
+                } else {
+                    requestPermissions(
+                        arrayOf(
+                            Manifest.permission.RECORD_AUDIO,
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ),
+                        PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
+                    )
                 }
             }
-            if (allPermissionsGranted) {
-                // Tất cả các quyền đã được cấp, tiến hành thực hiện các tác vụ liên quan đến camera, microphone, và thông báo
-                // ở đây
-            } else {
-                // Nếu người dùng từ chối cấp quyền, bạn có thể hiển thị một thông báo hoặc xử lý một cách phù hợp
-            }
+        } else {
+            // Permissions already granted
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
     private fun initView() {
         acceptCallBtn = findViewById(R.id.btn_answer_call)
@@ -128,19 +149,34 @@ class IncomingCallActivity : AppCompatActivity() {
         btnToggleMic = findViewById(R.id.btn_toggle_mic_incoming)
         bgColorIncoming = findViewById(R.id.bg_color_incoming)
 
+        callManager?.getAppointmentDetail {
+            Glide
+                .with(this)
+                .load(if (EdoctorDlvnSdk.environment == Constants.Env.SANDBOX) {
+                        Constants.edrAttachmentUrlDev
+                    } else {
+                        Constants.edrAttachmentUrlProd
+                    } + it?.doctor?.avatar
+                )
+                .circleCrop()
+                .into(callerAvatar!!)
+
+            txtCaller!!.text = it?.doctor?.degree?.shortName + " " + it?.doctor?.fullName + " gọi video"
+        }
+
         if (directCall?.callee?.nickname != null) {
 //            txtCallee!!.text = directCall?.callee?.nickname
         }
-        txtCaller!!.text = "BS. " + directCall?.caller?.nickname + " gọi video"
+//        txtCaller!!.text = "BS. " + directCall?.caller?.nickname + " gọi video"
 
         mainHandler = Handler(Looper.getMainLooper())
         countdownRingingTimeout()
 
-        Glide
-            .with(this)
-            .load(directCall?.caller?.profileUrl)
-            .circleCrop()
-            .into(callerAvatar!!)
+//        Glide
+//            .with(this)
+//            .load(directCall?.caller?.profileUrl)
+//            .circleCrop()
+//            .into(callerAvatar!!)
         Glide
             .with(this)
             .load(resources.getDrawable(R.drawable.dlvn_city_bg))
@@ -150,15 +186,48 @@ class IncomingCallActivity : AppCompatActivity() {
 //        setUpAnimation()
 
         acceptCallBtn!!.setOnClickListener {
-            val context: Context = this@IncomingCallActivity
-            val intent = Intent(context, VideoCallActivity::class.java)
-            context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
+            if (checkMicCamPermissions()) {
+                val context: Context = this@IncomingCallActivity
+                val intent = Intent(context, VideoCallActivity::class.java)
+                context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
 
-            finish()
+                finish()
+            } else {
+                var dialog: AlertDialog? = null
+                val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+                builder.setMessage(getString(R.string.request_calling_permissions_msg))
+                builder.setPositiveButton(getString(R.string.end_time_ok_label)) { _, _ ->
+                    dialog?.dismiss()
+                    if (
+                        ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS)
+                    ) {
+                        requestPermissions(
+                            arrayOf(
+                                Manifest.permission.RECORD_AUDIO,
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.POST_NOTIFICATIONS
+                            ),
+                            PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
+                        )
+                        PermissionManager.setPermissionAsked(this, NEEDED_CALLING_PERMISSIONS)
+                    } else {
+                        startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", packageName, null)
+                        })
+                    }
+                }
+                builder.setNegativeButton(getString(R.string.btn_close_label)) { _, _ ->
+                    dialog?.dismiss()
+                }
+                dialog = builder.create()
+                dialog.show()
+            }
         }
 
         rejectCallBtn!!.setOnClickListener {
-            callManager!!.expireEclinicRinging()
+            callManager!!.endEclinicCall()
             callManager!!.directCall?.end()
             CallService.stopService(this)
         }
@@ -187,6 +256,7 @@ class IncomingCallActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun handleCallService() {
         requestAllPermissions()
 //        callManager?.handleSendbirdEvent(this@IncomingCallActivity)
@@ -233,6 +303,17 @@ class IncomingCallActivity : AppCompatActivity() {
 
     private fun countdownRingingTimeout() {
         mainHandler.post(countdown)
+    }
+
+    private fun checkMicCamPermissions(): Boolean {
+        if (
+            ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+            + ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            return false
+        }
+        return true
     }
 
     private fun setUpAnimation() {

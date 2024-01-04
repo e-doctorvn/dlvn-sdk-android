@@ -9,6 +9,8 @@ import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import com.edoctor.dlvn_sdk.api.ApiService
 import com.edoctor.dlvn_sdk.api.RetrofitClient
 import com.edoctor.dlvn_sdk.graphql.GraphAction
+import com.edoctor.dlvn_sdk.model.AppointmentDetailInfo
+import com.edoctor.dlvn_sdk.model.AppointmentDetailResponse
 import com.edoctor.dlvn_sdk.service.CallService
 import com.google.gson.JsonObject
 import com.sendbird.calls.AudioDevice
@@ -33,6 +35,7 @@ class CallManager {
     var mContext: Context? = null
     private var apiService: ApiService? = null
     var acceptCallSetting: AcceptSetting? = AcceptSetting()
+    var appointmentDetail: AppointmentDetailInfo? = AppointmentDetailInfo()
 
     init {
         if (apiService === null) {
@@ -207,7 +210,46 @@ class CallManager {
         }
     }
 
+    fun getAppointmentDetail(mCallback: (result: AppointmentDetailInfo?) -> Unit) {
+        val params = JsonObject()
+        val variables = JSONObject()
+        if (appointmentDetail?.channelUrl == "") {
+            if (directCall?.customItems?.contains("appointmentScheduleId") == true) {
+                variables.put(
+                    "appointmentScheduleId",
+                    directCall?.customItems?.get("appointmentScheduleId")
+                )
+                params.addProperty("query", GraphAction.Query.appointmentDetail)
+                params.addProperty("variables", variables.toString())
 
+                EdoctorDlvnSdk.edrAccessToken?.let {
+                    apiService?.getAppointmentDetail(params)
+                        ?.enqueue(object : Callback<AppointmentDetailResponse> {
+                            override fun onResponse(
+                                call: Call<AppointmentDetailResponse>,
+                                response: Response<AppointmentDetailResponse>
+                            ) {
+                                val data = response.body()?.appointmentSchedules?.get(0)
+                                if (!data?.thirdParty?.sendbird?.channelUrl.isNullOrEmpty()) {
+                                    appointmentDetail?.channelUrl =
+                                        data!!.thirdParty.sendbird.channelUrl.toString()
+                                }
+                                appointmentDetail?.doctor = data?.doctor!!
+                                mCallback(appointmentDetail)
+                            }
+
+                            override fun onFailure(
+                                call: Call<AppointmentDetailResponse>,
+                                t: Throwable
+                            ) {
+                            }
+                        })
+                }
+            }
+        } else {
+            mCallback(appointmentDetail)
+        }
+    }
 
     fun rotateCamera(call: DirectCall) {
         call.switchCamera() {

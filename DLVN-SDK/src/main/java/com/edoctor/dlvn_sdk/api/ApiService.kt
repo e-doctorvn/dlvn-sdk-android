@@ -2,6 +2,7 @@ package com.edoctor.dlvn_sdk.api
 
 import com.edoctor.dlvn_sdk.model.SBAccountResponse
 import com.edoctor.dlvn_sdk.model.AccountInitResponse
+import com.edoctor.dlvn_sdk.model.AppointmentDetailResponse
 import com.edoctor.dlvn_sdk.model.User
 import com.google.gson.JsonObject
 import retrofit2.Call
@@ -28,4 +29,7 @@ interface ApiService {
 
     @POST("graphql")
     fun expireEClinicRinging(@Header("Authorization") token: String, @Body params: JsonObject): Call<Any>
+
+    @POST("graphql")
+    fun getAppointmentDetail(@Body params: JsonObject): Call<AppointmentDetailResponse>
 }

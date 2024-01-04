@@ -72,6 +72,7 @@ object SendbirdCallImpl {
                 CallManager.getInstance()?.directCall = call
                 CallManager.getInstance()?.callState = "RINGING"
                 CallManager.getInstance()!!.handleSendbirdEvent(context)
+                CallManager.getInstance()!!.getAppointmentDetail {}
 
                 if (CallNotificationHelper.action != null) {
                     if (CallNotificationHelper.action == "_decline") {
@@ -117,6 +118,7 @@ object SendbirdCallImpl {
                 if (e == null) {
                     addListener(context)
                     Toast.makeText(context, "Login $userId Success", Toast.LENGTH_SHORT).show()
+                    Log.println(Log.ASSERT, null, userId)
                     FirebaseMessaging.getInstance().token
                         .addOnCompleteListener(object : OnCompleteListener<String?> {
                             override fun onComplete(task: Task<String?>) {
@@ -186,6 +188,7 @@ object SendbirdCallImpl {
         if (accessToken != null && accessToken != "" && userId != null && userId != "") {
             didTokenSave = true
             if (EdoctorDlvnSdk.sendBirdAccount?.token == null) {
+                EdoctorDlvnSdk.edrAccessToken = accessToken
                 EdoctorDlvnSdk.sendBirdAccount = SendBirdAccount(userId, accessToken)
             }
             authenticate(context, userId, accessToken)
