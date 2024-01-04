@@ -21,6 +21,7 @@ import com.edoctor.dlvn_sdk.api.RetrofitClient
 import com.edoctor.dlvn_sdk.graphql.GraphAction
 import com.edoctor.dlvn_sdk.model.AccountInitResponse
 import com.edoctor.dlvn_sdk.model.AppointmentDetailResponse
+import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdChatImpl
 import com.edoctor.dlvn_sdk.webview.SdkWebView
 import com.google.gson.JsonObject
 import org.json.JSONObject
@@ -232,6 +233,7 @@ class EdoctorDlvnSdk(
 
         webView.clearCacheAndCookies(context)
         SendbirdCallImpl.deAuthenticate(context)
+        SendbirdChatImpl.disconnect()
     }
 
     private fun configCall(params: JSONObject) {

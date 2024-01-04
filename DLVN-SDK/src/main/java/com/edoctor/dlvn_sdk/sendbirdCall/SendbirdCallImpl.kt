@@ -118,7 +118,7 @@ object SendbirdCallImpl {
                 if (e == null) {
                     addListener(context)
                     Toast.makeText(context, "Login $userId Success", Toast.LENGTH_SHORT).show()
-                    Log.println(Log.ASSERT, null, userId)
+                    Log.d("zzz", userId)
                     FirebaseMessaging.getInstance().token
                         .addOnCompleteListener(object : OnCompleteListener<String?> {
                             override fun onComplete(task: Task<String?>) {
@@ -135,6 +135,8 @@ object SendbirdCallImpl {
                                 val token: String? = task.result
                                 CallManager.getInstance()!!.pushToken = token
                                 registerPushToken(token)
+                                SendbirdChatImpl.initSendbirdChat(context, "0BEF9C57-BA3B-474E-A40F-62B027AA47F6", userId, accessToken!!)
+                                SendbirdChatImpl.registerPushToken(token!!)
                                 PrefUtils.setPushToken(context, token)
                                 if (!didTokenSave) {
                                     PrefUtils.setAccessToken(context, accessToken)
