@@ -11,7 +11,7 @@ import android.util.Log
 import android.widget.Toast
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import com.edoctor.dlvn_sdk.R
-import com.edoctor.dlvn_sdk.helper.CallNotificationHelper
+import com.edoctor.dlvn_sdk.helper.NotificationHelper
 import com.edoctor.dlvn_sdk.helper.PrefUtils
 import com.edoctor.dlvn_sdk.model.SendBirdAccount
 import com.edoctor.dlvn_sdk.service.CallActionReceiver
@@ -33,12 +33,14 @@ import com.sendbird.calls.internal.PushTokenType
 import java.util.UUID
 
 object SendbirdCallImpl {
-    private const val TAG = "RNSendBirdCalls"
+    private var edrAppId = ""
     private var didTokenSave = false
+    private const val TAG = "RNSendBirdCalls"
 
     @JvmStatic
     fun initSendbirdCall(context: Context, APP_ID: String) {
         if (SendBirdCall.init(context, APP_ID)) {
+            edrAppId = APP_ID
             Toast
                 .makeText(context, "initSendbirdCall success", Toast.LENGTH_SHORT)
                 .show()
@@ -74,8 +76,8 @@ object SendbirdCallImpl {
                 CallManager.getInstance()!!.handleSendbirdEvent(context)
                 CallManager.getInstance()!!.getAppointmentDetail {}
 
-                if (CallNotificationHelper.action != null) {
-                    if (CallNotificationHelper.action == "_decline") {
+                if (NotificationHelper.action != null) {
+                    if (NotificationHelper.action == "_decline") {
                         CallManager.getInstance()?.pushToken = null
                         call.end()
                     }
@@ -128,16 +130,17 @@ object SendbirdCallImpl {
                                         "Fetching FCM registration token failed",
                                         task.exception
                                     )
-                                    Log.d("zzz", "Fetching FCM registration token failed")
                                     return
                                 }
 
                                 val token: String? = task.result
                                 CallManager.getInstance()!!.pushToken = token
                                 registerPushToken(token)
-                                SendbirdChatImpl.initSendbirdChat(context, "0BEF9C57-BA3B-474E-A40F-62B027AA47F6", userId, accessToken!!)
-                                SendbirdChatImpl.registerPushToken(token!!)
                                 PrefUtils.setPushToken(context, token)
+
+                                SendbirdChatImpl.initSendbirdChat(context, edrAppId, userId, accessToken!!)
+                                SendbirdChatImpl.registerPushToken(token!!)
+
                                 if (!didTokenSave) {
                                     PrefUtils.setAccessToken(context, accessToken)
                                     PrefUtils.setUserId(context, userId)
@@ -178,7 +181,7 @@ object SendbirdCallImpl {
         }
 
         CallManager.getInstance()?.directCall = call
-        CallManager.getInstance()?.callState = "DIALING"
+//        CallManager.getInstance()?.callState = "DIALING"
         val intent = Intent(context, IncomingCallActivity::class.java)
         context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(context as Activity).toBundle())
     }

@@ -3,7 +3,7 @@ package com.edoctor.dlvn_sdk.service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.edoctor.dlvn_sdk.helper.CallNotificationHelper
+import com.edoctor.dlvn_sdk.helper.NotificationHelper
 import com.edoctor.dlvn_sdk.sendbirdCall.CallManager
 
 class CallActionReceiver : BroadcastReceiver() {
@@ -21,7 +21,7 @@ class CallActionReceiver : BroadcastReceiver() {
                 "CallAction" ->
                     when (key) {
                         "END_CALL" -> {
-                            CallNotificationHelper.cancelCallNotification()
+                            NotificationHelper.cancelCallNotification()
                         }
                         "ACCEPT_CALL" -> {
 

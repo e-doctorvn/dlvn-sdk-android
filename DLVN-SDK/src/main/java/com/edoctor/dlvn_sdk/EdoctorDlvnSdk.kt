@@ -9,7 +9,7 @@ import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
-import com.edoctor.dlvn_sdk.helper.CallNotificationHelper
+import com.edoctor.dlvn_sdk.helper.NotificationHelper
 import com.edoctor.dlvn_sdk.model.SBAccountResponse
 import com.edoctor.dlvn_sdk.model.SendBirdAccount
 import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdCallImpl
@@ -20,7 +20,6 @@ import com.edoctor.dlvn_sdk.api.ApiService
 import com.edoctor.dlvn_sdk.api.RetrofitClient
 import com.edoctor.dlvn_sdk.graphql.GraphAction
 import com.edoctor.dlvn_sdk.model.AccountInitResponse
-import com.edoctor.dlvn_sdk.model.AppointmentDetailResponse
 import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdChatImpl
 import com.edoctor.dlvn_sdk.webview.SdkWebView
 import com.google.gson.JsonObject
@@ -75,9 +74,9 @@ class EdoctorDlvnSdk(
 
         if (intent.action?.equals("CallAction") == true) {
             if (intent.getStringExtra("Key") == "END_CALL") {
-                CallNotificationHelper.action = "_decline"
+                NotificationHelper.action = "_decline"
             } else {
-                CallNotificationHelper.action = "_accept"
+                NotificationHelper.action = "_accept"
             }
         }
         SendbirdCallImpl.initSendbirdCall(context, edrAppId)

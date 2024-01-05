@@ -30,7 +30,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.edoctor.dlvn_sdk.Constants
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import com.edoctor.dlvn_sdk.R
-import com.edoctor.dlvn_sdk.helper.CallNotificationHelper
+import com.edoctor.dlvn_sdk.helper.NotificationHelper
 import com.edoctor.dlvn_sdk.helper.PermissionManager
 import com.edoctor.dlvn_sdk.service.CallActionReceiver
 import com.edoctor.dlvn_sdk.service.CallService
@@ -97,7 +97,7 @@ class IncomingCallActivity : AppCompatActivity() {
                     this.findViewById(android.R.id.content),
                     getString(R.string.request_rational_calling_permissions_msg),
                     Snackbar.LENGTH_INDEFINITE
-                ).setTextMaxLines(3).setAction(getString(R.string.incoming_accept_label)) {
+                ).setTextMaxLines(3).setAction(getString(R.string.incoming_agree_label)) {
                     requestPermissions(
                         arrayOf(
                             Manifest.permission.RECORD_AUDIO,
@@ -260,7 +260,7 @@ class IncomingCallActivity : AppCompatActivity() {
     private fun handleCallService() {
         requestAllPermissions()
 //        callManager?.handleSendbirdEvent(this@IncomingCallActivity)
-        CallNotificationHelper.cancelCallNotification()
+        NotificationHelper.cancelCallNotification()
         CallService.stopService(this)
     }
 

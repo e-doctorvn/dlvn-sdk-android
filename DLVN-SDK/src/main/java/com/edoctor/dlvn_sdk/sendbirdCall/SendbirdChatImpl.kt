@@ -2,18 +2,24 @@ package com.edoctor.dlvn_sdk.sendbirdCall
 
 import android.content.Context
 import android.util.Log
-import com.edoctor.dlvn_sdk.helper.PrefUtils
+import com.edoctor.dlvn_sdk.service.PushNotificationService
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.messaging.FirebaseMessaging
 import com.sendbird.android.SendbirdChat
 import com.sendbird.android.exception.SendbirdException
 import com.sendbird.android.handler.InitResultHandler
+import com.sendbird.android.handler.PushRequestCompleteHandler
 import com.sendbird.android.params.InitParams
 import com.sendbird.android.push.PushTokenRegistrationStatus
+import com.sendbird.android.push.SendbirdPushHelper
 
 object SendbirdChatImpl {
+    private const val TAG = "RNSendBirdChat"
+
     fun initSendbirdChat(context: Context, APP_ID: String, userId: String, token: String) {
+        SendbirdPushHelper.registerPushHandler(PushNotificationService())
+
         SendbirdChat.init(
             InitParams(APP_ID, context, useCaching = true),
             object : InitResultHandler {
@@ -26,39 +32,19 @@ object SendbirdChatImpl {
                 }
 
                 override fun onInitSucceed() {
-                    Log.d("zzz", "SendbirdChat initialization is completed.")
-                    SendbirdChat.connect(userId, token) { user, e ->
+                    SendbirdChat.connect(userId, token) { user, _ ->
                         if (user != null) {
-                            Log.d("zzz", "SendbirdChat connect is completed.")
+                            SendbirdPushHelper.registerPushHandler(PushNotificationService())
                             FirebaseMessaging.getInstance().token
                                 .addOnCompleteListener(object : OnCompleteListener<String?> {
                                     override fun onComplete(task: Task<String?>) {
                                         if (!task.isSuccessful) {
-                                            Log.d("zzz", "Fetching FCM registration token failed")
                                             return
                                         }
                                         registerPushToken(task.result!!)
                                         Log.d("zzz", "READY TO GET CHAT NOTI")
                                     }
                                 })
-//                            if (e != null) {
-//                                // Proceed in offline mode with the data stored in the local database.
-//                                // Later, connection will be made automatically.
-//                                // The connection will be notified through ConnectionHandler.onReconnectSucceeded()
-//                                FirebaseMessaging.getInstance().token
-//                                    .addOnCompleteListener(object : OnCompleteListener<String?> {
-//                                        override fun onComplete(task: Task<String?>) {
-//                                            if (!task.isSuccessful) {
-//                                                Log.d("zzz", "Fetching FCM registration token failed")
-//                                                return
-//                                            }
-//                                            registerPushToken(task.result!!)
-//                                            Log.d("zzz", "READY TO GET CHAT NOTI")
-//                                        }
-//                                    })
-//                            } else {
-//                                // Proceed in online mode.
-//                            }
                         } else {
                             // Handle error.
                         }
@@ -69,7 +55,7 @@ object SendbirdChatImpl {
     }
 
     fun registerPushToken(pushToken: String) {
-//        if (SendbirdChat.isInitialized) {
+        if (SendbirdChat.isInitialized) {
             SendbirdChat.registerPushToken(pushToken) { status ,e ->
                 if (e != null) {
                     // Handle error.
@@ -80,14 +66,22 @@ object SendbirdChatImpl {
                     // Try registering again after a connection has been successfully established.
                 }
             }
-//        }
+        }
     }
 
     fun disconnect() {
         if (SendbirdChat.isInitialized) {
-            SendbirdChat.disconnect {
-                Log.d("zzz", "SendbirdChat disconnected.")
-            }
+            SendbirdPushHelper.unregisterPushHandler(true, object : PushRequestCompleteHandler {
+                override fun onComplete(isRegistered: Boolean, token: String?) {
+                    SendbirdChat.disconnect {
+                        Log.d("zzz", "SendbirdChat disconnected.")
+                    }
+                }
+
+                override fun onError(e: SendbirdException) {
+                    Log.d(TAG, e.message.toString())
+                }
+            })
         }
     }
 }

@@ -11,10 +11,8 @@ import android.graphics.BitmapFactory
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.edoctor.dlvn_sdk.R
-import com.edoctor.dlvn_sdk.helper.CallNotificationHelper
 import com.edoctor.dlvn_sdk.sendbirdCall.IncomingCallActivity
 import com.edoctor.dlvn_sdk.sendbirdCall.VideoCallActivity
 import com.edoctor.dlvn_sdk.sendbirdCall.VideoCallActivity.STATE

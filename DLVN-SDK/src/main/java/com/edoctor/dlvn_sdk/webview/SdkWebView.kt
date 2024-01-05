@@ -365,7 +365,9 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 if (myWebView.url == domain) {
                     selfClose()
                 } else if (myWebView.canGoBack()) {
-                    myWebView.goBack()
+                    if (myWebView.url?.contains("/phong-tu-van") == false) {
+                        myWebView.goBack()
+                    }
                 } else {
                     dismiss()
                 }
@@ -402,6 +404,17 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             PermissionManager.handleRequestPermission(
                 requireActivity(),
                 Manifest.permission.CAMERA,
+                it
+            )
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun requestPostNotificationPermission() {
+        requestPermissionLauncher?.let {
+            PermissionManager.handleRequestPermission(
+                requireActivity(),
+                Manifest.permission.POST_NOTIFICATIONS,
                 it
             )
         }

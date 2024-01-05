@@ -3,7 +3,8 @@
     <string name="EDR_APP_ID">0BEF9C57-BA3B-474E-A40F-62B027AA47F6</string>
     <string name="incoming_calling_label" tools:ignore="TypographyEllipsis">Đang gọi...</string>
     <string name="incoming_decline_label">Từ chối</string>
-    <string name="incoming_accept_label">Đồng ý</string>
+    <string name="incoming_agree_label">Đồng ý</string>
+    <string name="incoming_accept_label">Chấp nhận</string>
     <string name="incall_network_error_label" tools:ignore="TypographyEllipsis">Đã xảy ra sự cố kết nối. Đang kết nối lại...</string>
     <string name="incall_open_chat_label">Mở chat</string>
     <string name="incall_on_mic_label">Bật mic</string>
