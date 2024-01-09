@@ -72,8 +72,10 @@ class FCMService : FirebaseMessagingService(), LifecycleObserver {
                 val sendbird = remoteMessage.data["sendbird"]?.let { JSONObject(it) }
                 val messageTitle = "Tin nhắn mới từ bác sĩ"
                 val messageBody = sendbird?.get("message") as String
+                val channel = sendbird.get("channel") as JSONObject
+                val channelUrl = channel.get("channel_url") as String
 
-                NotificationHelper.showChatNotification(this, messageTitle, messageBody)
+                NotificationHelper.showChatNotification(this, messageTitle, messageBody, channelUrl)
             }
         } catch (e: JSONException) {
 

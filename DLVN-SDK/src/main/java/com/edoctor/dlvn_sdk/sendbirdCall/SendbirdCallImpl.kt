@@ -193,7 +193,6 @@ object SendbirdCallImpl {
         if (accessToken != null && accessToken != "" && userId != null && userId != "") {
             didTokenSave = true
             if (EdoctorDlvnSdk.sendBirdAccount?.token == null) {
-                EdoctorDlvnSdk.edrAccessToken = accessToken
                 EdoctorDlvnSdk.sendBirdAccount = SendBirdAccount(userId, accessToken)
             }
             authenticate(context, userId, accessToken)

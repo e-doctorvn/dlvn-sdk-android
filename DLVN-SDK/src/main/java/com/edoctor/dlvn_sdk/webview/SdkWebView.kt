@@ -48,6 +48,7 @@ import androidx.fragment.app.DialogFragment
 import com.edoctor.dlvn_sdk.Constants
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import com.edoctor.dlvn_sdk.R
+import com.edoctor.dlvn_sdk.helper.NotificationHelper
 import com.edoctor.dlvn_sdk.helper.PermissionManager
 import com.edoctor.dlvn_sdk.store.AppStore
 import java.io.File
@@ -259,6 +260,10 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                             hideLoading = false
                             loading.visibility = View.GONE
                             checkTimeoutLoadWebView = true
+
+                            requireActivity().runOnUiThread {
+                                requestPostNotificationPermission()
+                            }
                         }
                         super.onPageFinished(view, url)
                     },2000)
@@ -409,7 +414,6 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun requestPostNotificationPermission() {
         requestPermissionLauncher?.let {
             PermissionManager.handleRequestPermission(
@@ -417,6 +421,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 Manifest.permission.POST_NOTIFICATIONS,
                 it
             )
+            NotificationHelper.initialize(requireContext())
         }
     }
 

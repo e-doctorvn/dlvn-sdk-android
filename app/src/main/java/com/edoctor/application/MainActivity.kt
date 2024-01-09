@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        edoctorDlvnSdk = EdoctorDlvnSdk(applicationContext, intent)
+        edoctorDlvnSdk = EdoctorDlvnSdk(this@MainActivity, intent)
 
         myBtn = findViewById(R.id.btn_id)
         callManh = findViewById(R.id.call_manh)
@@ -51,7 +51,8 @@ class MainActivity : AppCompatActivity() {
 
         callDanh!!.setOnClickListener {
 //            edoctorDlvnSdk!!.sampleFunc("zzz")
-            SendbirdCallImpl.startCall(this@MainActivity, "dev_manh2")
+//            SendbirdCallImpl.startCall(this@MainActivity, "dev_manh2")
+            edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
         }
 
         myBtn!!.setOnClickListener {

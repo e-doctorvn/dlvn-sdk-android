@@ -9,6 +9,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.edoctor.dlvn_sdk.Constants
 import com.edoctor.dlvn_sdk.R
@@ -23,7 +24,7 @@ object NotificationHelper {
     private const val CHANNEL_ID = "call_channel_id"
     private val mainActivityClass = Class.forName(Constants.sdkMainClassname) // context.packageName + ".MainActivity"
 
-    private fun initialize(context: Context) {
+    fun initialize(context: Context) {
         if (notificationManager == null) {
             notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -73,11 +74,13 @@ object NotificationHelper {
         notificationManager?.cancel(1)
     }
 
-    fun showChatNotification(context: Context, messageTitle: String, messageBody: String) {
+    fun showChatNotification(context: Context, messageTitle: String, messageBody: String, channelUrl: String) {
         initialize(context)
 
         val intent = Intent(context, mainActivityClass).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("isChatNotification", true)
+            putExtra("channelUrl", channelUrl)
         }
         val fullScreenIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         // Implement your own way to create and show a notification containing the received FCM message.

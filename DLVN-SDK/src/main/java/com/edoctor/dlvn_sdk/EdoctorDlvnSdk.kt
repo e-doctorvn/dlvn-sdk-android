@@ -3,11 +3,13 @@
 package com.edoctor.dlvn_sdk
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.edoctor.dlvn_sdk.helper.NotificationHelper
 import com.edoctor.dlvn_sdk.model.SBAccountResponse
@@ -19,6 +21,7 @@ import com.edoctor.dlvn_sdk.Constants.webViewTag
 import com.edoctor.dlvn_sdk.api.ApiService
 import com.edoctor.dlvn_sdk.api.RetrofitClient
 import com.edoctor.dlvn_sdk.graphql.GraphAction
+import com.edoctor.dlvn_sdk.helper.PrefUtils
 import com.edoctor.dlvn_sdk.model.AccountInitResponse
 import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdChatImpl
 import com.edoctor.dlvn_sdk.webview.SdkWebView
@@ -72,6 +75,9 @@ class EdoctorDlvnSdk(
             webView.defaultDomain = Constants.healthConsultantUrlProd
         }
 
+        checkSavedAuthCredentials()
+        SendbirdCallImpl.initSendbirdCall(context, edrAppId)
+
         if (intent.action?.equals("CallAction") == true) {
             if (intent.getStringExtra("Key") == "END_CALL") {
                 NotificationHelper.action = "_decline"
@@ -79,7 +85,9 @@ class EdoctorDlvnSdk(
                 NotificationHelper.action = "_accept"
             }
         }
-        SendbirdCallImpl.initSendbirdCall(context, edrAppId)
+        if (intent.hasExtra("isChatNotification") && intent.getBooleanExtra("isChatNotification", false)) {
+            intent.getStringExtra("channelUrl")?.let { openChatChannelFromNotification(it) }
+        }
     }
 
     fun openWebView(fragmentManager: FragmentManager, url: String?) {
@@ -148,6 +156,9 @@ class EdoctorDlvnSdk(
                 }
                 authParams!!.getString("token").let {
                     dlvnAccessToken = it.toString()
+                    if (PrefUtils.getDlvnToken(context) == "") {
+                        PrefUtils.setDlvnToken(context, it.toString())
+                    }
                 }
                 params.addProperty("query", GraphAction.Mutation.dlvnAccountInit)
                 params.addProperty("variables", variables.toString())
@@ -157,6 +168,10 @@ class EdoctorDlvnSdk(
                         if (response.body()?.dlvnAccountInit?.accessToken != null) {
                             needClearCache = false
                             edrAccessToken = response.body()!!.dlvnAccountInit.accessToken
+                            if (PrefUtils.getEdrToken(context) == "") {
+                                PrefUtils.setEdrToken(context, edrAccessToken)
+                            }
+
                             mCallback(response.body())
                             getSendbirdAccount()
                         } else {
@@ -184,7 +199,7 @@ class EdoctorDlvnSdk(
         }
     }
 
-    fun getSendbirdAccount() {
+    private fun getSendbirdAccount() {
         try {
             if (sendBirdAccount?.token == null) {
                 val params = JsonObject()
@@ -231,6 +246,7 @@ class EdoctorDlvnSdk(
         needClearCache = true
 
         webView.clearCacheAndCookies(context)
+        PrefUtils.removeSdkAuthData(context)
         SendbirdCallImpl.deAuthenticate(context)
         SendbirdChatImpl.disconnect()
     }
@@ -240,6 +256,27 @@ class EdoctorDlvnSdk(
             initDLVNAccount {
                 Log.d("zzz", "initDLVNAccount success")
             }
+        }
+    }
+
+    private fun checkSavedAuthCredentials() {
+        val edrToken: String? = PrefUtils.getEdrToken(context)
+        val dlvnToken: String? = PrefUtils.getDlvnToken(context)
+
+        if (!dlvnToken.isNullOrEmpty() && !edrToken.isNullOrEmpty()) {
+            edrAccessToken = edrToken
+            dlvnAccessToken = dlvnToken
+        }
+    }
+
+    private fun openChatChannelFromNotification(channelUrl: String) {
+        try {
+            val activity = context as AppCompatActivity
+            val url = webView.defaultDomain + "/phong-tu-van?channel=${channelUrl}"
+
+            openWebView(activity.supportFragmentManager, url)
+        } catch (e: Exception) {
+            Log.d("zzz", e.message.toString())
         }
     }
 
