@@ -85,8 +85,11 @@ class EdoctorDlvnSdk(
                 NotificationHelper.action = "_accept"
             }
         }
-        if (intent.hasExtra("isChatNotification") && intent.getBooleanExtra("isChatNotification", false)) {
-            intent.getStringExtra("channelUrl")?.let { openChatChannelFromNotification(it) }
+        if (intent.hasExtra(Constants.IntentExtra.chatNotification)
+            && intent.getBooleanExtra(Constants.IntentExtra.chatNotification, false)) {
+            intent.getStringExtra(Constants.IntentExtra.channelUrl)?.let {
+                openChatChannelFromNotification(it)
+            }
         }
     }
 

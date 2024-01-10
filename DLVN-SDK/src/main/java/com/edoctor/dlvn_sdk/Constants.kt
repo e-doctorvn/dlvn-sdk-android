@@ -16,6 +16,10 @@ object Constants {
         const val shareDlvnArticle: String = "shared-article"
         const val requestLoginNative: String = "request-login-native"
     }
+    object IntentExtra {
+        const val chatNotification: String = "isEdrChatNotification"
+        const val channelUrl: String = "edrChannelUrl"
+    }
     enum class CallState {
         ESTABLISHED, CONNECTED, RECONNECTING, RECONNECTED, ENDED
     }
