@@ -11,6 +11,7 @@ import com.edoctor.dlvn_sdk.helper.PrefUtils
 import com.edoctor.dlvn_sdk.sendbirdCall.CallManager
 import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdCallImpl
 import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdChatImpl
+import com.edoctor.dlvn_sdk.store.AppStore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.sendbird.android.push.SendbirdPushHandler
@@ -75,7 +76,9 @@ class FCMService : FirebaseMessagingService(), LifecycleObserver {
                 val channel = sendbird.get("channel") as JSONObject
                 val channelUrl = channel.get("channel_url") as String
 
-                NotificationHelper.showChatNotification(this, messageTitle, messageBody, channelUrl)
+                if (AppStore.activeChannelUrl != channelUrl) {
+                    NotificationHelper.showChatNotification(this, messageTitle, messageBody, channelUrl)
+                }
             }
         } catch (e: JSONException) {
 

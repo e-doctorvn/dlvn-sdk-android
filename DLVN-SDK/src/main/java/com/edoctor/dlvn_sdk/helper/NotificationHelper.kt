@@ -23,10 +23,10 @@ object NotificationHelper {
     private var notificationManager: NotificationManager? = null
 
     private const val CHANNEL_ID = "call_channel_id"
-    private var mainActivityClass = Class.forName(Constants.sdkMainClassname) // context.packageName + ".MainActivity"
+    private var activityClassName = ""
 
     fun initialize(context: Context) {
-//        mainActivityClass = Class.forName(context.packageName + ".MainActivity")
+        activityClassName = context.packageName + ".MainActivity" // Constants.sdkMainClassname
 
         if (notificationManager == null) {
             notificationManager =
@@ -47,6 +47,7 @@ object NotificationHelper {
     fun showCallNotification(context: Context, callerName: String) {
         initialize(context)
 
+        val mainActivityClass = Class.forName(activityClassName)
         val intent = Intent(context, mainActivityClass).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
@@ -80,6 +81,7 @@ object NotificationHelper {
     fun showChatNotification(context: Context, messageTitle: String, messageBody: String, channelUrl: String) {
         initialize(context)
 
+        val mainActivityClass = Class.forName(activityClassName)
         val intent = Intent(context, mainActivityClass).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra(Constants.IntentExtra.chatNotification, true)

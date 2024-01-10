@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat.startActivity
 import com.edoctor.dlvn_sdk.Constants
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import com.edoctor.dlvn_sdk.sendbirdCall.CallManager
+import com.edoctor.dlvn_sdk.store.AppStore
 import org.json.JSONObject
 
 class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
@@ -54,6 +55,12 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                 sharingIntent.type = "text/plain"
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody)
                 mWebview?.context?.let { startActivity(it, Intent.createChooser(sharingIntent, "Share via"), null) }
+            }
+            Constants.WebviewParams.onChangeChatChannel -> {
+                val data = JSONObject(json.get("data").toString())
+                if (data.has("channelUrl")) {
+                    AppStore.activeChannelUrl = data.getString("channelUrl")
+                }
             }
         }
         return true

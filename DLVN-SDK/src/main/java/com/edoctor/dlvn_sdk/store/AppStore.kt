@@ -9,4 +9,5 @@ object AppStore {
     var webViewInstance: SdkWebView? = null
     @SuppressLint("StaticFieldLeak")
     var sdkInstance: EdoctorDlvnSdk? = null
+    var activeChannelUrl: String? = null
 }

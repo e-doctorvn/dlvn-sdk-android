@@ -15,6 +15,7 @@ object Constants {
         const val goBackFromDlvn: String = "go-back"
         const val shareDlvnArticle: String = "shared-article"
         const val requestLoginNative: String = "request-login-native"
+        const val onChangeChatChannel: String = "active-channel-url"
     }
     object IntentExtra {
         const val chatNotification: String = "isEdrChatNotification"
