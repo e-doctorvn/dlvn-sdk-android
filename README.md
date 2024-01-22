@@ -2,7 +2,7 @@
 
 EDR - DLVN Android SDK
 
-## Version 1.1.0
+## Version 1.1.1
 
 ## Requirements
 
@@ -42,7 +42,7 @@ val dlvnSdk = EdoctorDlvnSdk(context: Context, intent: Intent, env: Env)
 
 In this constructor:
 
-- `Intent` is the intent from MainActivity of application.
+- `Intent` is the intent from MainActivity of application. SDK uses this to handle notifications which belong to chat/video consultant service.
 - `env` is an enum of `Env { LIVE, SANDBOX }`. It already has the **_default value_** of `Env.SANDBOX`, so adding it to the constructor is **optional**.
 
 ## Environment notes
@@ -112,13 +112,25 @@ Function for DLVN to listen to the SDK when it needs to request login from DC ap
   }
   ```
 
-#### clearWebViewCache
+#### deauthenticateEDR
 
 Clear SDK's data when DC app logs out.
 
 ```kotlin
-  dlvnSdk.clearWebViewCache(): Unit
+  dlvnSdk.deauthenticateEDR(): Unit
 ```
+
+#### authenticateEDR
+
+Call this function after user logined successfully to initialize SDK's listener for chat/call events.
+
+```kotlin
+  dlvnSdk.authenticateEDR(params: JSONObject): Unit
+```
+
+| Parameter | Type         | Description  |
+| :-------- | :----------- | :----------- |
+| `params`  | `JSONObject` | **Required** |
 
 #### Sample function
 

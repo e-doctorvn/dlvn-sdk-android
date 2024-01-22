@@ -2,9 +2,16 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.0 (Updated: 28/12/2023)**
+Latest version: **1.1.1 (Updated: 22/01/2024)**
 
-## Version 1.1.0
+## Version 1.1.1 - Includes Chat + Call libraries (22/01/2024)
+
+- Add Chat library and handling notifications.
+- Handle checking SDK version on web to use Chat/Call with doctor features.
+- Rename `clearWebViewCache` function to `deauthenticateEDR`
+- Add function `authenticateEDR`
+
+## Version 1.1.0 - Pre-test native calling (28/12/2023)
 
 - Add SendbirdCalls SDK to implement native calling => DLVN UAT pre-test
 
