@@ -41,9 +41,9 @@ object SendbirdCallImpl {
     fun initSendbirdCall(context: Context, APP_ID: String) {
         if (SendBirdCall.init(context, APP_ID)) {
             edrAppId = APP_ID
-            Toast
-                .makeText(context, "initSendbirdCall success", Toast.LENGTH_SHORT)
-                .show()
+//            Toast
+//                .makeText(context, "initSendbirdCall success", Toast.LENGTH_SHORT)
+//                .show()
             checkLoggedInUser(context)
         }
     }
@@ -106,7 +106,7 @@ object SendbirdCallImpl {
                 SendBirdCall.deauthenticate() {
                     didTokenSave = false
                     PrefUtils.removeSendbirdAuthData(context)
-                    Toast.makeText(context, "Logged out SB", Toast.LENGTH_SHORT).show()
+                    // Toast.makeText(context, "Logged out SB", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -119,8 +119,8 @@ object SendbirdCallImpl {
             override fun onResult(user: User?, e: SendBirdException?) {
                 if (e == null) {
                     addListener(context)
-                    Toast.makeText(context, "Login $userId Success", Toast.LENGTH_SHORT).show()
-                    Log.d("zzz", userId)
+//                    Toast.makeText(context, "Login $userId Success", Toast.LENGTH_SHORT).show()
+                    Log.d("zzz", "UserID: $userId")
                     FirebaseMessaging.getInstance().token
                         .addOnCompleteListener(object : OnCompleteListener<String?> {
                             override fun onComplete(task: Task<String?>) {

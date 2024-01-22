@@ -22,8 +22,8 @@ object NotificationHelper {
     var action: String? = null
     private var notificationManager: NotificationManager? = null
 
-    private const val CHANNEL_ID = "call_channel_id"
     private var activityClassName = ""
+    private const val CHANNEL_ID = "call_channel_id"
 
     fun initialize(context: Context) {
         activityClassName = context.packageName + ".MainActivity" // Constants.sdkMainClassname

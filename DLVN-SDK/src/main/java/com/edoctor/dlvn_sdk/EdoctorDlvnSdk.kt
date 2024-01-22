@@ -3,7 +3,6 @@
 package com.edoctor.dlvn_sdk
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -137,7 +136,7 @@ class EdoctorDlvnSdk(
 
     var onSdkRequestLogin: ((callbackUrl: String) -> Unit)? = {}
 
-    fun authenticateSb(context: Context, userId: String, accessToken: String) {
+    private fun authenticateSb(context: Context, userId: String, accessToken: String) {
         SendbirdCallImpl.authenticate(context, userId, accessToken)
     }
 
@@ -174,7 +173,6 @@ class EdoctorDlvnSdk(
                             if (PrefUtils.getEdrToken(context) == "") {
                                 PrefUtils.setEdrToken(context, edrAccessToken)
                             }
-
                             mCallback(response.body())
                             getSendbirdAccount()
                         } else {
@@ -241,7 +239,7 @@ class EdoctorDlvnSdk(
         }
     }
 
-    fun clearWebViewCache() {
+    fun deauthenticateEDR() {
         edrAccessToken = null
         dlvnAccessToken = null
         authParams = null
@@ -254,7 +252,7 @@ class EdoctorDlvnSdk(
         SendbirdChatImpl.disconnect()
     }
 
-    private fun configCall(params: JSONObject) {
+    fun authenticateEDR(params: JSONObject) { // Goi luc login thanh cong, ko goi moi lan mo app
         if (DLVNSendData(params)) {
             initDLVNAccount {
                 Log.d("zzz", "initDLVNAccount success")

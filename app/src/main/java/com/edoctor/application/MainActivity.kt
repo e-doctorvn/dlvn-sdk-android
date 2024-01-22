@@ -6,7 +6,6 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
-import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdCallImpl
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
@@ -40,13 +39,13 @@ class MainActivity : AppCompatActivity() {
 
         loginManh!!.setOnClickListener {
             txtName!!.text = "Danh (EDR)"
-            edoctorDlvnSdk!!.authenticateSb(
-                this@MainActivity, "dev_danh2", "3b98b5e8b0c2c560d651d02ce1551b6a69cf76ca"
-//                "dev_xUqOcSQLXGsxR1i1",
-//                "42bc707a751935047ec58391a6da05c42cc6deab"
-//                "dev_manh", // dev_0XJyZqTJN7ecrUOc
-//                "45fda7a0a7920752243d302738c8be4dabba92b8" // 206d35ef4bf4bed04672e4254db6e06db812b3ec
-            )
+//            edoctorDlvnSdk!!.authenticateSb(
+//                this@MainActivity, "dev_danh2", "3b98b5e8b0c2c560d651d02ce1551b6a69cf76ca"
+////                "dev_xUqOcSQLXGsxR1i1",
+////                "42bc707a751935047ec58391a6da05c42cc6deab"
+////                "dev_manh", // dev_0XJyZqTJN7ecrUOc
+////                "45fda7a0a7920752243d302738c8be4dabba92b8" // 206d35ef4bf4bed04672e4254db6e06db812b3ec
+//            )
         }
 
         callDanh!!.setOnClickListener {
@@ -72,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btn_dangxuat!!.setOnClickListener {
-            edoctorDlvnSdk!!.clearWebViewCache()
+            edoctorDlvnSdk!!.deauthenticateEDR()
         }
     }
 }

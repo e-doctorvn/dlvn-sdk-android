@@ -251,6 +251,13 @@ class CallManager {
         }
     }
 
+    fun getDirectCallFromSleep(context: Context, callID: String) {
+        directCall = SendBirdCall.getCall(callID)
+        callState = "RINGING"
+        handleSendbirdEvent(context)
+        getAppointmentDetail {}
+    }
+
     fun rotateCamera(call: DirectCall) {
         call.switchCamera() {
 

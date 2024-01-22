@@ -48,9 +48,8 @@ class FCMService : FirebaseMessagingService(), LifecycleObserver {
             // CALL
             val messageType =
                 remoteMessage.data["sendbird_call"]?.let { JSONObject(it).getJSONObject("command").get("type").toString() }
-    //        Log.d("zzz", messageType)
-    //        val callId = remoteMessage.data["sendbird_call"]?.let { JSONObject(it).getJSONObject("command").getJSONObject("payload").get("custom_items") }
-    //        callId?.toString()?.let { Log.d("zzz", it) }
+            val callId = remoteMessage.data["sendbird_call"]?.let { JSONObject(it).getJSONObject("command").getJSONObject("payload").get("custom_items") }
+            callId?.toString()?.let { Log.d("zzz", it) }
             if (isAppInForeground) {
                 if (handleFirebaseMessageData(remoteMessage.data)) {
 
@@ -76,8 +75,23 @@ class FCMService : FirebaseMessagingService(), LifecycleObserver {
                 val channel = sendbird.get("channel") as JSONObject
                 val channelUrl = channel.get("channel_url") as String
 
-                if (AppStore.activeChannelUrl != channelUrl) {
-                    NotificationHelper.showChatNotification(this, messageTitle, messageBody, channelUrl)
+                Log.d("zzz", "message: $messageBody")
+                if (isAppInForeground) {
+                    if (AppStore.activeChannelUrl != channelUrl) {
+                        NotificationHelper.showChatNotification(
+                            this,
+                            messageTitle,
+                            messageBody,
+                            channelUrl
+                        )
+                    }
+                } else {
+                    NotificationHelper.showChatNotification(
+                        this,
+                        messageTitle,
+                        messageBody,
+                        channelUrl
+                    )
                 }
             }
         } catch (e: JSONException) {
