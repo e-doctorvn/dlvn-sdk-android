@@ -1,6 +1,7 @@
 package com.edoctor.dlvn_sdk.webview
 
 import android.content.Intent
+import android.util.Log
 import android.webkit.JavascriptInterface
 import androidx.core.content.ContextCompat.startActivity
 import com.edoctor.dlvn_sdk.Constants
@@ -24,6 +25,9 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
         val json = JSONObject(data)
         when (json.getString("type")) {
             Constants.WebviewParams.closeWebview -> {
+                if (AppStore.activeChannelUrl != Constants.entryChannel) {
+                    AppStore.activeChannelUrl = Constants.entryChannel
+                }
                 if (CallManager.getInstance()?.directCall != null) {
                     CallManager.getInstance()?.closeWebViewActivity?.invoke()
                 } else {
@@ -57,10 +61,12 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                 mWebview?.context?.let { startActivity(it, Intent.createChooser(sharingIntent, "Share via"), null) }
             }
             Constants.WebviewParams.onChangeChatChannel -> {
-                val data = JSONObject(json.get("data").toString())
-                if (data.has("channelUrl")) {
-                    AppStore.activeChannelUrl = data.getString("channelUrl")
+                if (json.has("channelUrl")) {
+                    AppStore.activeChannelUrl = json.get("channelUrl").toString()
                 }
+            }
+            Constants.WebviewParams.onRequestUpdateApp -> {
+                mWebview?.openAppInStore()
             }
         }
         return true

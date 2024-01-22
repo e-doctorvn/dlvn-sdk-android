@@ -10,12 +10,15 @@ object Constants {
     const val dlvnDomain = "dai-ichi-life.com.vn"
     const val webViewTag = "EDR-WebView"
     const val sdkMainClassname = "com.edoctor.application.MainActivity"
+    const val entryChannel = "entry_channel_url"
+    const val dConnectStoreUrl = "https://play.google.com/store/apps/details?id=com.dlvn.mcustomerportal"
     object WebviewParams {
         const val closeWebview: String = "close-webview"
         const val goBackFromDlvn: String = "go-back"
         const val shareDlvnArticle: String = "shared-article"
         const val requestLoginNative: String = "request-login-native"
         const val onChangeChatChannel: String = "active-channel-url"
+        const val onRequestUpdateApp: String = "request-update-app"
     }
     object IntentExtra {
         const val chatNotification: String = "isEdrChatNotification"

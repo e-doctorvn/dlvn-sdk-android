@@ -130,6 +130,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             buttonBack = v.findViewById(R.id.buttonBack)
             buttonNext = v.findViewById(R.id.buttonNext)
             containerErrorNetwork = v.findViewById(R.id.containerErrorNetwork)
+            myWebView.overScrollMode = View.OVER_SCROLL_NEVER
 
             if (EdoctorDlvnSdk.needClearCache) {
                 clearCacheAndCookies(requireContext())
@@ -275,6 +276,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                         view?.evaluateJavascript("sessionStorage.setItem(\"accessTokenEdr\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
                         view?.evaluateJavascript("sessionStorage.setItem(\"upload_token\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
                         view?.evaluateJavascript("sessionStorage.setItem(\"accessTokenDlvn\", \"${EdoctorDlvnSdk.dlvnAccessToken}\");") {}
+                        view?.evaluateJavascript("sessionStorage.setItem(\"sdkSupportConsultant\", ${true});") {}
                     }
                     Thread {
                         try {
@@ -402,6 +404,10 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             myWebView.clearHistory()
             myWebView.clearSslPreferences()
         }
+    }
+
+    fun openAppInStore() {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Constants.dConnectStoreUrl)))
     }
 
     private fun requestCameraPermission() {
