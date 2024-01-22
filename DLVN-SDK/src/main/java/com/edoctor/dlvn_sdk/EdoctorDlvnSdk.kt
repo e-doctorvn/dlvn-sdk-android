@@ -77,17 +77,20 @@ class EdoctorDlvnSdk(
         checkSavedAuthCredentials()
         SendbirdCallImpl.initSendbirdCall(context, edrAppId)
 
-        if (intent.action?.equals("CallAction") == true) {
-            if (intent.getStringExtra("Key") == "END_CALL") {
-                NotificationHelper.action = "_decline"
-            } else {
-                NotificationHelper.action = "_accept"
+        if (intent != null) {
+            if (intent?.action?.equals("CallAction") == true) {
+                if (intent.getStringExtra("Key") == "END_CALL") {
+                    NotificationHelper.action = "_decline"
+                } else {
+                    NotificationHelper.action = "_accept"
+                }
             }
-        }
-        if (intent.hasExtra(Constants.IntentExtra.chatNotification)
-            && intent.getBooleanExtra(Constants.IntentExtra.chatNotification, false)) {
-            intent.getStringExtra(Constants.IntentExtra.channelUrl)?.let {
-                openChatChannelFromNotification(it)
+            if (intent?.hasExtra(Constants.IntentExtra.chatNotification) == true
+                && intent?.getBooleanExtra(Constants.IntentExtra.chatNotification, false)!!
+            ) {
+                intent.getStringExtra(Constants.IntentExtra.channelUrl)?.let {
+                    openChatChannelFromNotification(it)
+                }
             }
         }
     }
