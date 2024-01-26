@@ -22,9 +22,13 @@ import com.edoctor.dlvn_sdk.api.RetrofitClient
 import com.edoctor.dlvn_sdk.graphql.GraphAction
 import com.edoctor.dlvn_sdk.helper.PrefUtils
 import com.edoctor.dlvn_sdk.model.AccountInitResponse
+import com.edoctor.dlvn_sdk.sendbirdCall.CallManager
 import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdChatImpl
 import com.edoctor.dlvn_sdk.webview.SdkWebView
+import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.JsonObject
+import com.sendbird.calls.SendBirdCall
+import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -57,6 +61,64 @@ class EdoctorDlvnSdk(
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
         }
+
+        fun isEdrMessage(remoteMessage: RemoteMessage): Boolean {
+            if (remoteMessage.data.containsKey("sendbird") || remoteMessage.data.containsKey("sendbird_call")) {
+                return true
+            }
+            return false
+        }
+
+        fun handleEdrRemoteMessage(pContext: Context, remoteMessage: RemoteMessage, icon: Int?) {
+            try {
+                val messageType =
+                    remoteMessage.data["sendbird_call"]?.let { JSONObject(it).getJSONObject("command").get("type").toString() }
+
+                // CHAT
+                if (remoteMessage.data.containsKey("sendbird")) {
+                    val sendbird = remoteMessage.data["sendbird"]?.let { JSONObject(it) }
+                    val channel = sendbird?.get("channel") as JSONObject
+                    val channelUrl = channel.get("channel_url") as String
+                    val sender = sendbird.get("sender") as JSONObject
+                    val doctorName = sender.get("name") as String
+
+                    val messageTitle = "Quý khách có tin nhắn mới từ $doctorName"
+                    val messageBody = doctorName + ": " + sendbird.get("message") as String
+
+                    NotificationHelper.showChatNotification(pContext, messageTitle, messageBody, channelUrl, icon)
+                } else {
+                    // CALL
+                    if (AppStore.isAppInForeground) {
+                        if (SendBirdCall.handleFirebaseMessageData(remoteMessage.data)) {
+
+                        }
+                    } else {
+                        if (messageType == "dial") {
+                            val pushToken: String? = CallManager.getInstance()?.pushToken
+                            if (pushToken != null) {
+                                SendBirdCall.handleFirebaseMessageData(remoteMessage.data)
+                            } else {
+                                NotificationHelper.showCallNotification(
+                                    pContext,
+                                    CallManager.getInstance()?.directCall?.caller?.nickname ?: "Bác sĩ"
+                                )
+                            }
+                        }
+                    }
+                }
+            } catch (e: JSONException) {
+
+            }
+        }
+
+        fun handleNewToken(pContext: Context, token: String) {
+            SendbirdChatImpl.registerPushToken(token)
+            if (SendBirdCall.currentUser != null) {
+                SendbirdCallImpl.registerPushToken(token)
+            } else {
+                PrefUtils.setPushToken(pContext, token)
+            }
+        }
     }
 
     init {
@@ -77,20 +139,18 @@ class EdoctorDlvnSdk(
         checkSavedAuthCredentials()
         SendbirdCallImpl.initSendbirdCall(context, edrAppId)
 
-        if (intent != null) {
-            if (intent?.action?.equals("CallAction") == true) {
-                if (intent.getStringExtra("Key") == "END_CALL") {
-                    NotificationHelper.action = "_decline"
-                } else {
-                    NotificationHelper.action = "_accept"
-                }
+        if (intent.action?.equals("CallAction") == true) {
+            if (intent.getStringExtra("Key") == "END_CALL") {
+                NotificationHelper.action = "_decline"
+            } else {
+                NotificationHelper.action = "_accept"
             }
-            if (intent?.hasExtra(Constants.IntentExtra.chatNotification) == true
-                && intent?.getBooleanExtra(Constants.IntentExtra.chatNotification, false)!!
-            ) {
-                intent.getStringExtra(Constants.IntentExtra.channelUrl)?.let {
-                    openChatChannelFromNotification(it)
-                }
+        }
+        if (intent.hasExtra(Constants.IntentExtra.chatNotification)
+            && intent.getBooleanExtra(Constants.IntentExtra.chatNotification, false)
+        ) {
+            intent.getStringExtra(Constants.IntentExtra.channelUrl)?.let {
+                openChatChannelFromNotification(it)
             }
         }
     }

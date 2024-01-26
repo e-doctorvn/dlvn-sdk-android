@@ -254,7 +254,7 @@ class CallManager {
     fun getDirectCallFromSleep(context: Context, callID: String) {
         directCall = SendBirdCall.getCall(callID)
         callState = "RINGING"
-        handleSendbirdEvent(context)
+//        handleSendbirdEvent(context)
         getAppointmentDetail {}
     }
 

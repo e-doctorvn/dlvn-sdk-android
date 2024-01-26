@@ -2,7 +2,13 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.1 (Updated: 22/01/2024)**
+Latest version: **1.1.2 (Updated: 26/01/2024)**
+
+## Version 1.1.2 (26/01/2024)
+
+- Fix displaying chat notification in DC app.
+- Add `EdrLifecycleObserver` interface.
+- Add 03 functions: `isEdrMessage`, `handleEdrRemoteMessage` and `handleNewToken`
 
 ## Version 1.1.1 - Includes Chat + Call libraries (22/01/2024)
 

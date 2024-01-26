@@ -60,7 +60,7 @@ object NotificationHelper {
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle("Cuộc gọi đến")
-            .setContentText("BS. $callerName đang gọi")
+            .setContentText(if (callerName == "Bác sĩ") "$callerName đang gọi" else "BS. $callerName đang gọi")
             .setSmallIcon(R.drawable.end_call_24)
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -78,7 +78,7 @@ object NotificationHelper {
         notificationManager?.cancel(1)
     }
 
-    fun showChatNotification(context: Context, messageTitle: String, messageBody: String, channelUrl: String) {
+    fun showChatNotification(context: Context, messageTitle: String, messageBody: String, channelUrl: String, icon: Int?) {
         initialize(context)
 
         val mainActivityClass = Class.forName(activityClassName)
@@ -90,7 +90,7 @@ object NotificationHelper {
         val fullScreenIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         // Implement your own way to create and show a notification containing the received FCM message.
         val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_notification)
+            .setSmallIcon(icon ?: R.drawable.ic_notification)
             .setColor(Color.parseColor("#D25540")) // small icon background color
             .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_notification))
             .setContentTitle(messageTitle)

@@ -2,7 +2,7 @@
 
 EDR - DLVN Android SDK
 
-## Version 1.1.1
+## Version 1.1.2
 
 ## Requirements
 
@@ -26,7 +26,7 @@ This dependency requires:
 
   ```sh
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.1.1'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.1.2'
         implementation 'com.google.firebase:firebase-messaging:23.4.0'
     }
   ```
@@ -132,14 +132,88 @@ Call this function after user logined successfully to initialize SDK's listener 
 | :-------- | :----------- | :----------- |
 | `params`  | `JSONObject` | **Required** |
 
-#### Sample function
+#### isEdrMessage
 
-Takes the name and return a hello string
+Call this function to check if the remote message is from EDR.
 
 ```kotlin
-  dlvnSdk.sampleFunc(name: String): String
+  EdoctorDlvnSdk.Companion.isEdrMessage(message: RemoteMessage): Boolean
+```
+
+| Parameter | Type            | Description  |
+| :-------- | :-------------- | :----------- |
+| `message` | `RemoteMessage` | **Required** |
+
+#### handleEdrRemoteMessage
+
+Call this function to let SDK handle the remote message from EDR.
+If parameter `icon` is null, SDK will use its default icon for notification.
+
+```kotlin
+  EdoctorDlvnSdk.Companion.handleEdrRemoteMessage(context: Context, message: RemoteMessage, icon: Int?): Unit
+```
+
+| Parameter | Type            | Description   |
+| :-------- | :-------------- | :------------ |
+| `context` | `Context`       | **Required**  |
+| `message` | `RemoteMessage` | **Required**  |
+| `icon`    | `Int?`          | Can be `null` |
+
+- ##### Example
+
+  - **Java**:
+
+  ```java
+  @Override
+  public void onMessageReceived(@NonNull RemoteMessage message) {
+      super.onMessageReceived(message);
+      if (EdoctorDlvnSdk.Companion.isEdrMessage(message)) {
+          EdoctorDlvnSdk.Companion.handleEdrRemoteMessage(this, message, R.drawable.dc_app_icon);
+      } else {
+          // DLVN handle
+      }
+  }
+  ```
+
+### handleNewToken
+
+Call this function inside the override function `onNewToken` of `FirebaseMessagingService`.
+
+```kotlin
+  EdoctorDlvnSdk.Companion.handleNewToken(token: String): Unit
 ```
 
 | Parameter | Type     | Description  |
 | :-------- | :------- | :----------- |
-| `name`    | `String` | **Required** |
+| `token`   | `String` | **Required** |
+
+#### EdrLifecyleObserver (Interface)
+
+Interface to implement for the class which extends `FirebaseMessagingService`. Inside this class, add the following lines of code:
+
+```java
+  @Override
+  public void onCreate() {
+      super.onCreate();
+      registerObserver();  // insert this
+  }
+
+  @Override
+  public void onDestroy() {
+      super.onDestroy();
+      unregisterObserver();  // insert this
+  }
+
+  // insert these 04 functions
+  @Override
+  public void onForegroundStart() {}
+
+  @Override
+  public void onForegroundStop() {}
+
+  @Override
+  public void registerObserver() {}
+
+  @Override
+  public void unregisterObserver() {}
+```

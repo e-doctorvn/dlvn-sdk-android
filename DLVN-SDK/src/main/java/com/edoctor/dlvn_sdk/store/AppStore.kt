@@ -10,4 +10,5 @@ object AppStore {
     @SuppressLint("StaticFieldLeak")
     var sdkInstance: EdoctorDlvnSdk? = null
     var activeChannelUrl: String? = null
+    var isAppInForeground: Boolean = false
 }
