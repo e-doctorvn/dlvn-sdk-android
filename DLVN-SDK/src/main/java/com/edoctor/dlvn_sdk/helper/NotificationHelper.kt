@@ -83,11 +83,11 @@ object NotificationHelper {
 
         val mainActivityClass = Class.forName(activityClassName)
         val intent = Intent(context, mainActivityClass).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra(Constants.IntentExtra.chatNotification, true)
             putExtra(Constants.IntentExtra.channelUrl, channelUrl)
         }
-        val fullScreenIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val fullScreenIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         // Implement your own way to create and show a notification containing the received FCM message.
         val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(icon ?: R.drawable.ic_notification)
@@ -109,11 +109,11 @@ object NotificationHelper {
 
         val mainActivityClass = Class.forName(className)
         val intent = Intent(context, mainActivityClass).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra(Constants.IntentExtra.chatNotification, true)
             putExtra(Constants.IntentExtra.channelUrl, channelUrl)
         }
-        val fullScreenIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val fullScreenIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         // Implement your own way to create and show a notification containing the received FCM message.
         val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(icon ?: R.drawable.ic_notification)
