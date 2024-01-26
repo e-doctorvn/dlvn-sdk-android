@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.3 (Updated: 26/01/2024)**
+Latest version: **1.1.4 (Updated: 26/01/2024)**
+
+## Version 1.1.4 (26/01/2024)
+
+- Update flags for chat notification: `Intent.FLAG_ACTIVITY_CLEAR_TOP` + `PendingIntent.FLAG_UPDATE_CURRENT`
 
 ## Version 1.1.3 (26/01/2024)
 
