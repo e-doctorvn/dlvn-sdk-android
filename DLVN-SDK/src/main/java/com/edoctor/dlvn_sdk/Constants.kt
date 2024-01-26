@@ -10,6 +10,7 @@ object Constants {
     const val dlvnDomain = "dai-ichi-life.com.vn"
     const val webViewTag = "EDR-WebView"
     const val sdkMainClassname = "com.edoctor.application.MainActivity"
+    const val dConnectMainClassname = "com.dlvn.mcustomerportal.activity.DashboardActivity"
     const val entryChannel = "entry_channel_url"
     const val dConnectStoreUrl = "https://play.google.com/store/apps/details?id=com.dlvn.mcustomerportal"
     object WebviewParams {

@@ -2,7 +2,7 @@
 
 EDR - DLVN Android SDK
 
-## Version 1.1.2
+## Version 1.1.3
 
 ## Requirements
 
@@ -26,7 +26,7 @@ This dependency requires:
 
   ```sh
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.1.2'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.1.3'
         implementation 'com.google.firebase:firebase-messaging:23.4.0'
     }
   ```
@@ -180,12 +180,13 @@ If parameter `icon` is null, SDK will use its default icon for notification.
 Call this function inside the override function `onNewToken` of `FirebaseMessagingService`.
 
 ```kotlin
-  EdoctorDlvnSdk.Companion.handleNewToken(token: String): Unit
+  EdoctorDlvnSdk.Companion.handleNewToken(context: Context, token: String): Unit
 ```
 
-| Parameter | Type     | Description  |
-| :-------- | :------- | :----------- |
-| `token`   | `String` | **Required** |
+| Parameter | Type      | Description  |
+| :-------- | :-------- | :----------- |
+| `context` | `Context` | **Required** |
+| `token`   | `String`  | **Required** |
 
 #### EdrLifecyleObserver (Interface)
 

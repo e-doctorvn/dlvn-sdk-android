@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.2 (Updated: 26/01/2024)**
+Latest version: **1.1.3 (Updated: 26/01/2024)**
+
+## Version 1.1.3 (26/01/2024)
+
+- Fix main classname of D-Connect app in showing notification. (`com.dlvn.mcustomerportal.activity.DashboardActivity`)
 
 ## Version 1.1.2 (26/01/2024)
 

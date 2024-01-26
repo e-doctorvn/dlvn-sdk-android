@@ -111,6 +111,26 @@ class EdoctorDlvnSdk(
             }
         }
 
+        fun handleEdrRemoteMessage2(pContext: Context, classname: String, remoteMessage: RemoteMessage, icon: Int?) {
+            try {
+                // CHAT
+                if (remoteMessage.data.containsKey("sendbird")) {
+                    val sendbird = remoteMessage.data["sendbird"]?.let { JSONObject(it) }
+                    val channel = sendbird?.get("channel") as JSONObject
+                    val channelUrl = channel.get("channel_url") as String
+                    val sender = sendbird.get("sender") as JSONObject
+                    val doctorName = sender.get("name") as String
+
+                    val messageTitle = "Quý khách có tin nhắn mới từ $doctorName"
+                    val messageBody = doctorName + ": " + sendbird.get("message") as String
+
+                    NotificationHelper.showChatNotification2(pContext, classname, messageTitle, messageBody, channelUrl, icon)
+                }
+            } catch (e: JSONException) {
+
+            }
+        }
+
         fun handleNewToken(pContext: Context, token: String) {
             SendbirdChatImpl.registerPushToken(token)
             if (SendBirdCall.currentUser != null) {
