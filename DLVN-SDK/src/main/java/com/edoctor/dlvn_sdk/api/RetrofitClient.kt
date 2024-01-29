@@ -1,6 +1,5 @@
 package com.edoctor.dlvn_sdk.api
 
-import android.util.Log
 import com.edoctor.dlvn_sdk.Constants
 import com.edoctor.dlvn_sdk.Constants.Env
 import com.edoctor.dlvn_sdk.graphql.DataConverterFactory

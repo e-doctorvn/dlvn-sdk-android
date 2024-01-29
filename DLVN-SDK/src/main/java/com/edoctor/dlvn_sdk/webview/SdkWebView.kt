@@ -48,14 +48,16 @@ import androidx.fragment.app.DialogFragment
 import com.edoctor.dlvn_sdk.Constants
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import com.edoctor.dlvn_sdk.R
+import com.edoctor.dlvn_sdk.helper.NotificationHelper
 import com.edoctor.dlvn_sdk.helper.PermissionManager
+import com.edoctor.dlvn_sdk.store.AppStore
 import java.io.File
 import java.io.IOException
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.Date
 
-open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
+class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private lateinit var loading: ConstraintLayout
     private lateinit var loadingProgressBar: ProgressBar
     lateinit var myWebView: WebView
@@ -64,6 +66,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     lateinit var containerErrorNetwork: ConstraintLayout
 
     private var sdkInstance: EdoctorDlvnSdk
+    var webViewCallActivity: Context? = null
     private var checkTimeoutLoadWebView = false
     var domain = Constants.healthConsultantUrlDev
     var defaultDomain = Constants.healthConsultantUrlDev
@@ -75,6 +78,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
     init {
         sdkInstance = sdk
+        AppStore.webViewInstance = this
     }
     companion object {
         var isVisible = false
@@ -126,6 +130,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             buttonBack = v.findViewById(R.id.buttonBack)
             buttonNext = v.findViewById(R.id.buttonNext)
             containerErrorNetwork = v.findViewById(R.id.containerErrorNetwork)
+            myWebView.overScrollMode = View.OVER_SCROLL_NEVER
 
             if (EdoctorDlvnSdk.needClearCache) {
                 clearCacheAndCookies(requireContext())
@@ -186,7 +191,6 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                     val photoFile: File = createImageFile()
                     mCM = photoFile.toUri().toString()
-
 
                     val captureImgUri =
                         FileProvider.getUriForFile(
@@ -257,6 +261,10 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                             hideLoading = false
                             loading.visibility = View.GONE
                             checkTimeoutLoadWebView = true
+
+                            requireActivity().runOnUiThread {
+                                requestPostNotificationPermission()
+                            }
                         }
                         super.onPageFinished(view, url)
                     },2000)
@@ -268,6 +276,7 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                         view?.evaluateJavascript("sessionStorage.setItem(\"accessTokenEdr\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
                         view?.evaluateJavascript("sessionStorage.setItem(\"upload_token\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
                         view?.evaluateJavascript("sessionStorage.setItem(\"accessTokenDlvn\", \"${EdoctorDlvnSdk.dlvnAccessToken}\");") {}
+                        view?.evaluateJavascript("sessionStorage.setItem(\"sdkSupportConsultant\", ${true});") {}
                     }
                     Thread {
                         try {
@@ -363,7 +372,9 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 if (myWebView.url == domain) {
                     selfClose()
                 } else if (myWebView.canGoBack()) {
-                    myWebView.goBack()
+                    if (myWebView.url?.contains("/phong-tu-van") == false) {
+                        myWebView.goBack()
+                    }
                 } else {
                     dismiss()
                 }
@@ -395,6 +406,10 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         }
     }
 
+    fun openAppInStore() {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Constants.dConnectStoreUrl)))
+    }
+
     private fun requestCameraPermission() {
         requestPermissionLauncher?.let {
             PermissionManager.handleRequestPermission(
@@ -402,6 +417,17 @@ open class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 Manifest.permission.CAMERA,
                 it
             )
+        }
+    }
+
+    private fun requestPostNotificationPermission() {
+        requestPermissionLauncher?.let {
+            PermissionManager.handleRequestPermission(
+                requireActivity(),
+                Manifest.permission.POST_NOTIFICATIONS,
+                it
+            )
+            NotificationHelper.initialize(requireContext())
         }
     }
 

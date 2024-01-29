@@ -33,6 +33,7 @@
             android:layout_height="match_parent"
             android:text="Login Manh"/>
         <Button
+            android:visibility="gone"
             android:id="@+id/btn_login_Danh"
             android:layout_width="150dp"
             android:layout_height="match_parent"
@@ -57,6 +58,7 @@
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:text="Call Manh"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

@@ -17,13 +17,12 @@ class MainActivity : AppCompatActivity() {
     private var btn_dangxuat: Button? = null
     private var txtName: TextView? = null
     private var edoctorDlvnSdk: EdoctorDlvnSdk? = null
-//    private val accessToken: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTY5MTQwMjY3MSwiZXhwIjoxNjkzMTMwNjcxfQ.o_YSfydvUboC_XjZfm_7pHtk53G0TASgazUL-1Zqh18"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        edoctorDlvnSdk = EdoctorDlvnSdk(applicationContext)
+        edoctorDlvnSdk = EdoctorDlvnSdk(this@MainActivity, intent)
 
         myBtn = findViewById(R.id.btn_id)
         callManh = findViewById(R.id.call_manh)
@@ -38,7 +37,20 @@ class MainActivity : AppCompatActivity() {
             Log.d("zzz", it)
         }
 
+        loginManh!!.setOnClickListener {
+            txtName!!.text = "Danh (EDR)"
+//            edoctorDlvnSdk!!.authenticateSb(
+//                this@MainActivity, "dev_danh2", "3b98b5e8b0c2c560d651d02ce1551b6a69cf76ca"
+////                "dev_xUqOcSQLXGsxR1i1",
+////                "42bc707a751935047ec58391a6da05c42cc6deab"
+////                "dev_manh", // dev_0XJyZqTJN7ecrUOc
+////                "45fda7a0a7920752243d302738c8be4dabba92b8" // 206d35ef4bf4bed04672e4254db6e06db812b3ec
+//            )
+        }
+
         callDanh!!.setOnClickListener {
+//            edoctorDlvnSdk!!.sampleFunc("zzz")
+//            SendbirdCallImpl.startCall(this@MainActivity, "dev_manh2")
             edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
         }
 
@@ -59,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btn_dangxuat!!.setOnClickListener {
-            edoctorDlvnSdk!!.clearWebViewCache()
+            edoctorDlvnSdk!!.deauthenticateEDR()
         }
     }
 }

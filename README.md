@@ -2,7 +2,7 @@
 
 EDR - DLVN Android SDK
 
-## Version 1.0.26
+## Version 1.1.6
 
 ## Requirements
 
@@ -18,6 +18,7 @@ This dependency requires:
   ```sh
     repositories {
         maven { url "https://jitpack.io" }
+        maven { url "https://repo.sendbird.com/public/maven" }
     }
   ```
 
@@ -25,7 +26,8 @@ This dependency requires:
 
   ```sh
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.0.26'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.1.6'
+        implementation 'com.google.firebase:firebase-messaging:23.4.0'
     }
   ```
 
@@ -35,11 +37,12 @@ This dependency requires:
 import com.example.dlvn_sdk.EdoctorDlvnSdk
 
 // Initialize SDK instance with context before using any functions
-val dlvnSdk = EdoctorDlvnSdk(context: Context, env: Env)
+val dlvnSdk = EdoctorDlvnSdk(context: Context, intent: Intent?, env: Env)
 ```
 
 In this constructor:
 
+- `Intent` should be the intent from MainActivity of application. SDK uses this to handle notifications which belong to chat/video consultant service. This parameter can be `null`.
 - `env` is an enum of `Env { LIVE, SANDBOX }`. It already has the **_default value_** of `Env.SANDBOX`, so adding it to the constructor is **optional**.
 
 ## Environment notes
@@ -109,22 +112,109 @@ Function for DLVN to listen to the SDK when it needs to request login from DC ap
   }
   ```
 
-#### clearWebViewCache
+#### deauthenticateEDR
 
 Clear SDK's data when DC app logs out.
 
 ```kotlin
-  dlvnSdk.clearWebViewCache(): Unit
+  dlvnSdk.deauthenticateEDR(): Unit
 ```
 
-#### Sample function
+#### authenticateEDR
 
-Takes the name and return a hello string
+Call this function after user logined successfully to initialize SDK's listener for chat/call events.
 
 ```kotlin
-  dlvnSdk.sampleFunc(name: String): String
+  dlvnSdk.authenticateEDR(params: JSONObject): Unit
 ```
 
-| Parameter | Type     | Description  |
-| :-------- | :------- | :----------- |
-| `name`    | `String` | **Required** |
+| Parameter | Type         | Description  |
+| :-------- | :----------- | :----------- |
+| `params`  | `JSONObject` | **Required** |
+
+#### isEdrMessage
+
+Call this function to check if the remote message is from EDR.
+
+```kotlin
+  EdoctorDlvnSdk.Companion.isEdrMessage(message: RemoteMessage): Boolean
+```
+
+| Parameter | Type            | Description  |
+| :-------- | :-------------- | :----------- |
+| `message` | `RemoteMessage` | **Required** |
+
+#### handleEdrRemoteMessage
+
+Call this function to let SDK handle the remote message from EDR.
+If parameter `icon` is null, SDK will use its default icon for notification.
+
+```kotlin
+  EdoctorDlvnSdk.Companion.handleEdrRemoteMessage(context: Context, message: RemoteMessage, icon: Int?): Unit
+```
+
+| Parameter | Type            | Description   |
+| :-------- | :-------------- | :------------ |
+| `context` | `Context`       | **Required**  |
+| `message` | `RemoteMessage` | **Required**  |
+| `icon`    | `Int?`          | Can be `null` |
+
+- ##### Example
+
+  - **Java**:
+
+  ```java
+  @Override
+  public void onMessageReceived(@NonNull RemoteMessage message) {
+      super.onMessageReceived(message);
+      if (EdoctorDlvnSdk.Companion.isEdrMessage(message)) {
+          EdoctorDlvnSdk.Companion.handleEdrRemoteMessage(this, message, R.drawable.dc_app_icon);
+      } else {
+          // DLVN handle
+      }
+  }
+  ```
+
+### handleNewToken
+
+Call this function inside the override function `onNewToken` of `FirebaseMessagingService`.
+
+```kotlin
+  EdoctorDlvnSdk.Companion.handleNewToken(context: Context, token: String): Unit
+```
+
+| Parameter | Type      | Description  |
+| :-------- | :-------- | :----------- |
+| `context` | `Context` | **Required** |
+| `token`   | `String`  | **Required** |
+
+#### EdrLifecyleObserver (Interface)
+
+Interface to implement for the class which extends `FirebaseMessagingService`. Inside this class, add the following lines of code:
+
+```java
+  @Override
+  public void onCreate() {
+      super.onCreate();
+      registerObserver();  // insert this
+  }
+
+  @Override
+  public void onDestroy() {
+      super.onDestroy();
+      unregisterObserver();  // insert this
+  }
+
+  // insert these 04 functions
+  @Override
+  public void onForegroundStart() {}
+
+  @Override
+  public void onForegroundStop() {}
+
+  @Override
+  public void registerObserver() {}
+
+  @Override
+  public void unregisterObserver() {}
+```

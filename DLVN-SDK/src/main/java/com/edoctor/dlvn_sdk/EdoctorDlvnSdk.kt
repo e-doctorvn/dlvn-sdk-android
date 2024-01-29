@@ -4,18 +4,31 @@ package com.edoctor.dlvn_sdk
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
+import com.edoctor.dlvn_sdk.helper.NotificationHelper
+import com.edoctor.dlvn_sdk.model.SBAccountResponse
+import com.edoctor.dlvn_sdk.model.SendBirdAccount
+import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdCallImpl
+import com.edoctor.dlvn_sdk.store.AppStore
 import com.edoctor.dlvn_sdk.Constants.Env
 import com.edoctor.dlvn_sdk.Constants.webViewTag
 import com.edoctor.dlvn_sdk.api.ApiService
 import com.edoctor.dlvn_sdk.api.RetrofitClient
 import com.edoctor.dlvn_sdk.graphql.GraphAction
+import com.edoctor.dlvn_sdk.helper.PrefUtils
 import com.edoctor.dlvn_sdk.model.AccountInitResponse
+import com.edoctor.dlvn_sdk.sendbirdCall.CallManager
+import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdChatImpl
 import com.edoctor.dlvn_sdk.webview.SdkWebView
+import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.JsonObject
+import com.sendbird.calls.SendBirdCall
+import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -24,8 +37,10 @@ import retrofit2.create
 
 class EdoctorDlvnSdk(
     context: Context,
+    intent: Intent?,
     env: Env = Env.SANDBOX
 ) {
+    private val edrAppId: String = context.getString(R.string.EDR_APP_ID)
     private val webView: SdkWebView = SdkWebView(this)
     private var apiService: ApiService? = null
     private var authParams: JSONObject? = null
@@ -35,21 +50,77 @@ class EdoctorDlvnSdk(
         const val LOG_TAG = "EDOCTOR_SDK"
         @SuppressLint("StaticFieldLeak")
         internal lateinit var context: Context
-        internal lateinit var accessToken: String
+        internal var environment: Env = Env.SANDBOX
         internal var needClearCache: Boolean = false
         internal var edrAccessToken: String? = null
         internal var dlvnAccessToken: String? = null
+        internal var sendBirdAccount: SendBirdAccount? = null
 
         fun showError(message: String?) {
             if (message != null && message != "null" && message != "") {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
         }
+
+        fun isEdrMessage(remoteMessage: RemoteMessage): Boolean {
+            return remoteMessage.data.containsKey("sendbird") || remoteMessage.data.containsKey("sendbird_call")
+        }
+
+        fun handleEdrRemoteMessage(pContext: Context, remoteMessage: RemoteMessage, icon: Int?) {
+            try {
+                val messageType =
+                    remoteMessage.data["sendbird_call"]?.let { JSONObject(it).getJSONObject("command").get("type").toString() }
+
+                // CHAT
+                if (remoteMessage.data.containsKey("sendbird")) {
+                    val sendbird = remoteMessage.data["sendbird"]?.let { JSONObject(it) }
+                    val channel = sendbird?.get("channel") as JSONObject
+                    val channelUrl = channel.get("channel_url") as String
+                    val sender = sendbird.get("sender") as JSONObject
+                    val doctorName = sender.get("name") as String
+
+                    val messageTitle = "Quý khách có tin nhắn mới từ $doctorName"
+                    val messageBody = doctorName + ": " + sendbird.get("message") as String
+
+                    NotificationHelper.showChatNotification(pContext, messageTitle, messageBody, channelUrl, icon)
+                } else {
+                    // CALL
+                    if (AppStore.isAppInForeground) {
+                        if (SendBirdCall.handleFirebaseMessageData(remoteMessage.data)) {
+
+                        }
+                    } else {
+                        if (messageType == "dial") {
+                            val pushToken: String? = CallManager.getInstance()?.pushToken
+                            if (pushToken != null) {
+                                SendBirdCall.handleFirebaseMessageData(remoteMessage.data)
+                            } else {
+                                NotificationHelper.showCallNotification(
+                                    pContext,
+                                    CallManager.getInstance()?.directCall?.caller?.nickname ?: "Bác sĩ"
+                                )
+                            }
+                        }
+                    }
+                }
+            } catch (_: JSONException) {
+
+            }
+        }
+
+        fun handleNewToken(pContext: Context, token: String) {
+            SendbirdChatImpl.registerPushToken(token)
+            if (SendBirdCall.currentUser != null) {
+                SendbirdCallImpl.registerPushToken(token)
+            } else {
+                PrefUtils.setPushToken(pContext, token)
+            }
+        }
     }
 
     init {
-        Companion.context = context
-        accessToken = "hello"
+        EdoctorDlvnSdk.context = context
+        AppStore.sdkInstance = this
 
         if (apiService === null) {
             apiService = RetrofitClient(env)
@@ -57,8 +128,29 @@ class EdoctorDlvnSdk(
                 ?.create<ApiService>()
         }
         if (env == Env.LIVE) {
+            environment = Env.LIVE
             webView.domain = Constants.healthConsultantUrlProd
             webView.defaultDomain = Constants.healthConsultantUrlProd
+        }
+
+        if (intent != null) {
+            checkSavedAuthCredentials()
+            SendbirdCallImpl.initSendbirdCall(context, edrAppId)
+            
+            if (intent.action?.equals("CallAction") == true) {
+                if (intent.getStringExtra("Key") == "END_CALL") {
+                    NotificationHelper.action = "_decline"
+                } else {
+                    NotificationHelper.action = "_accept"
+                }
+            }
+            if (intent.hasExtra(Constants.IntentExtra.chatNotification)
+                && intent.getBooleanExtra(Constants.IntentExtra.chatNotification, false)
+            ) {
+                intent.getStringExtra(Constants.IntentExtra.channelUrl)?.let {
+                    openChatChannelFromNotification(it)
+                }
+            }
         }
     }
 
@@ -106,9 +198,17 @@ class EdoctorDlvnSdk(
 
     var onSdkRequestLogin: ((callbackUrl: String) -> Unit)? = {}
 
+    private fun authenticateSb(context: Context, userId: String, accessToken: String) {
+        SendbirdCallImpl.authenticate(context, userId, accessToken)
+    }
+
+    private fun deAuthenticateSb() {
+        SendbirdCallImpl.deAuthenticate(context)
+    }
+
     private fun initDLVNAccount(mCallback: (result: Any?) -> Unit) {
         try {
-            if (authParams != null) {
+            if (authParams != null) { // && dlvnAccessToken == null
                 isFetching = true
 
                 val params = JsonObject()
@@ -120,6 +220,9 @@ class EdoctorDlvnSdk(
                 }
                 authParams!!.getString("token").let {
                     dlvnAccessToken = it.toString()
+                    if (PrefUtils.getDlvnToken(context) == "") {
+                        PrefUtils.setDlvnToken(context, it.toString())
+                    }
                 }
                 params.addProperty("query", GraphAction.Mutation.dlvnAccountInit)
                 params.addProperty("variables", variables.toString())
@@ -129,7 +232,11 @@ class EdoctorDlvnSdk(
                         if (response.body()?.dlvnAccountInit?.accessToken != null) {
                             needClearCache = false
                             edrAccessToken = response.body()!!.dlvnAccountInit.accessToken
+                            if (PrefUtils.getEdrToken(context) == "") {
+                                PrefUtils.setEdrToken(context, edrAccessToken)
+                            }
                             mCallback(response.body())
+                            getSendbirdAccount()
                         } else {
                             showError(context.getString(R.string.common_error_msg))
                         }
@@ -150,12 +257,51 @@ class EdoctorDlvnSdk(
             } else {
                 showError("Call `DLVNSendData` before calling this function!")
             }
-        } catch (e: Error) {
+        } catch (_: Error) {
 
         }
     }
 
-    fun clearWebViewCache() {
+    private fun getSendbirdAccount() {
+        try {
+            if (sendBirdAccount?.token == null) {
+                val params = JsonObject()
+                params.addProperty("query", GraphAction.Query.sendBirdAccount)
+
+                edrAccessToken?.let {
+                    apiService?.getSendbirdAccount(it, params)
+                        ?.enqueue(object : Callback<SBAccountResponse> {
+                            override fun onResponse(
+                                call: Call<SBAccountResponse>,
+                                response: Response<SBAccountResponse>
+                            ) {
+                                if (response.body()?.account?.accountId != null) {
+                                    val data = response.body()!!.account
+                                    sendBirdAccount = SendBirdAccount(
+                                        data.accountId,
+                                        data.thirdParty.sendbird.token,
+                                    )
+                                    SendbirdCallImpl.authenticate(
+                                        context,
+                                        sendBirdAccount?.accountId.toString(),
+                                        sendBirdAccount?.token.toString()
+                                    )
+                                }
+                            }
+
+                            override fun onFailure(call: Call<SBAccountResponse>, t: Throwable) {
+                                Log.d(LOG_TAG, "An error happened!")
+                                showError(t.message.toString())
+                                t.printStackTrace()
+                            }
+                        })
+                }
+            }
+        } catch (_: Error) {
+        }
+    }
+
+    fun deauthenticateEDR() {
         edrAccessToken = null
         dlvnAccessToken = null
         authParams = null
@@ -163,6 +309,38 @@ class EdoctorDlvnSdk(
         needClearCache = true
 
         webView.clearCacheAndCookies(context)
+        PrefUtils.removeSdkAuthData(context)
+        SendbirdCallImpl.deAuthenticate(context)
+        SendbirdChatImpl.disconnect()
+    }
+
+    fun authenticateEDR(params: JSONObject) { // Goi luc login thanh cong, ko goi moi lan mo app
+        if (DLVNSendData(params)) {
+            initDLVNAccount {
+                Log.d("zzz", "initDLVNAccount success")
+            }
+        }
+    }
+
+    private fun checkSavedAuthCredentials() {
+        val edrToken: String? = PrefUtils.getEdrToken(context)
+        val dlvnToken: String? = PrefUtils.getDlvnToken(context)
+
+        if (!dlvnToken.isNullOrEmpty() && !edrToken.isNullOrEmpty()) {
+            edrAccessToken = edrToken
+            dlvnAccessToken = dlvnToken
+        }
+    }
+
+    private fun openChatChannelFromNotification(channelUrl: String) {
+        try {
+            val activity = context as AppCompatActivity
+            val url = webView.defaultDomain + "/phong-tu-van?channel=${channelUrl}"
+
+            openWebView(activity.supportFragmentManager, url)
+        } catch (e: Exception) {
+            Log.d("zzz", e.message.toString())
+        }
     }
 
     private fun isNetworkConnected(): Boolean {

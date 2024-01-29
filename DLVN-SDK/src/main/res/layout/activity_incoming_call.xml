@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+    <ImageView
+        android:src="@drawable/dlvn_city_bg"
+        android:scaleType="centerCrop"
+        android:id="@+id/bg_incoming"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+<!--    <LinearLayout-->
+<!--        android:alpha="0.5"-->
+<!--        android:background="@color/white"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"/>-->
+    <LinearLayout
+        android:alpha="0.35"
+        android:id="@+id/bg_color_incoming"
+        android:background="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" />
+    <!-- Avatar người gọi -->
+    <LinearLayout
+        android:layout_marginTop="46dp"
+        android:gravity="fill_vertical"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp">
+        <ImageView
+            android:id="@+id/img_caller_avatar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_default_avatar"
+            android:background="@drawable/bg_circle"
+            android:cropToPadding="true"
+            android:clipToOutline="true" />
+        <LinearLayout
+            android:layout_marginStart="16dp"
+            android:orientation="vertical"
+            android:layout_gravity="clip_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_caller_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="BS.Huỳnh Mai"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:lineHeight="30sp"
+                android:lineSpacingExtra="1sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_gravity="center_horizontal" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/incoming_calling_label"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:lineHeight="24sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/avatar_cover"
+        android:layout_marginTop="95dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/bg_circle" />
+
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="124dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <!-- Nút từ chối cuộc gọi -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageButton
+                    android:hapticFeedbackEnabled="true"
+                    android:id="@+id/btn_reject_call"
+                    android:layout_width="74dp"
+                    android:layout_height="74dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_reject_call"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:elevation="4dp" />
+                <TextView
+                    android:text="@string/incoming_decline_label"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_marginStart="100dp"
+                android:gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageButton
+                    android:id="@+id/btn_answer_call"
+                    android:layout_width="74dp"
+                    android:layout_height="74dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_accept_call"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:elevation="4dp" />
+                <TextView
+                    android:text="@string/incoming_decline_label"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+            <ImageButton
+                android:id="@+id/btn_toggle_mic_incoming"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_mic_atv"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+            <ImageButton
+                android:id="@+id/btn_toggle_cam_incoming"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_cam_atv"
+                android:layout_marginStart="60dp"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

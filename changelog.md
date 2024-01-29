@@ -2,9 +2,42 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.0.26 (Updated: 21/12/2023)**
+Latest version: **1.1.6 (Updated: 29/01/2024)**
 
-## Version 1.0.26
+## Version 1.1.6 (29/01/2024)
+
+- Fix not to remove iOS pushToken when disconnect Sendbird's ChatSDK.
+
+## Version 1.1.5 (29/01/2024)
+
+- Make `intent` parameter in SDK constructor **nullable**
+
+## Version 1.1.4 (26/01/2024)
+
+- Update flags for chat notification: `Intent.FLAG_ACTIVITY_CLEAR_TOP` + `PendingIntent.FLAG_UPDATE_CURRENT`
+
+## Version 1.1.3 (26/01/2024)
+
+- Fix main classname of D-Connect app in showing notification. (`com.dlvn.mcustomerportal.activity.DashboardActivity`)
+
+## Version 1.1.2 (26/01/2024)
+
+- Fix displaying chat notification in DC app.
+- Add `EdrLifecycleObserver` interface.
+- Add 03 functions: `isEdrMessage`, `handleEdrRemoteMessage` and `handleNewToken`
+
+## Version 1.1.1 - Includes Chat + Call libraries (22/01/2024)
+
+- Add Chat library and handling notifications.
+- Handle checking SDK version on web to use Chat/Call with doctor features.
+- Rename `clearWebViewCache` function to `deauthenticateEDR`
+- Add function `authenticateEDR`
+
+## Version 1.1.0 - Pre-test native calling (28/12/2023)
+
+- Add SendbirdCalls SDK to implement native calling => DLVN UAT pre-test
+
+## Version 1.0.26 - Without native calling (21/12/2023)
 
 - Enhance loading when open SDK
 

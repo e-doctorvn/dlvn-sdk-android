@@ -1,10 +1,13 @@
 package com.edoctor.dlvn_sdk.webview
 
 import android.content.Intent
+import android.util.Log
 import android.webkit.JavascriptInterface
 import androidx.core.content.ContextCompat.startActivity
 import com.edoctor.dlvn_sdk.Constants
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
+import com.edoctor.dlvn_sdk.sendbirdCall.CallManager
+import com.edoctor.dlvn_sdk.store.AppStore
 import org.json.JSONObject
 
 class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
@@ -22,9 +25,17 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
         val json = JSONObject(data)
         when (json.getString("type")) {
             Constants.WebviewParams.closeWebview -> {
-                mWebview?.requireActivity()?.runOnUiThread {
-                    if (mWebview!!.domain == JSONObject(json.getString("data")).getString("url")) {
-                        mWebview!!.selfClose()
+                if (AppStore.activeChannelUrl != Constants.entryChannel) {
+                    AppStore.activeChannelUrl = Constants.entryChannel
+                }
+                if (CallManager.getInstance()?.directCall != null) {
+                    CallManager.getInstance()?.closeWebViewActivity?.invoke()
+                } else {
+                    // mWebview?.requireActivity()?.runOnUiThread { mWebview?.selfClose() }
+                    mWebview?.requireActivity()?.runOnUiThread {
+                        if (mWebview!!.domain == JSONObject(json.getString("data")).getString("url")) {
+                            mWebview!!.selfClose()
+                        }
                     }
                 }
             }
@@ -48,6 +59,14 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                 sharingIntent.type = "text/plain"
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody)
                 mWebview?.context?.let { startActivity(it, Intent.createChooser(sharingIntent, "Share via"), null) }
+            }
+            Constants.WebviewParams.onChangeChatChannel -> {
+                if (json.has("channelUrl")) {
+                    AppStore.activeChannelUrl = json.get("channelUrl").toString()
+                }
+            }
+            Constants.WebviewParams.onRequestUpdateApp -> {
+                mWebview?.openAppInStore()
             }
         }
         return true
