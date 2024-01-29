@@ -372,9 +372,10 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 if (myWebView.url == domain) {
                     selfClose()
                 } else if (myWebView.canGoBack()) {
-                    if (myWebView.url?.contains("/phong-tu-van") == false) {
-                        myWebView.goBack()
-                    }
+                    myWebView.goBack()
+//                    if (myWebView.url?.contains("/phong-tu-van") == false) {
+//                        myWebView.goBack()
+//                    }
                 } else {
                     dismiss()
                 }
