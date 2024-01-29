@@ -46,9 +46,9 @@ object NotificationHelper {
 
         val mainActivityClass = Class.forName(activityClassName)
         val intent = Intent(context, mainActivityClass).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
-        val fullScreenIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val fullScreenIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         val decline = Intent(context, CallActionReceiver::class.java)
         decline.action = "CallAction"

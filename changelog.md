@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.5 (Updated: 29/01/2024)**
+Latest version: **1.1.6 (Updated: 29/01/2024)**
+
+## Version 1.1.6 (29/01/2024)
+
+- Fix not to remove iOS pushToken when disconnect Sendbird's ChatSDK.
 
 ## Version 1.1.5 (29/01/2024)
 
