@@ -63,7 +63,7 @@ publishing {
         release(MavenPublication) {
             groupId = 'com.github.e-doctorvn'
             artifactId = 'dlvn-sdk-android'
-            version = '1.1.6'
+            version = '1.1.7'
 
             afterEvaluate {
                 from components.release

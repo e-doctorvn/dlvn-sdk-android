@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.6 (Updated: 29/01/2024)**
+Latest version: **1.1.7 (Updated: 29/01/2024)**
+
+## Version 1.1.7 (29/01/2024)
+
+- Fix not showing chat noti from same doctor when already in channel.
 
 ## Version 1.1.6 (29/01/2024)
 
