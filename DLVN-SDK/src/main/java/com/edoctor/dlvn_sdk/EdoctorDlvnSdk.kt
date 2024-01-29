@@ -37,7 +37,7 @@ import retrofit2.create
 
 class EdoctorDlvnSdk(
     context: Context,
-    intent: Intent,
+    intent: Intent?,
     env: Env = Env.SANDBOX
 ) {
     private val edrAppId: String = context.getString(R.string.EDR_APP_ID)
@@ -63,10 +63,7 @@ class EdoctorDlvnSdk(
         }
 
         fun isEdrMessage(remoteMessage: RemoteMessage): Boolean {
-            if (remoteMessage.data.containsKey("sendbird") || remoteMessage.data.containsKey("sendbird_call")) {
-                return true
-            }
-            return false
+            return remoteMessage.data.containsKey("sendbird") || remoteMessage.data.containsKey("sendbird_call")
         }
 
         fun handleEdrRemoteMessage(pContext: Context, remoteMessage: RemoteMessage, icon: Int?) {
@@ -106,27 +103,7 @@ class EdoctorDlvnSdk(
                         }
                     }
                 }
-            } catch (e: JSONException) {
-
-            }
-        }
-
-        fun handleEdrRemoteMessage2(pContext: Context, classname: String, remoteMessage: RemoteMessage, icon: Int?) {
-            try {
-                // CHAT
-                if (remoteMessage.data.containsKey("sendbird")) {
-                    val sendbird = remoteMessage.data["sendbird"]?.let { JSONObject(it) }
-                    val channel = sendbird?.get("channel") as JSONObject
-                    val channelUrl = channel.get("channel_url") as String
-                    val sender = sendbird.get("sender") as JSONObject
-                    val doctorName = sender.get("name") as String
-
-                    val messageTitle = "Quý khách có tin nhắn mới từ $doctorName"
-                    val messageBody = doctorName + ": " + sendbird.get("message") as String
-
-                    NotificationHelper.showChatNotification2(pContext, classname, messageTitle, messageBody, channelUrl, icon)
-                }
-            } catch (e: JSONException) {
+            } catch (_: JSONException) {
 
             }
         }
@@ -156,21 +133,23 @@ class EdoctorDlvnSdk(
             webView.defaultDomain = Constants.healthConsultantUrlProd
         }
 
-        checkSavedAuthCredentials()
-        SendbirdCallImpl.initSendbirdCall(context, edrAppId)
-
-        if (intent.action?.equals("CallAction") == true) {
-            if (intent.getStringExtra("Key") == "END_CALL") {
-                NotificationHelper.action = "_decline"
-            } else {
-                NotificationHelper.action = "_accept"
+        if (intent != null) {
+            checkSavedAuthCredentials()
+            SendbirdCallImpl.initSendbirdCall(context, edrAppId)
+            
+            if (intent.action?.equals("CallAction") == true) {
+                if (intent.getStringExtra("Key") == "END_CALL") {
+                    NotificationHelper.action = "_decline"
+                } else {
+                    NotificationHelper.action = "_accept"
+                }
             }
-        }
-        if (intent.hasExtra(Constants.IntentExtra.chatNotification)
-            && intent.getBooleanExtra(Constants.IntentExtra.chatNotification, false)
-        ) {
-            intent.getStringExtra(Constants.IntentExtra.channelUrl)?.let {
-                openChatChannelFromNotification(it)
+            if (intent.hasExtra(Constants.IntentExtra.chatNotification)
+                && intent.getBooleanExtra(Constants.IntentExtra.chatNotification, false)
+            ) {
+                intent.getStringExtra(Constants.IntentExtra.channelUrl)?.let {
+                    openChatChannelFromNotification(it)
+                }
             }
         }
     }
@@ -278,7 +257,7 @@ class EdoctorDlvnSdk(
             } else {
                 showError("Call `DLVNSendData` before calling this function!")
             }
-        } catch (e: Error) {
+        } catch (_: Error) {
 
         }
     }
@@ -318,7 +297,7 @@ class EdoctorDlvnSdk(
                         })
                 }
             }
-        } catch (e: Error) {
+        } catch (_: Error) {
         }
     }
 

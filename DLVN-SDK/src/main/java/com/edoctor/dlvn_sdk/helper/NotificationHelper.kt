@@ -9,14 +9,11 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.edoctor.dlvn_sdk.Constants
-import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import com.edoctor.dlvn_sdk.R
 import com.edoctor.dlvn_sdk.service.CallActionReceiver
 import java.util.Date
-
 
 object NotificationHelper {
     var action: String? = null
@@ -82,32 +79,6 @@ object NotificationHelper {
         initialize(context)
 
         val mainActivityClass = Class.forName(activityClassName)
-        val intent = Intent(context, mainActivityClass).apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra(Constants.IntentExtra.chatNotification, true)
-            putExtra(Constants.IntentExtra.channelUrl, channelUrl)
-        }
-        val fullScreenIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        // Implement your own way to create and show a notification containing the received FCM message.
-        val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(icon ?: R.drawable.ic_notification)
-            .setColor(Color.parseColor("#D25540")) // small icon background color
-            .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_notification))
-            .setContentTitle(messageTitle)
-            .setContentText(messageBody)
-            .setAutoCancel(true)
-            .setOngoing(false)
-            .setPriority(Notification.PRIORITY_MAX)
-            .setDefaults(Notification.DEFAULT_ALL)
-            .setContentIntent(fullScreenIntent)
-
-        notificationManager!!.notify(Date().time.toInt(), notificationBuilder.build())
-    }
-
-    fun showChatNotification2(context: Context, className: String, messageTitle: String, messageBody: String, channelUrl: String, icon: Int?) {
-        initialize(context)
-
-        val mainActivityClass = Class.forName(className)
         val intent = Intent(context, mainActivityClass).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra(Constants.IntentExtra.chatNotification, true)

@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.4 (Updated: 26/01/2024)**
+Latest version: **1.1.5 (Updated: 29/01/2024)**
+
+## Version 1.1.5 (29/01/2024)
+
+- Make `intent` parameter in SDK constructor **nullable**
 
 ## Version 1.1.4 (26/01/2024)
 

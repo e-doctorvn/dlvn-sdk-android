@@ -35,16 +35,21 @@ import java.util.UUID
 object SendbirdCallImpl {
     private var edrAppId = ""
     private var didTokenSave = false
+    private var isInitialized = false
+    private var isAuthenticated = false
     private const val TAG = "RNSendBirdCalls"
 
     @JvmStatic
     fun initSendbirdCall(context: Context, APP_ID: String) {
-        if (SendBirdCall.init(context, APP_ID)) {
-            edrAppId = APP_ID
+        if (!isInitialized) {
+            if (SendBirdCall.init(context, APP_ID)) {
+                edrAppId = APP_ID
+                isInitialized = true
 //            Toast
 //                .makeText(context, "initSendbirdCall success", Toast.LENGTH_SHORT)
 //                .show()
-            checkLoggedInUser(context)
+                checkLoggedInUser(context)
+            }
         }
     }
 
@@ -105,6 +110,7 @@ object SendbirdCallImpl {
             SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
                 SendBirdCall.deauthenticate() {
                     didTokenSave = false
+                    isAuthenticated = false
                     PrefUtils.removeSendbirdAuthData(context)
                     // Toast.makeText(context, "Logged out SB", Toast.LENGTH_SHORT).show()
                 }
@@ -115,42 +121,50 @@ object SendbirdCallImpl {
     @JvmStatic
     fun authenticate(context: Context, userId: String, accessToken: String?) {
         val params: AuthenticateParams = AuthenticateParams(userId).setAccessToken(accessToken)
-        SendBirdCall.authenticate(params, object : AuthenticateHandler {
-            override fun onResult(user: User?, e: SendBirdException?) {
-                if (e == null) {
-                    addListener(context)
+        if (!isAuthenticated) {
+            SendBirdCall.authenticate(params, object : AuthenticateHandler {
+                override fun onResult(user: User?, e: SendBirdException?) {
+                    if (e == null) {
+                        addListener(context)
 //                    Toast.makeText(context, "Login $userId Success", Toast.LENGTH_SHORT).show()
-                    Log.d("zzz", "UserID: $userId")
-                    FirebaseMessaging.getInstance().token
-                        .addOnCompleteListener(object : OnCompleteListener<String?> {
-                            override fun onComplete(task: Task<String?>) {
-                                if (!task.isSuccessful) {
-                                    Log.w(
-                                        TAG,
-                                        "Fetching FCM registration token failed",
-                                        task.exception
+                        Log.d("zzz", "UserID: $userId")
+                        FirebaseMessaging.getInstance().token
+                            .addOnCompleteListener(object : OnCompleteListener<String?> {
+                                override fun onComplete(task: Task<String?>) {
+                                    if (!task.isSuccessful) {
+                                        Log.w(
+                                            TAG,
+                                            "Fetching FCM registration token failed",
+                                            task.exception
+                                        )
+                                        return
+                                    }
+
+                                    val token: String? = task.result
+                                    CallManager.getInstance()!!.pushToken = token
+                                    registerPushToken(token)
+                                    PrefUtils.setPushToken(context, token)
+
+                                    SendbirdChatImpl.initSendbirdChat(
+                                        context,
+                                        edrAppId,
+                                        userId,
+                                        accessToken!!
                                     )
-                                    return
+                                    SendbirdChatImpl.registerPushToken(token!!)
+
+                                    if (!didTokenSave) {
+                                        PrefUtils.setAccessToken(context, accessToken)
+                                        PrefUtils.setUserId(context, userId)
+                                        didTokenSave = true
+                                    }
+                                    isAuthenticated = true
                                 }
-
-                                val token: String? = task.result
-                                CallManager.getInstance()!!.pushToken = token
-                                registerPushToken(token)
-                                PrefUtils.setPushToken(context, token)
-
-                                SendbirdChatImpl.initSendbirdChat(context, edrAppId, userId, accessToken!!)
-                                SendbirdChatImpl.registerPushToken(token!!)
-
-                                if (!didTokenSave) {
-                                    PrefUtils.setAccessToken(context, accessToken)
-                                    PrefUtils.setUserId(context, userId)
-                                    didTokenSave = true
-                                }
-                            }
-                        })
+                            })
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
     @JvmStatic

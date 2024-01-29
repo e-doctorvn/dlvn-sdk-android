@@ -2,7 +2,7 @@
 
 EDR - DLVN Android SDK
 
-## Version 1.1.4
+## Version 1.1.5
 
 ## Requirements
 
@@ -26,7 +26,7 @@ This dependency requires:
 
   ```sh
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.1.4'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.1.5'
         implementation 'com.google.firebase:firebase-messaging:23.4.0'
     }
   ```
@@ -37,12 +37,12 @@ This dependency requires:
 import com.example.dlvn_sdk.EdoctorDlvnSdk
 
 // Initialize SDK instance with context before using any functions
-val dlvnSdk = EdoctorDlvnSdk(context: Context, intent: Intent, env: Env)
+val dlvnSdk = EdoctorDlvnSdk(context: Context, intent: Intent?, env: Env)
 ```
 
 In this constructor:
 
-- `Intent` is the intent from MainActivity of application. SDK uses this to handle notifications which belong to chat/video consultant service.
+- `Intent` should be the intent from MainActivity of application. SDK uses this to handle notifications which belong to chat/video consultant service. This parameter can be `null`.
 - `env` is an enum of `Env { LIVE, SANDBOX }`. It already has the **_default value_** of `Env.SANDBOX`, so adding it to the constructor is **optional**.
 
 ## Environment notes
