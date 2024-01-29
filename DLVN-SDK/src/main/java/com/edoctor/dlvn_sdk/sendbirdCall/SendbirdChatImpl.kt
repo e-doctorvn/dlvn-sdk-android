@@ -34,6 +34,7 @@ object SendbirdChatImpl {
                 override fun onInitSucceed() {
                     SendbirdChat.connect(userId, token) { user, _ ->
                         if (user != null) {
+                            SendbirdChat.setPushTriggerOption(SendbirdChat.PushTriggerOption.ALL) {}
                             SendbirdPushHelper.registerPushHandler(PushNotificationService())
                             FirebaseMessaging.getInstance().token
                                 .addOnCompleteListener(object : OnCompleteListener<String?> {
