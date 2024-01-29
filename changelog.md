@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.7 (Updated: 29/01/2024)**
+Latest version: **1.1.8 (Updated: 29/01/2024)**
+
+## Version 1.1.8 (29/01/2024)
+
+- Fix receiving chat noti unconsistently.
 
 ## Version 1.1.7 (29/01/2024)
 
