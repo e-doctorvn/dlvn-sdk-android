@@ -313,6 +313,7 @@ class EdoctorDlvnSdk(
         authParams = null
         isFetching = false
         needClearCache = true
+        sendBirdAccount = null
 
         webView.clearCacheAndCookies(context)
         PrefUtils.removeSdkAuthData(context)
