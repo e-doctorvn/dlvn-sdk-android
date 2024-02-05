@@ -18,6 +18,7 @@
     <string name="btn_back_label">Trở lại</string>
     <string name="btn_retry_label">Thử lại</string>
     <string name="btn_close_label">Đóng</string>
+    <string name="request_noti_permission_msg">Quý khách vui lòng cấp quyền Thông báo để thực hiện thao tác.</string>
     <string name="request_permission_msg">Quý khách vui lòng cấp quyền Máy ảnh để thực hiện thao tác.</string>
     <string name="request_rational_calling_permissions_msg">Quý khách vui lòng cấp những quyền sau để sử dụng chức năng gọi video.</string>
     <string name="request_calling_permissions_msg">Quý khách vui lòng cấp quyền Máy ảnh, Ghi âm và Thông báo để sử dụng chức năng gọi video.</string>

@@ -4,6 +4,10 @@ EDR - DLVN Android SDK
 
 Latest version: **1.1.8 (Updated: 29/01/2024)**
 
+## Version 1.1.9 (--/01/2024)
+
+- Fix clearing Sendbird tokens when log out.
+
 ## Version 1.1.8 (29/01/2024)
 
 - Fix receiving chat noti unconsistently.

@@ -82,11 +82,7 @@ class EdoctorDlvnSdk(
                     val messageTitle = "Quý khách có tin nhắn mới từ $doctorName"
                     val messageBody = doctorName + ": " + sendbird.get("message") as String
 
-                    if (AppStore.isAppInForeground) {
-                        if (AppStore.activeChannelUrl != channelUrl) {
-                            NotificationHelper.showChatNotification(pContext, messageTitle, messageBody, channelUrl, icon)
-                        }
-                    } else {
+                    if (AppStore.activeChannelUrl != channelUrl) {
                         NotificationHelper.showChatNotification(pContext, messageTitle, messageBody, channelUrl, icon)
                     }
                 } else {
@@ -121,6 +117,10 @@ class EdoctorDlvnSdk(
             } else {
                 PrefUtils.setPushToken(pContext, token)
             }
+        }
+
+        fun setAppState(isForeground: Boolean) {
+            AppStore.isAppInForeground = isForeground
         }
     }
 
