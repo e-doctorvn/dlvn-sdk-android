@@ -2,11 +2,12 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.8 (Updated: 29/01/2024)**
+Latest version: **1.1.9 (Updated: 05/02/2024)**
 
-## Version 1.1.9 (--/01/2024)
+## Version 1.1.9 (05/02/2024)
 
 - Fix clearing Sendbird tokens when log out.
+- Add `setAppState` function.
 
 ## Version 1.1.8 (29/01/2024)
 
