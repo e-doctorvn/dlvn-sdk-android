@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.9 (Updated: 05/02/2024)**
+Latest version: **1.1.10 (Updated: 06/02/2024)**
+
+## Version 1.1.10 (06/02/2024)
+
+- Fix app crashing when calling `handleNewToken` function.
 
 ## Version 1.1.9 (05/02/2024)
 
