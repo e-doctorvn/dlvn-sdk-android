@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
-import android.widget.Toast
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import com.edoctor.dlvn_sdk.R
 import com.edoctor.dlvn_sdk.helper.NotificationHelper
@@ -142,7 +141,7 @@ object SendbirdCallImpl {
 
                                     val token: String? = task.result
                                     CallManager.getInstance()!!.pushToken = token
-                                    registerPushToken(token)
+                                    registerPushToken(context, token)
                                     PrefUtils.setPushToken(context, token)
 
                                     SendbirdChatImpl.initSendbirdChat(
@@ -168,13 +167,18 @@ object SendbirdCallImpl {
     }
 
     @JvmStatic
-    fun registerPushToken(pushToken: String?) {
+    fun registerPushToken(context: Context, pushToken: String?) {
         if (pushToken != null) {
-            SendBirdCall.registerPushToken(pushToken, PushTokenType.FCM_VOIP, true
-            ) { e ->
-                if (e == null) {
-                    // The push token is registered successfully.
+            if (isInitialized) {
+                SendBirdCall.registerPushToken(
+                    pushToken, PushTokenType.FCM_VOIP, true
+                ) { e ->
+                    if (e == null) {
+                        // The push token is registered successfully.
+                    }
                 }
+            } else {
+                PrefUtils.setPushToken(context, pushToken)
             }
         }
     }

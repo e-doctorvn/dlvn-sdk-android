@@ -112,11 +112,7 @@ class EdoctorDlvnSdk(
 
         fun handleNewToken(pContext: Context, token: String) {
             SendbirdChatImpl.registerPushToken(token)
-            if (SendBirdCall.currentUser != null) {
-                SendbirdCallImpl.registerPushToken(token)
-            } else {
-                PrefUtils.setPushToken(pContext, token)
-            }
+            SendbirdCallImpl.registerPushToken(pContext, token)
         }
 
         fun setAppState(isForeground: Boolean) {
@@ -180,6 +176,18 @@ class EdoctorDlvnSdk(
                 } else {
                     showError(context.getString(R.string.no_internet_msg))
                 }
+            }
+        }
+    }
+
+    fun openWebViewWithEncodedData(fragmentManager: FragmentManager, data: String) {
+        if (!isFetching && !webView.isVisible) {
+            if (isNetworkConnected()) {
+                webView.domain = webView.defaultDomain + "?data=$data"
+                webView.hideLoading = true
+                webView.show(fragmentManager, webViewTag)
+            } else {
+                showError(context.getString(R.string.no_internet_msg))
             }
         }
     }
