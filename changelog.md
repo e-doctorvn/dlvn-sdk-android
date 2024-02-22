@@ -2,7 +2,12 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.11 (Updated: 06/02/2024)**
+Latest version: **1.1.12 (Updated: 22/02/2024)**
+
+## Version 1.1.12 (22/02/2024)
+
+- Add `checkAccountExist` function.
+- Fix `authenticateEDR` function to not call `initDLVNAccount` if account does exist.
 
 ## Version 1.1.11 (06/02/2024)
 

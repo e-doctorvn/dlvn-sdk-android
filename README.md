@@ -2,7 +2,7 @@
 
 EDR - DLVN Android SDK
 
-## Version 1.1.11
+## Version 1.1.12
 
 ## Requirements
 
@@ -26,7 +26,7 @@ This dependency requires:
 
   ```sh
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.1.11'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.1.12'
         implementation 'com.google.firebase:firebase-messaging:23.4.0'
     }
   ```
@@ -200,33 +200,15 @@ Call this function inside `@OnLifecycleEvent(Lifecycle.Event.ON_START)` and `@On
 | :------------- | :-------- | :----------- |
 | `isForeground` | `Boolean` | **Required** |
 
-#### EdrLifecyleObserver (Interface)
+#### openWebViewWithEncodedData
 
-Interface to implement for the class which extends `FirebaseMessagingService`. Inside this class, add the following lines of code:
+Open URL from dynamic link. The URL should be full format with `data` and other params.
 
-```java
-  @Override
-  public void onCreate() {
-      super.onCreate();
-      registerObserver();  // insert this
-  }
-
-  @Override
-  public void onDestroy() {
-      super.onDestroy();
-      unregisterObserver();  // insert this
-  }
-
-  // insert these 04 functions
-  @Override
-  public void onForegroundStart() {}
-
-  @Override
-  public void onForegroundStop() {}
-
-  @Override
-  public void registerObserver() {}
-
-  @Override
-  public void unregisterObserver() {}
+```kotlin
+  dlvnSdk.openWebViewWithEncodedData(fm: FragmentManager, url: String): Unit
 ```
+
+| Parameter | Type              | Description  |
+| :-------- | :---------------- | :----------- |
+| `fm`      | `FragmentManager` | **Required** |
+| `url`     | `String`          | **Required** |
