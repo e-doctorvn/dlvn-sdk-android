@@ -327,7 +327,6 @@ class EdoctorDlvnSdk(
                 if (response.body() != null) {
                     val data = JSONObject(response.body().toString())
                     val exist = data.get("checkAccountExist") as Boolean
-                    Log.d("zzz", "checkAccountExist: $exist")
                     mCallback(exist)
                 }
             }
@@ -367,7 +366,7 @@ class EdoctorDlvnSdk(
         }
     }
 
-    fun handleAuthenticateShortLink(userId: String, edrToken: String, dlvnToken: String) {
+    private fun handleAuthenticateShortLink(userId: String, edrToken: String, dlvnToken: String) {
         if (userId == sendBirdAccount?.accountId.toString()) return
         else {
             SendbirdCallImpl.logOutCurrentUser(context) {
@@ -380,7 +379,7 @@ class EdoctorDlvnSdk(
         }
     }
 
-    fun handleDeauthenticateShortLink() {
+    private fun handleDeauthenticateShortLink() {
         checkSavedAuthCredentials()
         SendbirdCallImpl.logOutCurrentUser(context) {
             getSendbirdAccount()

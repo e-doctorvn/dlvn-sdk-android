@@ -35,9 +35,9 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                     mWebview?.requireActivity()?.runOnUiThread {
                         if (mWebview!!.domain == JSONObject(json.getString("data")).getString("url")) {
                             mWebview!!.selfClose()
-                            if (sdkInstance?.isShortLinkAuthen == true) {
+//                            if (sdkInstance?.isShortLinkAuthen == true) {
 //                                sdkInstance?.handleDeauthenticateShortLink()
-                            }
+//                            }
                         }
                     }
                 }
@@ -77,7 +77,11 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                 val edrToken = callbackData.get("edrToken") as String
                 val dlvnToken = callbackData.get("dlvnToken") as String
 
-                sdkInstance?.handleAuthenticateShortLink(userId, edrToken, dlvnToken)
+//                Log.d("zzz", "Constants.WebviewParams.onAuthenShortLink")
+//                Log.d("zzz", userId)
+//                Log.d("zzz", edrToken)
+//                Log.d("zzz", dlvnToken)
+//                sdkInstance?.handleAuthenticateShortLink(userId, edrToken, dlvnToken)
             }
         }
         return true
