@@ -19,6 +19,9 @@ interface ApiService {
     fun initAccount(@Body params: JsonObject): Call<AccountInitResponse>
 
     @POST("graphql")
+    fun checkAccountExist(@Body params: JsonObject): Call<Any>
+
+    @POST("graphql")
     fun getSendbirdAccount(@Header("Authorization") token: String, @Body params: JsonObject): Call<SBAccountResponse>
 
     @POST("graphql")

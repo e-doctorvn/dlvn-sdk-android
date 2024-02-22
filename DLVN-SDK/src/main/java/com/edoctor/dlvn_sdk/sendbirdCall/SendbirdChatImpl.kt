@@ -34,17 +34,34 @@ object SendbirdChatImpl {
                 override fun onInitSucceed() {
                     SendbirdChat.connect(userId, token) { user, _ ->
                         if (user != null) {
+                            SendbirdPushHelper.getPushToken { token, _ ->
+                                if (token == null) {
+                                    FirebaseMessaging.getInstance().token
+                                        .addOnCompleteListener(object : OnCompleteListener<String?> {
+                                            override fun onComplete(task: Task<String?>) {
+                                                if (!task.isSuccessful) {
+                                                    return
+                                                }
+                                                registerPushToken(task.result!!)
+                                                Log.d("zzz", "READY TO GET CHAT NOTI")
+                                            }
+                                        })
+                                }
+                            }
+                            SendbirdChat.setPushTriggerOption(SendbirdChat.PushTriggerOption.ALL) {}
                             SendbirdPushHelper.registerPushHandler(PushNotificationService())
-                            FirebaseMessaging.getInstance().token
-                                .addOnCompleteListener(object : OnCompleteListener<String?> {
-                                    override fun onComplete(task: Task<String?>) {
-                                        if (!task.isSuccessful) {
-                                            return
-                                        }
-                                        registerPushToken(task.result!!)
-                                        Log.d("zzz", "READY TO GET CHAT NOTI")
-                                    }
-                                })
+//                            SendbirdChat.setPushTriggerOption(SendbirdChat.PushTriggerOption.ALL) {}
+//                            SendbirdPushHelper.registerPushHandler(PushNotificationService())
+//                            FirebaseMessaging.getInstance().token
+//                                .addOnCompleteListener(object : OnCompleteListener<String?> {
+//                                    override fun onComplete(task: Task<String?>) {
+//                                        if (!task.isSuccessful) {
+//                                            return
+//                                        }
+//                                        registerPushToken(task.result!!)
+//                                        Log.d("zzz", "READY TO GET CHAT NOTI")
+//                                    }
+//                                })
                         } else {
                             // Handle error.
                         }

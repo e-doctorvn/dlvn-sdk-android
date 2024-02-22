@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
-import android.widget.Toast
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import com.edoctor.dlvn_sdk.R
 import com.edoctor.dlvn_sdk.helper.NotificationHelper
@@ -119,7 +118,7 @@ object SendbirdCallImpl {
     }
 
     @JvmStatic
-    fun authenticate(context: Context, userId: String, accessToken: String?) {
+    fun authenticate(context: Context, userId: String, accessToken: String?, saveCredentials: Boolean = true) {
         val params: AuthenticateParams = AuthenticateParams(userId).setAccessToken(accessToken)
         if (!isAuthenticated) {
             SendBirdCall.authenticate(params, object : AuthenticateHandler {
@@ -142,7 +141,7 @@ object SendbirdCallImpl {
 
                                     val token: String? = task.result
                                     CallManager.getInstance()!!.pushToken = token
-                                    registerPushToken(token)
+                                    registerPushToken(context, token)
                                     PrefUtils.setPushToken(context, token)
 
                                     SendbirdChatImpl.initSendbirdChat(
@@ -153,7 +152,7 @@ object SendbirdCallImpl {
                                     )
                                     SendbirdChatImpl.registerPushToken(token!!)
 
-                                    if (!didTokenSave) {
+                                    if (!didTokenSave && saveCredentials) {
                                         PrefUtils.setAccessToken(context, accessToken)
                                         PrefUtils.setUserId(context, userId)
                                         didTokenSave = true
@@ -168,12 +167,29 @@ object SendbirdCallImpl {
     }
 
     @JvmStatic
-    fun registerPushToken(pushToken: String?) {
+    fun registerPushToken(context: Context, pushToken: String?) {
         if (pushToken != null) {
-            SendBirdCall.registerPushToken(pushToken, PushTokenType.FCM_VOIP, true
-            ) { e ->
-                if (e == null) {
-                    // The push token is registered successfully.
+            if (isInitialized) {
+                SendBirdCall.registerPushToken(
+                    pushToken, PushTokenType.FCM_VOIP, true
+                ) { e ->
+                    if (e == null) {
+                        // The push token is registered successfully.
+                    }
+                }
+            } else {
+                PrefUtils.setPushToken(context, pushToken)
+            }
+        }
+    }
+
+    fun logOutCurrentUser(context: Context, mCallback: () -> Unit) {
+        removeAllListeners()
+        PrefUtils.getPushToken(context)?.let {
+            SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
+                SendBirdCall.deauthenticate() {
+                    isAuthenticated = false
+                    mCallback()
                 }
             }
         }

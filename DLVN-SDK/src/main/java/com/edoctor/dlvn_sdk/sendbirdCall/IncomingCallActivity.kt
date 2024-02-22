@@ -227,7 +227,7 @@ class IncomingCallActivity : AppCompatActivity() {
         }
 
         rejectCallBtn!!.setOnClickListener {
-            callManager!!.endEclinicCall()
+            callManager!!.expireEclinicRinging()
             callManager!!.directCall?.end()
             CallService.stopService(this)
         }

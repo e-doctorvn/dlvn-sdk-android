@@ -8,7 +8,6 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.net.http.SslError
@@ -35,9 +34,7 @@ import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -53,7 +50,6 @@ import com.edoctor.dlvn_sdk.helper.PermissionManager
 import com.edoctor.dlvn_sdk.store.AppStore
 import java.io.File
 import java.io.IOException
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -210,7 +206,9 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     val chooserIntent = Intent(Intent.ACTION_CHOOSER)
                     chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
                     chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser")
-                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
+                    if (webViewCallActivity == null) {
+                        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
+                    }
                     chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
                     startActivityForResult(chooserIntent, FCR)
                     requireActivity().runOnUiThread { requestCameraPermission() }
@@ -372,9 +370,10 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 if (myWebView.url == domain) {
                     selfClose()
                 } else if (myWebView.canGoBack()) {
-                    if (myWebView.url?.contains("/phong-tu-van") == false) {
-                        myWebView.goBack()
-                    }
+                    myWebView.goBack()
+//                    if (myWebView.url?.contains("/phong-tu-van") == false) {
+//                        myWebView.goBack()
+//                    }
                 } else {
                     dismiss()
                 }
@@ -501,5 +500,6 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
         mUMA!!.onReceiveValue(results)
         mUMA = null
+        hideLoading = true
     }
 }

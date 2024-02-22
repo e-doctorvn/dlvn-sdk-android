@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.media.MediaPlayer
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.edoctor.dlvn_sdk.Constants
@@ -67,6 +68,10 @@ object NotificationHelper {
             .addAction(R.drawable.accept_call_24, context.getString(R.string.incoming_accept_label), fullScreenIntent)
             .setAutoCancel(true)
             .setOngoing(false)
+
+//        val mediaPlayer = MediaPlayer.create(context, R.raw.ringing)
+//        mediaPlayer.isLooping = true
+//        mediaPlayer.start()
 
         notificationManager!!.notify( /*notification ID*/1, builder.build())
     }

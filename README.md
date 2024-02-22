@@ -2,7 +2,7 @@
 
 EDR - DLVN Android SDK
 
-## Version 1.1.6
+## Version 1.1.11
 
 ## Requirements
 
@@ -26,7 +26,7 @@ This dependency requires:
 
   ```sh
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.1.6'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.1.11'
         implementation 'com.google.firebase:firebase-messaging:23.4.0'
     }
   ```
@@ -175,7 +175,7 @@ If parameter `icon` is null, SDK will use its default icon for notification.
   }
   ```
 
-### handleNewToken
+#### handleNewToken
 
 Call this function inside the override function `onNewToken` of `FirebaseMessagingService`.
 
@@ -187,6 +187,18 @@ Call this function inside the override function `onNewToken` of `FirebaseMessagi
 | :-------- | :-------- | :----------- |
 | `context` | `Context` | **Required** |
 | `token`   | `String`  | **Required** |
+
+#### setAppState
+
+Call this function inside `@OnLifecycleEvent(Lifecycle.Event.ON_START)` and `@OnLifecycleEvent(Lifecycle.Event.ON_STOP)` to let SDK knows whether DC app is in foreground or not.
+
+```kotlin
+  EdoctorDlvnSdk.Companion.setAppState(isForeground: Boolean): Unit
+```
+
+| Parameter      | Type      | Description  |
+| :------------- | :-------- | :----------- |
+| `isForeground` | `Boolean` | **Required** |
 
 #### EdrLifecyleObserver (Interface)
 

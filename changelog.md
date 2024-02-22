@@ -2,7 +2,28 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.6 (Updated: 29/01/2024)**
+Latest version: **1.1.11 (Updated: 06/02/2024)**
+
+## Version 1.1.11 (06/02/2024)
+
+- Fix error in publishing version `1.1.10`.
+
+## Version 1.1.10 (06/02/2024)
+
+- Fix app crashing when calling `handleNewToken` function.
+
+## Version 1.1.9 (05/02/2024)
+
+- Fix clearing Sendbird tokens when log out.
+- Add `setAppState` function.
+
+## Version 1.1.8 (29/01/2024)
+
+- Fix receiving chat noti unconsistently.
+
+## Version 1.1.7 (29/01/2024)
+
+- Fix not showing chat noti from same doctor when already in channel.
 
 ## Version 1.1.6 (29/01/2024)
 

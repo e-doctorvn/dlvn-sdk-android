@@ -10,10 +10,5 @@ class FCMService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         SendbirdChatImpl.registerPushToken(token)
-        if (SendBirdCall.currentUser != null) {
-            SendbirdCallImpl.registerPushToken(token)
-        } else {
-            PrefUtils.setPushToken(this, token)
-        }
     }
 }

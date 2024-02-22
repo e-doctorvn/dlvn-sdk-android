@@ -51,7 +51,10 @@
         <activity
             android:name=".sendbirdCall.IncomingCallActivity"
             android:label="@null"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            tools:targetApi="o_mr1" />
         <activity
             android:name=".sendbirdCall.VideoCallActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"

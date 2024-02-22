@@ -60,5 +60,8 @@ object GraphAction {
                 "    }\n" +
                 "  }\n" +
                 "}"
+        const val checkAccountExist = "query CheckAccountExist(\$accountId: String, \$phone: String) {\n" +
+                "  checkAccountExist(accountId: \$accountId, phone: \$phone)" +
+                "}"
     }
 }
