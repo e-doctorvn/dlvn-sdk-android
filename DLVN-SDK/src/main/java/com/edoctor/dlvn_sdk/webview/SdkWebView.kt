@@ -206,7 +206,9 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     val chooserIntent = Intent(Intent.ACTION_CHOOSER)
                     chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
                     chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser")
-                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
+                    if (webViewCallActivity == null) {
+                        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
+                    }
                     chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
                     startActivityForResult(chooserIntent, FCR)
                     requireActivity().runOnUiThread { requestCameraPermission() }
@@ -498,5 +500,6 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
         mUMA!!.onReceiveValue(results)
         mUMA = null
+        hideLoading = true
     }
 }

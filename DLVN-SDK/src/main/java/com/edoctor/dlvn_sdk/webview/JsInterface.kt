@@ -35,16 +35,19 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                     mWebview?.requireActivity()?.runOnUiThread {
                         if (mWebview!!.domain == JSONObject(json.getString("data")).getString("url")) {
                             mWebview!!.selfClose()
+                            if (sdkInstance?.isShortLinkAuthen == true) {
+//                                sdkInstance?.handleDeauthenticateShortLink()
+                            }
                         }
                     }
                 }
             }
             Constants.WebviewParams.requestLoginNative -> {
-                val data = JSONObject(json.get("data").toString())
-                if (data.has("currentUrl")) {
+                val callbackData = JSONObject(json.get("data").toString())
+                if (callbackData.has("currentUrl")) {
                     if (!suspendReceiving) {
                         suspendReceiving = true
-                        sdkInstance?.onSdkRequestLogin?.invoke(data.getString("currentUrl"))
+                        sdkInstance?.onSdkRequestLogin?.invoke(callbackData.getString("currentUrl"))
                         mWebview?.requireActivity()?.runOnUiThread { mWebview?.selfClose() }
                         suspendReceiving = false
                     }
@@ -67,6 +70,14 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
             }
             Constants.WebviewParams.onRequestUpdateApp -> {
                 mWebview?.openAppInStore()
+            }
+            Constants.WebviewParams.onAuthenShortLink -> {
+                val callbackData = JSONObject(json.get("data").toString())
+                val userId = callbackData.get("userId") as String
+                val edrToken = callbackData.get("edrToken") as String
+                val dlvnToken = callbackData.get("dlvnToken") as String
+
+                sdkInstance?.handleAuthenticateShortLink(userId, edrToken, dlvnToken)
             }
         }
         return true

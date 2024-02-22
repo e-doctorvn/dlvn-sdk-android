@@ -18,6 +18,10 @@
     <string name="btn_back_label">Trở lại</string>
     <string name="btn_retry_label">Thử lại</string>
     <string name="btn_close_label">Đóng</string>
+    <string name="incall_off_mic_msg">Bạn đã tắt Mic</string>
+    <string name="incall_on_mic_msg">Bạn đã bật Mic</string>
+    <string name="incall_off_cam_msg">Bạn đã tắt Cam</string>
+    <string name="incall_on_cam_msg">Bạn đã bật Cam</string>
     <string name="request_noti_permission_msg">Quý khách vui lòng cấp quyền Thông báo để thực hiện thao tác.</string>
     <string name="request_permission_msg">Quý khách vui lòng cấp quyền Máy ảnh để thực hiện thao tác.</string>
     <string name="request_rational_calling_permissions_msg">Quý khách vui lòng cấp những quyền sau để sử dụng chức năng gọi video.</string>

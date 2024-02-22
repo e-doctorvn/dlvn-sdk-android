@@ -118,7 +118,7 @@ object SendbirdCallImpl {
     }
 
     @JvmStatic
-    fun authenticate(context: Context, userId: String, accessToken: String?) {
+    fun authenticate(context: Context, userId: String, accessToken: String?, saveCredentials: Boolean = true) {
         val params: AuthenticateParams = AuthenticateParams(userId).setAccessToken(accessToken)
         if (!isAuthenticated) {
             SendBirdCall.authenticate(params, object : AuthenticateHandler {
@@ -152,7 +152,7 @@ object SendbirdCallImpl {
                                     )
                                     SendbirdChatImpl.registerPushToken(token!!)
 
-                                    if (!didTokenSave) {
+                                    if (!didTokenSave && saveCredentials) {
                                         PrefUtils.setAccessToken(context, accessToken)
                                         PrefUtils.setUserId(context, userId)
                                         didTokenSave = true
@@ -179,6 +179,18 @@ object SendbirdCallImpl {
                 }
             } else {
                 PrefUtils.setPushToken(context, pushToken)
+            }
+        }
+    }
+
+    fun logOutCurrentUser(context: Context, mCallback: () -> Unit) {
+        removeAllListeners()
+        PrefUtils.getPushToken(context)?.let {
+            SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
+                SendBirdCall.deauthenticate() {
+                    isAuthenticated = false
+                    mCallback()
+                }
             }
         }
     }

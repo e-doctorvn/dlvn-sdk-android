@@ -11,11 +11,12 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.util.Rational
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -26,19 +27,21 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.edoctor.dlvn_sdk.service.CallService
 import com.edoctor.dlvn_sdk.Constants
 import com.edoctor.dlvn_sdk.Constants.CallState
 import com.edoctor.dlvn_sdk.R
 import com.edoctor.dlvn_sdk.helper.DimensionUtils
 import com.edoctor.dlvn_sdk.model.Dimension
-import com.google.android.flexbox.FlexboxLayout.LayoutParams
+import com.edoctor.dlvn_sdk.service.CallService
+import com.edoctor.dlvn_sdk.store.AppStore
+import com.google.android.material.snackbar.Snackbar
 import com.sendbird.calls.AcceptParams
 import com.sendbird.calls.CallOptions
 import com.sendbird.calls.DirectCall
 import com.sendbird.calls.SendBirdVideoView
 import jp.wasabeef.glide.transformations.BlurTransformation
 import org.webrtc.RendererCommon
+
 
 class VideoCallActivity : AppCompatActivity() {
     private var localView: SendBirdVideoView? = null
@@ -178,12 +181,7 @@ class VideoCallActivity : AppCompatActivity() {
         }
 
         btnOpenChat!!.setOnClickListener {
-            chatLoading!!.visibility = View.VISIBLE
-            btnOpenChat!!.visibility = View.GONE
-
-            val intent = Intent(this, WebViewCallActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
+            openWebViewCallActivity()
         }
 
         btnRotateCam!!.setOnClickListener {
@@ -198,12 +196,60 @@ class VideoCallActivity : AppCompatActivity() {
             if (callManager!!.directCall?.isLocalAudioEnabled == true) {
                 btnToggleMic!!.setImageResource(R.drawable.ic_mic_ina)
                 tvMicStatus!!.text = getString(R.string.incall_off_mic_label)
+                showOutputActionToast(R.string.incall_off_mic_msg)
             } else {
                 btnToggleMic!!.setImageResource(R.drawable.ic_mic_atv)
                 tvMicStatus!!.text = getString(R.string.incall_on_mic_label)
+                showOutputActionToast(R.string.incall_on_mic_msg)
             }
             directCall?.let { it1 -> callManager!!.toggleMic(it1) }
         }
+
+        AppStore.sdkInstance?.onOpenChatFromNotiInCalling = {
+            openWebViewCallActivity()
+        }
+    }
+
+    private fun openWebViewCallActivity() {
+        chatLoading!!.visibility = View.VISIBLE
+        btnOpenChat!!.visibility = View.GONE
+
+        val intent = Intent(this, WebViewCallActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
+    }
+
+    @SuppressLint("ShowToast")
+    private fun showOutputActionToast(messageId: Int) {
+//        val snackbar = Snackbar.make(
+//            this.findViewById(android.R.id.content),
+//            getString(messageId),
+//            Snackbar.LENGTH_SHORT
+//        )
+//
+//        val snackbarLayout: View = snackbar.view
+////        val message = snackbarLayout.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+////        message.gravity = Gravity.CENTER_HORIZONTAL
+////        message.textAlignment = View.TEXT_ALIGNMENT_CENTER
+//
+//        val lp = FrameLayout.LayoutParams(
+//            FrameLayout.LayoutParams.WRAP_CONTENT,
+//            FrameLayout.LayoutParams.WRAP_CONTENT
+//        )
+//        val screenSize: Dimension = DimensionUtils.getScreenSize(this)
+//        lp.gravity = Gravity.CENTER_HORIZONTAL
+//        lp.setMargins(0, screenSize.height - bottomContainer!!.height - 136, 0, 0)
+////        lp.bottomMargin = bottomContainer!!.height + 24
+//        // Layout must match parent layout type
+//        // Layout must match parent layout type
+////        lp.setMargins(0, 0, 0, 0)
+//        // Margins relative to the parent view.
+//        // This would be 50 from the top left.
+//        // Margins relative to the parent view.
+//        // This would be 50 from the top left.
+//        snackbarLayout.layoutParams = lp
+//        snackbar.setTextMaxLines(2)
+////        snackbar.show()
     }
 
     override fun onUserLeaveHint() {
@@ -312,10 +358,12 @@ class VideoCallActivity : AppCompatActivity() {
             toggleLocalView(true)
             btnToggleCam!!.setImageResource(R.drawable.ic_cam_ina)
             tvCamStatus!!.text = getString(R.string.incall_off_cam_label)
+            showOutputActionToast(R.string.incall_off_cam_msg)
         } else {
             toggleLocalView()
             btnToggleCam!!.setImageResource(R.drawable.ic_cam_atv)
             tvCamStatus!!.text = getString(R.string.incall_on_cam_label)
+            showOutputActionToast(R.string.incall_on_cam_msg)
         }
     }
 
