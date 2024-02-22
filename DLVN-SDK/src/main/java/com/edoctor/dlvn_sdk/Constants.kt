@@ -20,6 +20,7 @@ object Constants {
         const val requestLoginNative: String = "request-login-native"
         const val onChangeChatChannel: String = "active-channel-url"
         const val onRequestUpdateApp: String = "request-update-app"
+        const val onAuthenShortLink: String = "authenticate-short-link"
     }
     object IntentExtra {
         const val chatNotification: String = "isEdrChatNotification"
