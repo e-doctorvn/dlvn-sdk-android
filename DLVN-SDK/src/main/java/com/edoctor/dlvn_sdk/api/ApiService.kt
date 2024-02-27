@@ -12,9 +12,6 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface ApiService {
-    @GET("/api/v1/auth/profile")
-    fun getData(): Call<User>
-
     @POST("graphql")
     fun initAccount(@Body params: JsonObject): Call<AccountInitResponse>
 
@@ -23,6 +20,9 @@ interface ApiService {
 
     @POST("graphql")
     fun getSendbirdAccount(@Header("Authorization") token: String, @Body params: JsonObject): Call<SBAccountResponse>
+
+    @POST("graphql")
+    fun updateAccountAgreement(@Header("Authorization") token: String, @Body params: JsonObject): Call<Any>
 
     @POST("graphql")
     fun approveEClinicCall(@Header("Authorization") token: String, @Body params: JsonObject): Call<Any>

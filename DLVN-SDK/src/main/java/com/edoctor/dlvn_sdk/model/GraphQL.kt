@@ -19,17 +19,17 @@ data class SendBirdAccount(
     val token: String?,
 )
 data class ThirdParty(
-    val sendbird: SendBirdAccount
+    val sendbird: SendBirdAccount?
 )
 data class ADThirdParty(
     val sendbird: Sendbird
 )
 data class Account(
     val accountId: String,
-    val thirdParty: ThirdParty
+    val thirdParty: ThirdParty?
 )
 data class SBAccountResponse(
-    val account: Account
+    val account: Account?
 )
 
 // AppointmentDetail
@@ -60,9 +60,7 @@ data class AppointmentDetailResponse(
 
         other as AppointmentDetailResponse
 
-        if (!appointmentSchedules.contentEquals(other.appointmentSchedules)) return false
-
-        return true
+        return appointmentSchedules.contentEquals(other.appointmentSchedules)
     }
 
     override fun hashCode(): Int {

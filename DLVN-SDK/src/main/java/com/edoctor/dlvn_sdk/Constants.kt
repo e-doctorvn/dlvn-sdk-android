@@ -21,6 +21,7 @@ object Constants {
         const val onChangeChatChannel: String = "active-channel-url"
         const val onRequestUpdateApp: String = "request-update-app"
         const val onAuthenShortLink: String = "authenticate-short-link"
+        const val onAgreeConsent: String = "agree-consent"
     }
     object IntentExtra {
         const val chatNotification: String = "isEdrChatNotification"

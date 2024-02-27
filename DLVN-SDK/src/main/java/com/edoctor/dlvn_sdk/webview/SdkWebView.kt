@@ -7,6 +7,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.Uri
@@ -17,6 +18,7 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Message
 import android.provider.MediaStore
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -39,6 +41,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
@@ -48,6 +52,7 @@ import com.edoctor.dlvn_sdk.R
 import com.edoctor.dlvn_sdk.helper.NotificationHelper
 import com.edoctor.dlvn_sdk.helper.PermissionManager
 import com.edoctor.dlvn_sdk.store.AppStore
+import com.google.android.material.snackbar.Snackbar
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -70,6 +75,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private var mCM: String? = null
     var hideLoading: Boolean = false
     private var mUMA: ValueCallback<Array<Uri>>? = null
+    private val NEEDED_PHOTO_PERMISSIONS = "CAMERA_WRITEEXTERNALSTORAGE"
     private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
 
     init {
@@ -205,7 +211,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     val intentArray: Array<Intent> = arrayOf(takePictureIntent)
                     val chooserIntent = Intent(Intent.ACTION_CHOOSER)
                     chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
-                    chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser")
+                    chooserIntent.putExtra(Intent.EXTRA_TITLE, "Chọn ảnh từ")
                     if (webViewCallActivity == null) {
                         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
                     }
@@ -259,6 +265,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                             hideLoading = false
                             loading.visibility = View.GONE
                             checkTimeoutLoadWebView = true
+                            EdoctorDlvnSdk.debounceWVShortLink = false
 
                             requireActivity().runOnUiThread {
                                 requestPostNotificationPermission()
@@ -275,6 +282,9 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                         view?.evaluateJavascript("sessionStorage.setItem(\"upload_token\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
                         view?.evaluateJavascript("sessionStorage.setItem(\"accessTokenDlvn\", \"${EdoctorDlvnSdk.dlvnAccessToken}\");") {}
                         view?.evaluateJavascript("sessionStorage.setItem(\"sdkSupportConsultant\", ${true});") {}
+                    }
+                    if (EdoctorDlvnSdk.accountExist == false) {
+                        view?.evaluateJavascript("sessionStorage.setItem(\"consent\", ${true});") {}
                     }
                     Thread {
                         try {
@@ -410,12 +420,55 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     }
 
     private fun requestCameraPermission() {
-        requestPermissionLauncher?.let {
-            PermissionManager.handleRequestPermission(
-                requireActivity(),
-                Manifest.permission.CAMERA,
-                it
-            )
+//        requestPermissionLauncher?.let {
+//            PermissionManager.handleRequestPermission(
+//                requireActivity(),
+//                Manifest.permission.CAMERA,
+//                it
+//            )
+//        }
+        val context = requireActivity()
+        if (
+            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+            + ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            if (
+                ActivityCompat.shouldShowRequestPermissionRationale(context, Manifest.permission.CAMERA)
+                || ActivityCompat.shouldShowRequestPermissionRationale(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            ) {
+                requestPermissions(
+                    arrayOf(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    ),
+                    PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
+                )
+                PermissionManager.setPermissionAsked(context, NEEDED_PHOTO_PERMISSIONS)
+            } else {
+                if (PermissionManager.getRationalDisplayStatus(context, NEEDED_PHOTO_PERMISSIONS)) {
+                    Snackbar.make(
+                        requireView().rootView.findViewById(android.R.id.content),
+                        getString(R.string.request_calling_permissions_msg),
+                        Snackbar.LENGTH_INDEFINITE
+                    ).setTextMaxLines(3).setAction(getString(R.string.setting_label)) {
+                        startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", requireActivity().packageName, null)
+                        })
+                    }.show()
+
+                } else {
+                    requestPermissions(
+                        arrayOf(
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ),
+                        PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
+                    )
+                }
+            }
+        } else {
+            // Permissions already granted
         }
     }
 

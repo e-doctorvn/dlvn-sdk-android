@@ -44,9 +44,6 @@ object SendbirdCallImpl {
             if (SendBirdCall.init(context, APP_ID)) {
                 edrAppId = APP_ID
                 isInitialized = true
-//            Toast
-//                .makeText(context, "initSendbirdCall success", Toast.LENGTH_SHORT)
-//                .show()
                 checkLoggedInUser(context)
             }
         }

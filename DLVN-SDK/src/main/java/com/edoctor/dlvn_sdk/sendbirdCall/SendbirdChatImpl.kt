@@ -13,6 +13,7 @@ import com.sendbird.android.handler.PushRequestCompleteHandler
 import com.sendbird.android.params.InitParams
 import com.sendbird.android.push.PushTokenRegistrationStatus
 import com.sendbird.android.push.SendbirdPushHelper
+import com.sendbird.calls.SendBirdCall
 
 object SendbirdChatImpl {
     private const val TAG = "RNSendBirdChat"
@@ -50,18 +51,6 @@ object SendbirdChatImpl {
                             }
                             SendbirdChat.setPushTriggerOption(SendbirdChat.PushTriggerOption.ALL) {}
                             SendbirdPushHelper.registerPushHandler(PushNotificationService())
-//                            SendbirdChat.setPushTriggerOption(SendbirdChat.PushTriggerOption.ALL) {}
-//                            SendbirdPushHelper.registerPushHandler(PushNotificationService())
-//                            FirebaseMessaging.getInstance().token
-//                                .addOnCompleteListener(object : OnCompleteListener<String?> {
-//                                    override fun onComplete(task: Task<String?>) {
-//                                        if (!task.isSuccessful) {
-//                                            return
-//                                        }
-//                                        registerPushToken(task.result!!)
-//                                        Log.d("zzz", "READY TO GET CHAT NOTI")
-//                                    }
-//                                })
                         } else {
                             // Handle error.
                         }
