@@ -2,7 +2,13 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.12 (Updated: 22/02/2024)**
+Latest version: **1.1.13 (Updated: 27/02/2024)**
+
+## Version 1.1.13 (27/02/2024)
+
+- Fix crashing bugs.
+- Add `openWebViewWithEncodedData` function.
+- Update open webview flow to match `consent handling` with WEB.
 
 ## Version 1.1.12 (22/02/2024)
 

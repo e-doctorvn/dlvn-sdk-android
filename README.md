@@ -2,7 +2,7 @@
 
 EDR - DLVN Android SDK
 
-## Version 1.1.12
+## Version 1.1.13
 
 ## Requirements
 
@@ -26,7 +26,7 @@ This dependency requires:
 
   ```sh
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.1.12'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.1.13'
         implementation 'com.google.firebase:firebase-messaging:23.4.0'
     }
   ```
