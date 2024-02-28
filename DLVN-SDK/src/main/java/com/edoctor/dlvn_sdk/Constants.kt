@@ -22,6 +22,7 @@ object Constants {
         const val onRequestUpdateApp: String = "request-update-app"
         const val onAuthenShortLink: String = "authenticate-short-link"
         const val onAgreeConsent: String = "agree-consent"
+        const val onLoginSendBird: String = "authenticate-sendbird"
     }
     object IntentExtra {
         const val chatNotification: String = "isEdrChatNotification"
