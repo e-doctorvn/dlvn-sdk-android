@@ -289,7 +289,7 @@ class EdoctorDlvnSdk(
         }
     }
 
-    private fun getSendbirdAccount(saveCredentials: Boolean = true) {
+    fun getSendbirdAccount(saveCredentials: Boolean = true) {
         try {
             if (sendBirdAccount == null || sendBirdAccount?.token == null) {
                 val params = JsonObject()

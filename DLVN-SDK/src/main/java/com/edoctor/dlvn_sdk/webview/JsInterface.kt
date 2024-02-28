@@ -76,11 +76,13 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                 val edrToken = json.get("edrToken") as String
                 val dlvnToken = json.get("dlvnToken") as String
 
-                Log.d("zzz", "Constants.WebviewParams.onAuthenShortLink")
                 sdkInstance?.handleAuthenticateShortLink(userId, edrToken, dlvnToken)
             }
             Constants.WebviewParams.onAgreeConsent -> {
                 sdkInstance?.handleAgreeConsentOnWeb()
+            }
+            Constants.WebviewParams.onLoginSendBird -> {
+                sdkInstance?.getSendbirdAccount()
             }
         }
         return true
