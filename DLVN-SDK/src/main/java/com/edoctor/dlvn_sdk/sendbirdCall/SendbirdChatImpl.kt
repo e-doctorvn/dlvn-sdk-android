@@ -79,6 +79,11 @@ object SendbirdChatImpl {
         if (SendbirdChat.isInitialized) {
             SendbirdPushHelper.unregisterPushHandler(false, object : PushRequestCompleteHandler {
                 override fun onComplete(isRegistered: Boolean, token: String?) {
+                    SendbirdChat.pendingPushToken.let {
+                        if (it != null) {
+                            SendbirdChat.unregisterPushToken(it) {}
+                        }
+                    }
                     SendbirdChat.disconnect {
                         Log.d("zzz", "SendbirdChat disconnected.")
                     }
