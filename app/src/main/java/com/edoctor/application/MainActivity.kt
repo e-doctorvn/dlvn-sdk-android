@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 //            edoctorDlvnSdk!!.sampleFunc("zzz")
 //            SendbirdCallImpl.startCall(this@MainActivity, "dev_manh2")
 //            edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
-            edoctorDlvnSdk!!.openWebViewWithEncodedData(supportFragmentManager, "https://e-doctor.dev/tu-van-suc-khoe/ho-so-gia-dinh?data=U2FsdGVkX18%20EDxDQn%20h%2Fauhv9gby%2Fq3l20uL9kI2fISpVV1iWeV0K8bqRhCStEKPJ2iaGFUPCecta%20TPH9dXuOE4NHQnZKZGsUxJcuoySl4VIlcN9UJ7Fuw4EMPkTnJL98wj8h09mnF3QptnjP447GiI%20Nd1aWjb5M43r%2F9ZJgqAmAaxFSzYx0%20Zt6K9xnahb9UbP7iHA4vfE2MWc%2FzUx751ZDHDVvdkwdOwTUNcErVsVR54bdvcYJBiamVrUW2t9ByF2rX%20%2FE2fA5drzxGjGLjAG8wIAKcoVo2fM2QuQlMkmV1gIyZzSEXoJTnaBj50NNpg2Qu0%2FiTM4VDkg%2FM2QR3iNQHVEHN4HcKYI699OHriCGSgI%2FoqqQp3Lvt9J7ynkv%2Fj4y9NnGmPVFln3Y3Acs4vGMp38NTBj7aR093wtk%3D&signature=H17gpj45KkS%20V%20PjRBheu1ftUTLv8JSyWvH1E1%20uzXSt1MS6qbXnvnVo0qvtkuqEmbP3lL230ZzFko3MrQuZwvX35r4SKVSAyma3MiZ2TH1pelTQxrX%20ZnXeYCPJ3RYssxBfooEYyE%2FIkSM%20J2VKtZk5sf6TgVSnUoEr1NVP5sfnDVrJkEVNy8wtyHgMaGpeqXUPIxpfrHFKA3CeLHAjWSXd2JNgkQ6SjaR1e2HwZgqbr3OMsqpT33sWZFbuBNUbXMnVNbuVz9Qi72EPKTSs%20gLQ5Vk9w5ngfSR1fhI7sZ2%20eR32d9UVW7YL04m4gDAoBbUfGdrS98EORQeKELU6rg%3D%3D")
+            edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
         }
 
         myBtn!!.setOnClickListener {

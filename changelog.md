@@ -2,7 +2,12 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.13 (Updated: 27/02/2024)**
+Latest version: **1.1.14 (Updated: 29/02/2024)**
+
+## Version 1.1.14 (29/02/2024)
+
+- Fix crashing bug when choose attachments on devices below Android 11.
+- Call `getSendbirdAccount` when user succeeded in booking.
 
 ## Version 1.1.13 (27/02/2024)
 

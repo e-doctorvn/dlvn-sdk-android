@@ -1,7 +1,7 @@
 package com.edoctor.dlvn_sdk.webview
 
 import android.content.Intent
-import android.util.Log
+import android.os.Handler
 import android.webkit.JavascriptInterface
 import androidx.core.content.ContextCompat.startActivity
 import com.edoctor.dlvn_sdk.Constants
@@ -82,7 +82,9 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                 sdkInstance?.handleAgreeConsentOnWeb()
             }
             Constants.WebviewParams.onLoginSendBird -> {
-                sdkInstance?.getSendbirdAccount()
+                Handler().postDelayed({
+                    sdkInstance?.getSendbirdAccount()
+                },3500)
             }
         }
         return true

@@ -244,7 +244,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                             }
                         }
                         super.onPageFinished(view, url)
-                    },2000)
+                    }, 2250)
                 }
 
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
