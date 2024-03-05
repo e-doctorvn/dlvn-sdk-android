@@ -17,6 +17,7 @@ import com.sendbird.calls.AudioDevice
 import com.sendbird.calls.DirectCall
 import com.sendbird.calls.SendBirdCall
 import com.sendbird.calls.handler.DirectCallListener
+import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -33,6 +34,7 @@ class CallManager {
     var pushToken: String? = null
     var callState: String = "ENDED"
     var mContext: Context? = null
+    var totalTime: Int = 0
     private var apiService: ApiService? = null
     var acceptCallSetting: AcceptSetting? = AcceptSetting()
     var appointmentDetail: AppointmentDetailInfo? = AppointmentDetailInfo()
@@ -60,6 +62,7 @@ class CallManager {
     var closeWebViewActivity: (() -> Unit)? = {}
     var onCallStateChanged: ((state: CallState) -> Unit)? = {}
     var onCallActionChanged: ((state: CallAction) -> Unit)? = {}
+    var onTotalTimeFetched: ((total: Int) -> Unit)? = {}
 
     fun resetCall() {
         mContext = null
@@ -153,7 +156,19 @@ class CallManager {
             EdoctorDlvnSdk.edrAccessToken?.let {
                 apiService?.approveEClinicCall(it, params)?.enqueue(object : Callback<Any> {
                     override fun onResponse(call: Call<Any>, response: Response<Any>) {
-                        Log.d("zzz", response.body().toString())
+                        if (response.body() != null) {
+                            val data = JSONObject(response.body().toString())
+                            if (data.has("eClinicApprove")) {
+                                val approve = data.get("eClinicApprove") as JSONObject
+                                val product = approve.get("product") as JSONObject
+                                val packages = product.get("packages") as JSONArray
+                                val videoPackage = packages[0] as JSONObject
+                                val time = (videoPackage.get("time") as Double).toInt() * 60 * 1000
+
+                                totalTime = time
+                                onTotalTimeFetched?.invoke(totalTime)
+                            }
+                        }
                     }
 
                     override fun onFailure(call: Call<Any>, t: Throwable) {
@@ -235,6 +250,7 @@ class CallManager {
                                         data!!.thirdParty.sendbird.channelUrl.toString()
                                 }
                                 appointmentDetail?.doctor = data?.doctor!!
+                                appointmentDetail?.callDuration = data.callDuration
                                 mCallback(appointmentDetail)
                             }
 

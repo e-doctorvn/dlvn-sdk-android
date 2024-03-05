@@ -43,12 +43,14 @@ data class Doctor(
 )
 data class AppointmentDetail(
     val doctor: Doctor,
-    val thirdParty: ADThirdParty
+    val thirdParty: ADThirdParty,
+    val callDuration: Int?
 )
 
 data class AppointmentDetailInfo(
     var doctor: Doctor = Doctor("", "", Degree("")),
-    var channelUrl: String = ""
+    var channelUrl: String = "",
+    var callDuration: Int? = null
 )
 
 data class AppointmentDetailResponse(

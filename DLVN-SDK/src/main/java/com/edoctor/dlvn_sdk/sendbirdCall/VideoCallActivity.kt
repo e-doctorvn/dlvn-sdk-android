@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.util.Rational
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -41,6 +42,7 @@ import com.sendbird.calls.DirectCall
 import com.sendbird.calls.SendBirdVideoView
 import jp.wasabeef.glide.transformations.BlurTransformation
 import org.webrtc.RendererCommon
+import kotlin.math.abs
 
 
 class VideoCallActivity : AppCompatActivity() {
@@ -62,7 +64,7 @@ class VideoCallActivity : AppCompatActivity() {
     private var bottomOverlay: RelativeLayout? = null
     private var bottomContainer: LinearLayout? = null
     private var chatLoading: ProgressBar? = null
-    private var totalCallTime: Int = 600
+    private var totalCallTime: Int = 1800
     private lateinit var mainHandler: Handler
 //    private lateinit var audioDialog: AudioOutputDialog
     private var directCall: DirectCall? = CallManager.getInstance()?.directCall
@@ -337,6 +339,12 @@ class VideoCallActivity : AppCompatActivity() {
                 }
             }
         }
+
+        callManager?.onTotalTimeFetched = {total ->
+            totalCallTime = callManager?.appointmentDetail?.callDuration?.let { duration ->
+                total.minus(duration).div(1000).let { result -> abs(result) }
+            } ?: totalCallTime
+        }
     }
 
     override fun onBackPressed() {
@@ -368,9 +376,12 @@ class VideoCallActivity : AppCompatActivity() {
     }
 
     private fun formatCallTime(): String {
-        val minute = (totalCallTime % 3600) / 60
-        val second = (totalCallTime % 60)
-        return String.format("00:%02d:%02d", minute, second)
+        if (totalCallTime > 0) {
+            val minute = (totalCallTime % 3600) / 60
+            val second = (totalCallTime % 60)
+            return String.format("00:%02d:%02d", minute, second)
+        }
+        return "30:00"
     }
 
     private val countdown = object : Runnable {
@@ -384,7 +395,9 @@ class VideoCallActivity : AppCompatActivity() {
                 tvCallTimeout!!.text = formatCallTime()
             } else {
                 mainHandler.removeCallbacks(this)
+                callManager!!.endEclinicCall()
                 directCall!!.end()
+
             }
             mainHandler.postDelayed(this, 1000)
         }
@@ -418,6 +431,6 @@ class VideoCallActivity : AppCompatActivity() {
             alertDialogEndTime.dismiss()
         }
 
-        Handler(Looper.getMainLooper()).postDelayed(closeDialog, 3000)
+        Handler(Looper.getMainLooper()).postDelayed(closeDialog, 5000)
     }
 }

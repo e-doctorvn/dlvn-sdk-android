@@ -61,6 +61,7 @@ object GraphAction {
                 "        channelUrl\n" +
                 "      }\n" +
                 "    }\n" +
+                "    callDuration\n" +
                 "  }\n" +
                 "}"
         const val checkAccountExist = "query CheckAccountExist(\$accountId: String, \$phone: String) {\n" +
