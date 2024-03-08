@@ -10,6 +10,8 @@ object PrefUtils {
     private const val PREF_KEY_ACCESS_TOKEN = "edr_access_token"
     private const val PREF_KEY_EDR_TOKEN = "edr_token"
     private const val PREF_KEY_DLVN_TOKEN = "edr_dlvn_token"
+    private const val PREF_KEY_SHL_TOKEN = "edr_shl_token"
+    private const val PREF_KEY_SHL_USER_ID = "edr_shl_user_id"
     private const val PREF_KEY_CALLEE_ID = "edr_callee_id"
     private const val PREF_KEY_PUSH_TOKEN = "edr_push_token"
 
@@ -24,6 +26,15 @@ object PrefUtils {
 
     fun getUserId(context: Context): String? {
         return getSharedPreferences(context).getString(PREF_KEY_USER_ID, "")
+    }
+
+    fun setShortlinkUserId(context: Context, shortlinkUserId: String?) {
+        val editor = getSharedPreferences(context).edit()
+        editor.putString(PREF_KEY_SHL_USER_ID, shortlinkUserId).apply()
+    }
+
+    fun getShortlinkUserId(context: Context): String? {
+        return getSharedPreferences(context).getString(PREF_KEY_SHL_USER_ID, "")
     }
 
     fun setAccessToken(context: Context, accessToken: String?) {
@@ -51,6 +62,15 @@ object PrefUtils {
 
     fun getEdrToken(context: Context): String? {
         return getSharedPreferences(context).getString(PREF_KEY_EDR_TOKEN, "")
+    }
+
+    fun setShortlinkToken(context: Context, shortlinkToken: String?) {
+        val editor = getSharedPreferences(context).edit()
+        editor.putString(PREF_KEY_SHL_TOKEN, shortlinkToken).apply()
+    }
+
+    fun getShortlinkToken(context: Context): String? {
+        return getSharedPreferences(context).getString(PREF_KEY_SHL_TOKEN, "")
     }
 
     fun setCalleeId(context: Context, calleeId: String?) {
@@ -82,5 +102,11 @@ object PrefUtils {
         val editor = getSharedPreferences(context).edit()
         editor.remove(PREF_KEY_DLVN_TOKEN).apply()
         editor.remove(PREF_KEY_EDR_TOKEN).apply()
+    }
+
+    fun removeShortLinkAuthData(context: Context) {
+        val editor = getSharedPreferences(context).edit()
+        editor.remove(PREF_KEY_SHL_TOKEN).apply()
+        editor.remove(PREF_KEY_SHL_USER_ID).apply()
     }
 }

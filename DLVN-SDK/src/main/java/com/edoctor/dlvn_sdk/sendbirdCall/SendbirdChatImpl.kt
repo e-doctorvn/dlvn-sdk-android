@@ -18,46 +18,60 @@ import com.sendbird.calls.SendBirdCall
 object SendbirdChatImpl {
     private const val TAG = "RNSendBirdChat"
 
-    fun initSendbirdChat(context: Context, APP_ID: String, userId: String, token: String) {
-        SendbirdPushHelper.registerPushHandler(PushNotificationService())
+    fun initSendbirdChat(context: Context, APP_ID: String, userId: String?, token: String?) {
+        if (!SendbirdChat.isInitialized) {
+            SendbirdPushHelper.registerPushHandler(PushNotificationService())
 
-        SendbirdChat.init(
-            InitParams(APP_ID, context, useCaching = true),
-            object : InitResultHandler {
-                override fun onMigrationStarted() {
-                    Log.i("Application", "Called when there's an update in Sendbird server.")
-                }
+            SendbirdChat.init(
+                InitParams(APP_ID, context, useCaching = true),
+                object : InitResultHandler {
+                    override fun onMigrationStarted() {
+                        Log.i("Application", "Called when there's an update in Sendbird server.")
+                    }
 
-                override fun onInitFailed(e: SendbirdException) {
-                    Log.i("Application", "Called when initialize failed. SDK will still operate properly as if useLocalCaching is set to false.")
-                }
+                    override fun onInitFailed(e: SendbirdException) {
+                        Log.i(
+                            "Application",
+                            "Called when initialize failed. SDK will still operate properly as if useLocalCaching is set to false."
+                        )
+                    }
 
-                override fun onInitSucceed() {
-                    SendbirdChat.connect(userId, token) { user, _ ->
-                        if (user != null) {
-                            SendbirdPushHelper.getPushToken { token, _ ->
-                                if (token == null) {
-                                    FirebaseMessaging.getInstance().token
-                                        .addOnCompleteListener(object : OnCompleteListener<String?> {
-                                            override fun onComplete(task: Task<String?>) {
-                                                if (!task.isSuccessful) {
-                                                    return
-                                                }
-                                                registerPushToken(task.result!!)
-                                                Log.d("zzz", "READY TO GET CHAT NOTI")
-                                            }
-                                        })
-                                }
-                            }
-                            SendbirdChat.setPushTriggerOption(SendbirdChat.PushTriggerOption.ALL) {}
-                            SendbirdPushHelper.registerPushHandler(PushNotificationService())
-                        } else {
-                            // Handle error.
-                        }
+                    override fun onInitSucceed() {
+                        authenticateChat(userId, token)
                     }
                 }
+            )
+        } else {
+            authenticateChat(userId, token)
+        }
+    }
+
+    private fun authenticateChat(userId: String?, token: String?) {
+        if (userId != null && token != null) {
+            SendbirdChat.connect(userId, token) { user, _ ->
+                if (user != null) {
+                    SendbirdPushHelper.getPushToken { token, _ ->
+                        if (token == null) {
+                            FirebaseMessaging.getInstance().token
+                                .addOnCompleteListener(object :
+                                    OnCompleteListener<String?> {
+                                    override fun onComplete(task: Task<String?>) {
+                                        if (!task.isSuccessful) {
+                                            return
+                                        }
+                                        registerPushToken(task.result!!)
+                                        Log.d("zzz", "READY TO GET CHAT NOTI")
+                                    }
+                                })
+                        }
+                    }
+                    SendbirdChat.setPushTriggerOption(SendbirdChat.PushTriggerOption.ALL) {}
+                    SendbirdPushHelper.registerPushHandler(PushNotificationService())
+                } else {
+                    // Handle error.
+                }
             }
-        )
+        }
     }
 
     fun registerPushToken(pushToken: String) {

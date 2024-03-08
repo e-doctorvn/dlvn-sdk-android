@@ -140,7 +140,11 @@ class EdoctorDlvnSdk(
 
         if (intent != null) {
             checkSavedAuthCredentials()
+            SendbirdChatImpl.initSendbirdChat(context, edrAppId, null, null)
             SendbirdCallImpl.initSendbirdCall(context, edrAppId)
+            checkAndRemoveShortLinkCredentials {
+                getSendbirdAccount()
+            }
             
             if (intent.action?.equals("CallAction") == true) {
                 if (intent.getStringExtra("Key") == "END_CALL") {
@@ -309,10 +313,11 @@ class EdoctorDlvnSdk(
                                             data.accountId,
                                             data.thirdParty.sendbird?.token,
                                         )
+                                        // token != null: have appointmentSchedules
                                         SendbirdCallImpl.authenticate(
                                             context,
                                             sendBirdAccount?.accountId.toString(),
-                                            sendBirdAccount?.token.toString(),
+                                            sendBirdAccount?.token,
                                             saveCredentials
                                         )
                                     }
@@ -426,14 +431,18 @@ class EdoctorDlvnSdk(
     }
 
     fun handleAuthenticateShortLink(userId: String, edrToken: String, dlvnToken: String) {
-        if (userId == sendBirdAccount?.accountId.toString()) return
-        else {
-            SendbirdCallImpl.logOutCurrentUser(context) {
-                sendBirdAccount = null
-                isShortLinkAuthen = true
-                edrAccessToken = edrToken
-                dlvnAccessToken = dlvnToken
-                getSendbirdAccount(false)
+        if (edrAccessToken == null) { // Not authenticated
+            getSendbirdAccount(false)
+        } else { // Authenticated
+            if (userId == sendBirdAccount?.accountId) return
+            else {
+                SendbirdCallImpl.logOutCurrentUser(context) {
+                    sendBirdAccount = null
+                    isShortLinkAuthen = true
+                    edrAccessToken = edrToken
+                    dlvnAccessToken = dlvnToken
+                    getSendbirdAccount(false)
+                }
             }
         }
     }
@@ -442,6 +451,7 @@ class EdoctorDlvnSdk(
         checkSavedAuthCredentials()
         SendbirdCallImpl.logOutCurrentUser(context) {
             sendBirdAccount = null
+            isShortLinkAuthen = false
             SendbirdChatImpl.disconnect()
             getSendbirdAccount()
         }
@@ -454,6 +464,20 @@ class EdoctorDlvnSdk(
         if (!dlvnToken.isNullOrEmpty() && !edrToken.isNullOrEmpty()) {
             edrAccessToken = edrToken
             dlvnAccessToken = dlvnToken
+        }
+    }
+
+    private fun checkAndRemoveShortLinkCredentials(mCallback: () -> Unit) {
+        val shortlinkToken: String? = PrefUtils.getShortlinkToken(context)
+
+        if (shortlinkToken != null) { // Open short link then quit app
+            SendbirdCallImpl.logOutCurrentUser(context) {
+                SendbirdChatImpl.disconnect()
+                PrefUtils.removeShortLinkAuthData(context)
+                mCallback()
+            }
+        } else {
+            mCallback()
         }
     }
 
