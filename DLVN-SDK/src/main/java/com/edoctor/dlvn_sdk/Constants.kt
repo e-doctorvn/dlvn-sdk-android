@@ -1,7 +1,7 @@
 package com.edoctor.dlvn_sdk
 
 object Constants {
-    const val healthConsultantUrlDev = "https://khuat.dai-ichi-life.com.vn/tu-van-suc-khoe"  // "https://e-doctor.dev/tu-van-suc-khoe"
+    const val healthConsultantUrlDev = "https://e-doctor.dev/tu-van-suc-khoe" // "https://khuat.dai-ichi-life.com.vn/tu-van-suc-khoe"  // "https://e-doctor.dev/tu-van-suc-khoe"
     const val healthConsultantUrlProd = "https://kh.dai-ichi-life.com.vn/tu-van-suc-khoe"
     const val edrApiUrlDev = "https://virtual-clinic.api.e-doctor.dev/"
     const val edrApiUrlProd = "https://virtual-clinic.api.edoctor.io/"
@@ -21,6 +21,8 @@ object Constants {
         const val onChangeChatChannel: String = "active-channel-url"
         const val onRequestUpdateApp: String = "request-update-app"
         const val onAuthenShortLink: String = "authenticate-short-link"
+        const val onAgreeConsent: String = "agree-consent"
+        const val onLoginSendBird: String = "authenticate-sendbird"
     }
     object IntentExtra {
         const val chatNotification: String = "isEdrChatNotification"

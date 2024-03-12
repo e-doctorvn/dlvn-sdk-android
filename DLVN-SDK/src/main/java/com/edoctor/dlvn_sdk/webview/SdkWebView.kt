@@ -71,6 +71,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     var hideLoading: Boolean = false
     private var mUMA: ValueCallback<Array<Uri>>? = null
     private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
+    private var requestMultiplePermissionLauncher: ActivityResultLauncher<Array<String>>? = null
 
     init {
         sdkInstance = sdk
@@ -92,6 +93,9 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) {}
+        requestMultiplePermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions -> onRequestPermissionsResult(permissions)}
         setStyle(STYLE_NO_FRAME, R.style.EDRDialogStyle)
     }
 
@@ -184,34 +188,8 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     }
                     mUMA = filePathCallback
 
-                    val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                    val photoFile: File = createImageFile()
-                    mCM = photoFile.toUri().toString()
-
-                    val captureImgUri =
-                        FileProvider.getUriForFile(
-                            requireContext(),
-                            requireContext().applicationContext.packageName + ".com.edoctor.application.provider",
-                            photoFile
-                        )
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
-                    takePictureIntent.putExtra("return-data", false)
-                    takePictureIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-
-                    val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
-                    contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
-                    contentSelectionIntent.type = "*/*"
-                    contentSelectionIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-                    val intentArray: Array<Intent> = arrayOf(takePictureIntent)
-                    val chooserIntent = Intent(Intent.ACTION_CHOOSER)
-                    chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
-                    chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser")
-                    if (webViewCallActivity == null) {
-                        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
-                    }
-                    chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
-                    startActivityForResult(chooserIntent, FCR)
                     requireActivity().runOnUiThread { requestCameraPermission() }
+
                     return true
                 }
             }
@@ -259,13 +237,14 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                             hideLoading = false
                             loading.visibility = View.GONE
                             checkTimeoutLoadWebView = true
+                            EdoctorDlvnSdk.debounceWVShortLink = false
 
                             requireActivity().runOnUiThread {
                                 requestPostNotificationPermission()
                             }
                         }
                         super.onPageFinished(view, url)
-                    },2000)
+                    }, 2250)
                 }
 
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -275,6 +254,9 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                         view?.evaluateJavascript("sessionStorage.setItem(\"upload_token\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
                         view?.evaluateJavascript("sessionStorage.setItem(\"accessTokenDlvn\", \"${EdoctorDlvnSdk.dlvnAccessToken}\");") {}
                         view?.evaluateJavascript("sessionStorage.setItem(\"sdkSupportConsultant\", ${true});") {}
+                    }
+                    if (EdoctorDlvnSdk.accountExist == false) {
+                        view?.evaluateJavascript("sessionStorage.setItem(\"consent\", ${true});") {}
                     }
                     Thread {
                         try {
@@ -410,13 +392,12 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     }
 
     private fun requestCameraPermission() {
-        requestPermissionLauncher?.let {
-            PermissionManager.handleRequestPermission(
-                requireActivity(),
+        requestMultiplePermissionLauncher?.launch(
+            arrayOf(
                 Manifest.permission.CAMERA,
-                it
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
-        }
+        )
     }
 
     private fun requestPostNotificationPermission() {
@@ -501,5 +482,50 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         mUMA!!.onReceiveValue(results)
         mUMA = null
         hideLoading = true
+    }
+
+    private fun onRequestPermissionsResult(permissions: Map<String, @JvmSuppressWildcards Boolean>) {
+        try {
+            val chooserIntent = Intent(Intent.ACTION_CHOOSER)
+            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
+
+            val results = permissions.entries.map { it.value }
+            val availableBelowAndroid11 = Build.VERSION.SDK_INT < 30 && results[0] && results[1]
+            val availableAboveAndroid11 = Build.VERSION.SDK_INT >= 30 && results[0]
+
+            if (availableAboveAndroid11 || availableBelowAndroid11) {
+                val photoFile: File = createImageFile()
+                mCM = photoFile.toUri().toString()
+
+                val captureImgUri =
+                    FileProvider.getUriForFile(
+                        requireContext(),
+                        requireContext().applicationContext.packageName + ".com.edoctor.application.provider",
+                        photoFile
+                    )
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
+                takePictureIntent.putExtra("return-data", false)
+                takePictureIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+
+                val intentArray: Array<Intent> = arrayOf(takePictureIntent)
+
+                if (webViewCallActivity == null) {
+                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
+                }
+            }
+            // SELECT IMAGES
+            contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
+            contentSelectionIntent.type = "*/*"
+            contentSelectionIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+
+            chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
+            chooserIntent.putExtra(Intent.EXTRA_TITLE, "Chọn ảnh từ")
+            chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            startActivityForResult(chooserIntent, FCR)
+            return
+        } catch (_: Error) {
+
+        }
     }
 }

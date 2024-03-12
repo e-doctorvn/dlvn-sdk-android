@@ -2,7 +2,28 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.11 (Updated: 06/02/2024)**
+Latest version: **1.2.0 (Updated: 12/03/2024)**
+
+## Version 1.2.0 (12/03/2024)
+
+- Update call duration in VideoCallActivity.
+- Update saving Sendbird's credentials.
+
+## Version 1.1.14 (29/02/2024)
+
+- Fix crashing bug when choose attachments on devices below Android 11.
+- Call `getSendbirdAccount` when user succeeded in booking.
+
+## Version 1.1.13 (27/02/2024)
+
+- Fix crashing bugs.
+- Add `openWebViewWithEncodedData` function.
+- Update open webview flow to match `consent handling` with WEB.
+
+## Version 1.1.12 (22/02/2024)
+
+- Add `checkAccountExist` function.
+- Fix `authenticateEDR` function to not call `initDLVNAccount` if account does exist.
 
 ## Version 1.1.11 (06/02/2024)
 

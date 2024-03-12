@@ -44,10 +44,7 @@ object SendbirdCallImpl {
             if (SendBirdCall.init(context, APP_ID)) {
                 edrAppId = APP_ID
                 isInitialized = true
-//            Toast
-//                .makeText(context, "initSendbirdCall success", Toast.LENGTH_SHORT)
-//                .show()
-                checkLoggedInUser(context)
+//                checkLoggedInUser(context)
             }
         }
     }
@@ -106,12 +103,14 @@ object SendbirdCallImpl {
     fun deAuthenticate(context: Context) {
         removeAllListeners()
         PrefUtils.getPushToken(context)?.let {
-            SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
-                SendBirdCall.deauthenticate() {
-                    didTokenSave = false
-                    isAuthenticated = false
-                    PrefUtils.removeSendbirdAuthData(context)
-                    // Toast.makeText(context, "Logged out SB", Toast.LENGTH_SHORT).show()
+            if (it.isNotEmpty()) {
+                SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
+                    SendBirdCall.deauthenticate() {
+                        didTokenSave = false
+                        isAuthenticated = false
+                        PrefUtils.removeSendbirdAuthData(context)
+                        // Toast.makeText(context, "Logged out SB", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -119,56 +118,62 @@ object SendbirdCallImpl {
 
     @JvmStatic
     fun authenticate(context: Context, userId: String, accessToken: String?, saveCredentials: Boolean = true) {
-        val params: AuthenticateParams = AuthenticateParams(userId).setAccessToken(accessToken)
-        if (!isAuthenticated) {
-            SendBirdCall.authenticate(params, object : AuthenticateHandler {
-                override fun onResult(user: User?, e: SendBirdException?) {
-                    if (e == null) {
-                        addListener(context)
+        if (accessToken != null) {
+            val params: AuthenticateParams = AuthenticateParams(userId).setAccessToken(accessToken)
+            if (!isAuthenticated) {
+                SendBirdCall.authenticate(params, object : AuthenticateHandler {
+                    override fun onResult(user: User?, e: SendBirdException?) {
+                        if (e == null) {
+                            addListener(context)
 //                    Toast.makeText(context, "Login $userId Success", Toast.LENGTH_SHORT).show()
-                        Log.d("zzz", "UserID: $userId")
-                        FirebaseMessaging.getInstance().token
-                            .addOnCompleteListener(object : OnCompleteListener<String?> {
-                                override fun onComplete(task: Task<String?>) {
-                                    if (!task.isSuccessful) {
-                                        Log.w(
-                                            TAG,
-                                            "Fetching FCM registration token failed",
-                                            task.exception
+                            Log.d("zzz", "UserID: $userId")
+                            FirebaseMessaging.getInstance().token
+                                .addOnCompleteListener(object : OnCompleteListener<String?> {
+                                    override fun onComplete(task: Task<String?>) {
+                                        if (!task.isSuccessful) {
+                                            Log.w(
+                                                TAG,
+                                                "Fetching FCM registration token failed",
+                                                task.exception
+                                            )
+                                            return
+                                        }
+
+                                        val token: String? = task.result
+                                        CallManager.getInstance()!!.pushToken = token
+                                        registerPushToken(context, token)
+                                        PrefUtils.setPushToken(context, token)
+
+                                        SendbirdChatImpl.initSendbirdChat(
+                                            context,
+                                            edrAppId,
+                                            userId,
+                                            accessToken
                                         )
-                                        return
+                                        SendbirdChatImpl.registerPushToken(token!!)
+
+                                        if (!didTokenSave && saveCredentials) {
+                                            PrefUtils.setAccessToken(context, accessToken)
+                                            PrefUtils.setUserId(context, userId)
+                                            didTokenSave = true
+                                        } else if (!saveCredentials) {
+                                            PrefUtils.setShortlinkToken(context, accessToken)
+                                            PrefUtils.setShortlinkUserId(context, userId)
+                                        }
+
+                                        isAuthenticated = true
                                     }
-
-                                    val token: String? = task.result
-                                    CallManager.getInstance()!!.pushToken = token
-                                    registerPushToken(context, token)
-                                    PrefUtils.setPushToken(context, token)
-
-                                    SendbirdChatImpl.initSendbirdChat(
-                                        context,
-                                        edrAppId,
-                                        userId,
-                                        accessToken!!
-                                    )
-                                    SendbirdChatImpl.registerPushToken(token!!)
-
-                                    if (!didTokenSave && saveCredentials) {
-                                        PrefUtils.setAccessToken(context, accessToken)
-                                        PrefUtils.setUserId(context, userId)
-                                        didTokenSave = true
-                                    }
-                                    isAuthenticated = true
-                                }
-                            })
+                                })
+                        }
                     }
-                }
-            })
+                })
+            }
         }
     }
 
     @JvmStatic
     fun registerPushToken(context: Context, pushToken: String?) {
-        if (pushToken != null) {
+        if (!pushToken.isNullOrEmpty()) {
             if (isInitialized) {
                 SendBirdCall.registerPushToken(
                     pushToken, PushTokenType.FCM_VOIP, true
@@ -186,10 +191,12 @@ object SendbirdCallImpl {
     fun logOutCurrentUser(context: Context, mCallback: () -> Unit) {
         removeAllListeners()
         PrefUtils.getPushToken(context)?.let {
-            SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
-                SendBirdCall.deauthenticate() {
-                    isAuthenticated = false
-                    mCallback()
+            if (it.isNotEmpty()) {
+                SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
+                    SendBirdCall.deauthenticate() {
+                        isAuthenticated = false
+                        mCallback()
+                    }
                 }
             }
         }
@@ -227,5 +234,12 @@ object SendbirdCallImpl {
             }
             authenticate(context, userId, accessToken)
         }
+    }
+
+    fun getCurrentUser(): User? {
+        if (isInitialized) {
+            return SendBirdCall.currentUser
+        }
+        return null
     }
 }

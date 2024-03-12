@@ -7,10 +7,10 @@
     <string name="incoming_accept_label">Chấp nhận</string>
     <string name="incall_network_error_label" tools:ignore="TypographyEllipsis">Đã xảy ra sự cố kết nối. Đang kết nối lại...</string>
     <string name="incall_open_chat_label">Mở chat</string>
-    <string name="incall_on_mic_label">Bật mic</string>
-    <string name="incall_on_cam_label">Bật camera</string>
-    <string name="incall_off_mic_label">Tắt mic</string>
-    <string name="incall_off_cam_label">Tắt camera</string>
+    <string name="incall_on_mic_label">Mic</string> <!-- Bật -->
+    <string name="incall_on_cam_label">Camera</string> <!-- Bật -->
+    <string name="incall_off_mic_label">Mic</string> <!-- Tắt -->
+    <string name="incall_off_cam_label">Camera</string> <!-- Tắt -->
     <string name="incall_end_call_label">Kết thúc</string>
     <string name="end_time_ok_label">Đã hiểu</string>
     <string name="setting_label">Cài đặt</string>

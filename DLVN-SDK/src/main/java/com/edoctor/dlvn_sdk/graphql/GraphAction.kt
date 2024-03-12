@@ -7,6 +7,9 @@ object GraphAction {
                 "    accessToken\n" +
                 "   }\n" +
                 "}"
+        const val updateAccountAgreement = "mutation AccountUpdateAgreement(\$isAcceptAgreement: Date, \$isAcceptShareInfo: Date) {\n" +
+                "      accountUpdateAggrement(isAcceptAgreement: \$isAcceptAgreement, isAcceptShareInfo: \$isAcceptShareInfo)\n" +
+                "    }"
         const val eClinicExpireRinging = "mutation eClinicExpireRinging(\$eClinicId: String!, \$appointmentScheduleId: String!) {\n" +
                 "  eClinicExpireRinging(eClinicId: \$eClinicId, appointmentScheduleId: \$appointmentScheduleId) {\n" +
                 "    appointmentScheduleId\n" +
@@ -58,6 +61,7 @@ object GraphAction {
                 "        channelUrl\n" +
                 "      }\n" +
                 "    }\n" +
+                "    callDuration\n" +
                 "  }\n" +
                 "}"
         const val checkAccountExist = "query CheckAccountExist(\$accountId: String, \$phone: String) {\n" +

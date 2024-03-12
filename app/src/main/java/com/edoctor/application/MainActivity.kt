@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         callDanh!!.setOnClickListener {
 //            edoctorDlvnSdk!!.sampleFunc("zzz")
 //            SendbirdCallImpl.startCall(this@MainActivity, "dev_manh2")
+//            edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
             edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
         }
 

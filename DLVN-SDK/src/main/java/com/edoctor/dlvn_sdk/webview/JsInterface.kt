@@ -1,7 +1,6 @@
 package com.edoctor.dlvn_sdk.webview
 
 import android.content.Intent
-import android.util.Log
 import android.webkit.JavascriptInterface
 import androidx.core.content.ContextCompat.startActivity
 import com.edoctor.dlvn_sdk.Constants
@@ -36,7 +35,7 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                         if (mWebview!!.domain == JSONObject(json.getString("data")).getString("url")) {
                             mWebview!!.selfClose()
                             if (sdkInstance?.isShortLinkAuthen == true) {
-//                                sdkInstance?.handleDeauthenticateShortLink()
+                                sdkInstance?.handleDeauthenticateShortLink()
                             }
                         }
                     }
@@ -72,12 +71,17 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                 mWebview?.openAppInStore()
             }
             Constants.WebviewParams.onAuthenShortLink -> {
-                val callbackData = JSONObject(json.get("data").toString())
-                val userId = callbackData.get("userId") as String
-                val edrToken = callbackData.get("edrToken") as String
-                val dlvnToken = callbackData.get("dlvnToken") as String
+                val userId = json.get("userId") as String
+                val edrToken = json.get("edrToken") as String
+                val dlvnToken = json.get("dlvnToken") as String
 
                 sdkInstance?.handleAuthenticateShortLink(userId, edrToken, dlvnToken)
+            }
+            Constants.WebviewParams.onAgreeConsent -> {
+                sdkInstance?.handleAgreeConsentOnWeb()
+            }
+            Constants.WebviewParams.onLoginSendBird -> {
+                sdkInstance?.getSendbirdAccount()
             }
         }
         return true

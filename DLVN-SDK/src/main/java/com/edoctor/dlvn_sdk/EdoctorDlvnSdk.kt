@@ -51,10 +51,12 @@ class EdoctorDlvnSdk(
         const val LOG_TAG = "EDOCTOR_SDK"
         @SuppressLint("StaticFieldLeak")
         internal lateinit var context: Context
+        internal var accountExist: Boolean? = null
         internal var environment: Env = Env.SANDBOX
         internal var needClearCache: Boolean = false
         internal var edrAccessToken: String? = null
         internal var dlvnAccessToken: String? = null
+        internal var debounceWVShortLink: Boolean = false
         internal var sendBirdAccount: SendBirdAccount? = null
 
         fun showError(message: String?) {
@@ -113,7 +115,7 @@ class EdoctorDlvnSdk(
 
         fun handleNewToken(pContext: Context, token: String) {
             SendbirdChatImpl.registerPushToken(token)
-            SendbirdCallImpl.registerPushToken(pContext, token)
+//            SendbirdCallImpl.registerPushToken(pContext, token)
         }
 
         fun setAppState(isForeground: Boolean) {
@@ -138,7 +140,11 @@ class EdoctorDlvnSdk(
 
         if (intent != null) {
             checkSavedAuthCredentials()
+            SendbirdChatImpl.initSendbirdChat(context, edrAppId, null, null)
             SendbirdCallImpl.initSendbirdCall(context, edrAppId)
+            checkAndRemoveShortLinkCredentials {
+                getSendbirdAccount()
+            }
             
             if (intent.action?.equals("CallAction") == true) {
                 if (intent.getStringExtra("Key") == "END_CALL") {
@@ -162,9 +168,16 @@ class EdoctorDlvnSdk(
 
         if (authParams != null && !isFetching && !webView.isVisible) {
             if (isNetworkConnected()) {
-                webView.show(fragmentManager, webViewTag)
-                initDLVNAccount {
-                    webView.reload()
+                checkAccountExist(authParams?.get("dcid").toString()) {
+                    if (it) { // Account exists, normal flow
+                        webView.show(fragmentManager, webViewTag)
+                        initDLVNAccount {
+                            webView.reload()
+                        }
+                    } else { // Account not exists, set `consent=true` to sessionStorage
+                        webView.hideLoading = true
+                        webView.show(fragmentManager, webViewTag)
+                    }
                 }
             } else {
                 showError(context.getString(R.string.no_internet_msg))
@@ -182,11 +195,13 @@ class EdoctorDlvnSdk(
     }
 
     fun openWebViewWithEncodedData(fragmentManager: FragmentManager, url: String) {
-        if (isNetworkConnected()) {
+        if (isNetworkConnected() && !debounceWVShortLink) {
             webView.domain = url
+            debounceWVShortLink = true
             webView.hideLoading = true
             webView.show(fragmentManager, webViewTag)
         } else {
+            debounceWVShortLink = false
             showError(context.getString(R.string.no_internet_msg))
         }
     }
@@ -269,16 +284,18 @@ class EdoctorDlvnSdk(
                     }
                 })
             } else {
-                showError("Call `DLVNSendData` before calling this function!")
+                if (edrAccessToken == null) {
+                    showError("Call `DLVNSendData` before calling this function!")
+                }
             }
         } catch (_: Error) {
 
         }
     }
 
-    private fun getSendbirdAccount(saveCredentials: Boolean = true) {
+    fun getSendbirdAccount(saveCredentials: Boolean = true) {
         try {
-            if (sendBirdAccount?.token == null) {
+            if (sendBirdAccount == null || sendBirdAccount?.token == null) {
                 val params = JsonObject()
                 params.addProperty("query", GraphAction.Query.sendBirdAccount)
 
@@ -291,16 +308,20 @@ class EdoctorDlvnSdk(
                             ) {
                                 if (response.body()?.account?.accountId != null) {
                                     val data = response.body()!!.account
-                                    sendBirdAccount = SendBirdAccount(
-                                        data.accountId,
-                                        data.thirdParty.sendbird.token,
-                                    )
-                                    SendbirdCallImpl.authenticate(
-                                        context,
-                                        sendBirdAccount?.accountId.toString(),
-                                        sendBirdAccount?.token.toString(),
-                                        saveCredentials
-                                    )
+                                    if (data?.thirdParty != null) {
+                                        accountExist = true
+                                        sendBirdAccount = SendBirdAccount(
+                                            data.accountId,
+                                            data.thirdParty.sendbird?.token,
+                                        )
+                                        // token != null: have appointmentSchedules
+                                        SendbirdCallImpl.authenticate(
+                                            context,
+                                            sendBirdAccount?.accountId.toString(),
+                                            sendBirdAccount?.token,
+                                            saveCredentials
+                                        )
+                                    }
                                 }
                             }
 
@@ -316,28 +337,70 @@ class EdoctorDlvnSdk(
     }
 
     private fun checkAccountExist(dcid: String, mCallback: (result: Boolean) -> Unit) {
+        if (accountExist == null) {
+            val params = JsonObject()
+            val variables = JSONObject()
+            variables.put("phone", dcid)
+            params.addProperty("variables", variables.toString())
+            params.addProperty("query", GraphAction.Query.checkAccountExist)
+
+            apiService?.checkAccountExist(params)?.enqueue(object : Callback<Any> {
+                override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                    if (response.body() != null) {
+                        val data = JSONObject(response.body().toString())
+                        val exist = data.get("checkAccountExist")
+                        accountExist = exist as Boolean?
+                        Log.d("zzz", "checkAccountExist: $exist")
+                        mCallback(exist)
+                    }
+                }
+
+                override fun onFailure(call: Call<Any>, t: Throwable) {
+                    Log.d(LOG_TAG, "An error happened!")
+                    showError(t.message.toString())
+                    t.printStackTrace()
+                }
+            })
+        } else {
+            mCallback(accountExist!!)
+        }
+    }
+
+    private fun updateAccountAgreement(mCallback: (result: Boolean) -> Unit) {
         val params = JsonObject()
         val variables = JSONObject()
-        variables.put("phone", dcid)
+        variables.put("isAcceptAgreement", true)
+        variables.put("isAcceptShareInfo", true)
         params.addProperty("variables", variables.toString())
-        params.addProperty("query", GraphAction.Query.checkAccountExist)
+        params.addProperty("query", GraphAction.Mutation.updateAccountAgreement)
 
-        apiService?.checkAccountExist(params)?.enqueue(object : Callback<Any> {
-            override fun onResponse(call: Call<Any>, response: Response<Any>) {
-                if (response.body() != null) {
-                    val data = JSONObject(response.body().toString())
-                    val exist = data.get("checkAccountExist") as Boolean
-                    Log.d("zzz", "checkAccountExist: $exist")
-                    mCallback(exist)
+        edrAccessToken?.let {
+            apiService?.updateAccountAgreement(it, params)?.enqueue(object : Callback<Any> {
+                override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                    if (response.body() != null) {
+                        val data = JSONObject(response.body().toString())
+                        val success = data.get("accountUpdateAggrement") as Boolean
+                        mCallback(success)
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<Any>, t: Throwable) {
-                Log.d(LOG_TAG, "An error happened!")
-                showError(t.message.toString())
-                t.printStackTrace()
+                override fun onFailure(call: Call<Any>, t: Throwable) {
+                    Log.d(LOG_TAG, "An error happened!")
+                    showError(t.message.toString())
+                    t.printStackTrace()
+                    mCallback(false)
+                }
+            })
+        }
+    }
+
+    fun handleAgreeConsentOnWeb() {
+        initDLVNAccount {
+            accountExist = true
+            updateAccountAgreement {
+                webView.reload()
             }
-        })
+        }
     }
 
     fun deauthenticateEDR() {
@@ -347,6 +410,7 @@ class EdoctorDlvnSdk(
         isFetching = false
         needClearCache = true
         sendBirdAccount = null
+        accountExist = null
 
         webView.clearCacheAndCookies(context)
         PrefUtils.removeSdkAuthData(context)
@@ -368,21 +432,35 @@ class EdoctorDlvnSdk(
     }
 
     fun handleAuthenticateShortLink(userId: String, edrToken: String, dlvnToken: String) {
-        if (userId == sendBirdAccount?.accountId.toString()) return
-        else {
-            SendbirdCallImpl.logOutCurrentUser(context) {
-                sendBirdAccount = null
-                isShortLinkAuthen = true
-                edrAccessToken = edrToken
-                dlvnAccessToken = dlvnToken
-                getSendbirdAccount(false)
+        if (edrAccessToken == null) { // Not authenticated
+            isShortLinkAuthen = true
+            edrAccessToken = edrToken
+            dlvnAccessToken = dlvnToken
+            getSendbirdAccount(false)
+        } else { // Authenticated
+            if (userId == sendBirdAccount?.accountId) return
+            else {
+                SendbirdCallImpl.logOutCurrentUser(context) {
+                    sendBirdAccount = null
+                    isShortLinkAuthen = true
+                    edrAccessToken = edrToken
+                    dlvnAccessToken = dlvnToken
+                    getSendbirdAccount(false)
+                }
             }
         }
     }
 
     fun handleDeauthenticateShortLink() {
+        edrAccessToken = null
+        dlvnAccessToken = null
         checkSavedAuthCredentials()
+
+        PrefUtils.removeShortLinkAuthData(context)
         SendbirdCallImpl.logOutCurrentUser(context) {
+            sendBirdAccount = null
+            isShortLinkAuthen = false
+            SendbirdChatImpl.disconnect()
             getSendbirdAccount()
         }
     }
@@ -394,6 +472,20 @@ class EdoctorDlvnSdk(
         if (!dlvnToken.isNullOrEmpty() && !edrToken.isNullOrEmpty()) {
             edrAccessToken = edrToken
             dlvnAccessToken = dlvnToken
+        }
+    }
+
+    private fun checkAndRemoveShortLinkCredentials(mCallback: () -> Unit) {
+        val shortlinkToken: String? = PrefUtils.getShortlinkToken(context)
+
+        if (!shortlinkToken.isNullOrEmpty()) { // Open short link then quit app
+            PrefUtils.removeShortLinkAuthData(context)
+            SendbirdCallImpl.logOutCurrentUser(context) {
+                SendbirdChatImpl.disconnect()
+                mCallback()
+            }
+        } else {
+            mCallback()
         }
     }
 
