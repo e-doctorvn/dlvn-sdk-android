@@ -228,7 +228,9 @@ class CallManager {
     fun getAppointmentDetail(mCallback: (result: AppointmentDetailInfo?) -> Unit) {
         val params = JsonObject()
         val variables = JSONObject()
-        if (appointmentDetail?.channelUrl == "") {
+
+        try {
+//        if (appointmentDetail?.channelUrl == "") {
             if (directCall?.customItems?.contains("appointmentScheduleId") == true) {
                 variables.put(
                     "appointmentScheduleId",
@@ -262,8 +264,13 @@ class CallManager {
                         })
                 }
             }
-        } else {
-            mCallback(appointmentDetail)
+//        } else {
+//            mCallback(appointmentDetail)
+//        }
+        } catch (_: Error) {
+            if (appointmentDetail?.channelUrl != "") {
+                mCallback(appointmentDetail)
+            }
         }
     }
 

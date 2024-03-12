@@ -94,7 +94,7 @@ object SendbirdChatImpl {
             SendbirdPushHelper.unregisterPushHandler(false, object : PushRequestCompleteHandler {
                 override fun onComplete(isRegistered: Boolean, token: String?) {
                     SendbirdChat.pendingPushToken.let {
-                        if (it != null) {
+                        if (!it.isNullOrEmpty()) {
                             SendbirdChat.unregisterPushToken(it) {}
                         }
                     }

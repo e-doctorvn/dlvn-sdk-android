@@ -485,43 +485,47 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     }
 
     private fun onRequestPermissionsResult(permissions: Map<String, @JvmSuppressWildcards Boolean>) {
-        val chooserIntent = Intent(Intent.ACTION_CHOOSER)
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
+        try {
+            val chooserIntent = Intent(Intent.ACTION_CHOOSER)
+            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
 
-        val results = permissions.entries.map { it.value }
-        val availableBelowAndroid11 = Build.VERSION.SDK_INT < 30 && results[0] && results[1]
-        val availableAboveAndroid11 = Build.VERSION.SDK_INT >= 30 && results[0]
+            val results = permissions.entries.map { it.value }
+            val availableBelowAndroid11 = Build.VERSION.SDK_INT < 30 && results[0] && results[1]
+            val availableAboveAndroid11 = Build.VERSION.SDK_INT >= 30 && results[0]
 
-        if (availableAboveAndroid11 || availableBelowAndroid11) {
-            val photoFile: File = createImageFile()
-            mCM = photoFile.toUri().toString()
+            if (availableAboveAndroid11 || availableBelowAndroid11) {
+                val photoFile: File = createImageFile()
+                mCM = photoFile.toUri().toString()
 
-            val captureImgUri =
-                FileProvider.getUriForFile(
-                    requireContext(),
-                    requireContext().applicationContext.packageName + ".com.edoctor.application.provider",
-                    photoFile
-                )
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
-            takePictureIntent.putExtra("return-data", false)
-            takePictureIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                val captureImgUri =
+                    FileProvider.getUriForFile(
+                        requireContext(),
+                        requireContext().applicationContext.packageName + ".com.edoctor.application.provider",
+                        photoFile
+                    )
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
+                takePictureIntent.putExtra("return-data", false)
+                takePictureIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
 
-            val intentArray: Array<Intent> = arrayOf(takePictureIntent)
+                val intentArray: Array<Intent> = arrayOf(takePictureIntent)
 
-            if (webViewCallActivity == null) {
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
+                if (webViewCallActivity == null) {
+                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
+                }
             }
-        }
-        // SELECT IMAGES
-        contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
-        contentSelectionIntent.type = "*/*"
-        contentSelectionIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            // SELECT IMAGES
+            contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
+            contentSelectionIntent.type = "*/*"
+            contentSelectionIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
 
-        chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
-        chooserIntent.putExtra(Intent.EXTRA_TITLE, "Chọn ảnh từ")
-        chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        startActivityForResult(chooserIntent, FCR)
-        return
+            chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
+            chooserIntent.putExtra(Intent.EXTRA_TITLE, "Chọn ảnh từ")
+            chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            startActivityForResult(chooserIntent, FCR)
+            return
+        } catch (_: Error) {
+
+        }
     }
 }

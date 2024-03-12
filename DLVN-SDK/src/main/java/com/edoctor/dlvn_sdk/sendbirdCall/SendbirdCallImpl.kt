@@ -103,12 +103,14 @@ object SendbirdCallImpl {
     fun deAuthenticate(context: Context) {
         removeAllListeners()
         PrefUtils.getPushToken(context)?.let {
-            SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
-                SendBirdCall.deauthenticate() {
-                    didTokenSave = false
-                    isAuthenticated = false
-                    PrefUtils.removeSendbirdAuthData(context)
-                    // Toast.makeText(context, "Logged out SB", Toast.LENGTH_SHORT).show()
+            if (it.isNotEmpty()) {
+                SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
+                    SendBirdCall.deauthenticate() {
+                        didTokenSave = false
+                        isAuthenticated = false
+                        PrefUtils.removeSendbirdAuthData(context)
+                        // Toast.makeText(context, "Logged out SB", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -171,7 +173,7 @@ object SendbirdCallImpl {
 
     @JvmStatic
     fun registerPushToken(context: Context, pushToken: String?) {
-        if (pushToken != null) {
+        if (!pushToken.isNullOrEmpty()) {
             if (isInitialized) {
                 SendBirdCall.registerPushToken(
                     pushToken, PushTokenType.FCM_VOIP, true
@@ -189,10 +191,12 @@ object SendbirdCallImpl {
     fun logOutCurrentUser(context: Context, mCallback: () -> Unit) {
         removeAllListeners()
         PrefUtils.getPushToken(context)?.let {
-            SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
-                SendBirdCall.deauthenticate() {
-                    isAuthenticated = false
-                    mCallback()
+            if (it.isNotEmpty()) {
+                SendBirdCall.unregisterPushToken(it, PushTokenType.FCM_VOIP) {
+                    SendBirdCall.deauthenticate() {
+                        isAuthenticated = false
+                        mCallback()
+                    }
                 }
             }
         }

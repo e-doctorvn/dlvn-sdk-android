@@ -342,7 +342,7 @@ class VideoCallActivity : AppCompatActivity() {
 
         callManager?.onTotalTimeFetched = {total ->
             totalCallTime = callManager?.appointmentDetail?.callDuration?.let { duration ->
-                total.minus(duration).div(1000).let { result -> abs(result) }
+                total.minus(duration).div(1000).let { result -> if (result >= 0) abs(result) else 0 }
             } ?: totalCallTime
         }
     }
@@ -389,15 +389,14 @@ class VideoCallActivity : AppCompatActivity() {
         override fun run() {
             if (totalCallTime > 0) {
                 totalCallTime -= 1
-                if (totalCallTime == 180) {
+                if (totalCallTime == 300) { // last 5 minutes
                     initEndTimeDialog()
                 }
                 tvCallTimeout!!.text = formatCallTime()
             } else {
                 mainHandler.removeCallbacks(this)
-                callManager!!.endEclinicCall()
-                directCall!!.end()
-
+//                callManager!!.endEclinicCall()
+//                directCall!!.end()
             }
             mainHandler.postDelayed(this, 1000)
         }
@@ -422,6 +421,10 @@ class VideoCallActivity : AppCompatActivity() {
 //        }
 
         val alertDialogEndTime = alertDialogBuilder.create()
+        val attributes = alertDialogEndTime.window?.attributes
+        attributes?.let {
+            attributes.y += 500
+        }
         alertDialogEndTime.show()
         alertDialogEndTime.window?.setLayout(
             LinearLayout.LayoutParams.WRAP_CONTENT,
