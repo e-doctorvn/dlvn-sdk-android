@@ -2,7 +2,12 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.1.14 (Updated: 29/02/2024)**
+Latest version: **1.2.0 (Updated: 12/03/2024)**
+
+## Version 1.2.0 (12/03/2024)
+
+- Update call duration in VideoCallActivity.
+- Update saving Sendbird's credentials.
 
 ## Version 1.1.14 (29/02/2024)
 
