@@ -63,15 +63,16 @@ object NotificationHelper {
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(fullScreenIntent)
+            .setSilent(true)
             .setFullScreenIntent(fullScreenIntent, true)
             .addAction(R.drawable.end_call_24, context.getString(R.string.incoming_decline_label), declineIntent)
             .addAction(R.drawable.accept_call_24, context.getString(R.string.incoming_accept_label), fullScreenIntent)
             .setAutoCancel(true)
             .setOngoing(false)
 
-//        val mediaPlayer = MediaPlayer.create(context, R.raw.ringing)
-//        mediaPlayer.isLooping = true
-//        mediaPlayer.start()
+        val mediaPlayer = MediaPlayer.create(context, R.raw.ringing)
+        mediaPlayer.isLooping = true
+        mediaPlayer.start()
 
         notificationManager!!.notify( /*notification ID*/1, builder.build())
     }

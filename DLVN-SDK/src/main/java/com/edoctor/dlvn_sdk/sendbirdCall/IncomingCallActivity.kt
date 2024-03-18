@@ -306,14 +306,8 @@ class IncomingCallActivity : AppCompatActivity() {
     }
 
     private fun checkMicCamPermissions(): Boolean {
-        if (
-            ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-            + ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            return false
-        }
-        return true
+        return (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                + ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun setUpAnimation() {

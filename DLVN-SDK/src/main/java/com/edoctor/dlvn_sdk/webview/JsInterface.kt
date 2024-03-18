@@ -82,6 +82,8 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
             }
             Constants.WebviewParams.onLoginSendBird -> {
                 sdkInstance?.getSendbirdAccount()
+//                Request Mic + Cam permissions
+                mWebview?.requestCameraAndMicrophonePermissionForVideoCall()
             }
         }
         return true

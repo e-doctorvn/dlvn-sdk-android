@@ -340,7 +340,7 @@ class VideoCallActivity : AppCompatActivity() {
             }
         }
 
-        callManager?.onTotalTimeFetched = {total ->
+        callManager?.onTotalTimeFetched = { total ->
             totalCallTime = callManager?.appointmentDetail?.callDuration?.let { duration ->
                 total.minus(duration).div(1000).let { result -> if (result >= 0) abs(result) else 0 }
             } ?: totalCallTime

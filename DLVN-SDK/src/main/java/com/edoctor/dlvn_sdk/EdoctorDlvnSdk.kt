@@ -168,16 +168,9 @@ class EdoctorDlvnSdk(
 
         if (authParams != null && !isFetching && !webView.isVisible) {
             if (isNetworkConnected()) {
-                checkAccountExist(authParams?.get("dcid").toString()) {
-                    if (it) { // Account exists, normal flow
-                        webView.show(fragmentManager, webViewTag)
-                        initDLVNAccount {
-                            webView.reload()
-                        }
-                    } else { // Account not exists, set `consent=true` to sessionStorage
-                        webView.hideLoading = true
-                        webView.show(fragmentManager, webViewTag)
-                    }
+                webView.show(fragmentManager, webViewTag)
+                initDLVNAccount {
+                    webView.reload()
                 }
             } else {
                 showError(context.getString(R.string.no_internet_msg))
@@ -419,14 +412,9 @@ class EdoctorDlvnSdk(
     }
 
     fun authenticateEDR(params: JSONObject) { // Goi luc login thanh cong, ko goi moi lan mo app
-        val dcid = params.getString("dcid")
-        checkAccountExist(dcid) {
-            if (it) {
-                if (DLVNSendData(params)) {
-                    initDLVNAccount {
-                        Log.d("zzz", "initDLVNAccount success")
-                    }
-                }
+        if (DLVNSendData(params)) {
+            initDLVNAccount {
+                Log.d("zzz", "initDLVNAccount success")
             }
         }
     }

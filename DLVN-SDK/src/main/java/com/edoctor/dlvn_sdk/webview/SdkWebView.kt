@@ -7,6 +7,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.Uri
@@ -18,6 +19,7 @@ import android.os.Handler
 import android.os.Message
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,20 +36,26 @@ import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
 import com.edoctor.dlvn_sdk.Constants
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import com.edoctor.dlvn_sdk.R
+import com.edoctor.dlvn_sdk.helper.DimensionUtils
 import com.edoctor.dlvn_sdk.helper.NotificationHelper
 import com.edoctor.dlvn_sdk.helper.PermissionManager
+import com.edoctor.dlvn_sdk.model.Dimension
 import com.edoctor.dlvn_sdk.store.AppStore
+import com.google.android.material.snackbar.Snackbar
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -411,6 +419,16 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         }
     }
 
+    fun requestCameraAndMicrophonePermissionForVideoCall() {
+        requestPermissions(
+            arrayOf(
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.CAMERA,
+            ),
+            PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
+        )
+    }
+
     @Throws(IOException::class)
     private fun createImageFile(): File {
         @SuppressLint("SimpleDateFormat") val timeStamp: String =
@@ -482,6 +500,38 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         mUMA!!.onReceiveValue(results)
         mUMA = null
         hideLoading = true
+    }
+
+    fun showToast() {
+//        val snackbar = Snackbar.make(
+//            requireActivity().findViewById(android.R.id.content),
+//            "CookieManager.getInstance().removeAllCookies(null)",
+//            Snackbar.LENGTH_SHORT
+//        )
+//
+//        val snackbarLayout: View = snackbar.view
+//        val message = snackbarLayout.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+//        message.gravity = Gravity.CENTER_HORIZONTAL
+//        message.textAlignment = View.TEXT_ALIGNMENT_CENTER
+//
+//        val lp = FrameLayout.LayoutParams(
+//            FrameLayout.LayoutParams.WRAP_CONTENT,
+//            FrameLayout.LayoutParams.WRAP_CONTENT
+//        )
+//        val screenSize: Dimension = DimensionUtils.getScreenSize(requireActivity())
+//        lp.gravity = Gravity.CENTER_HORIZONTAL
+//        lp.setMargins(0, 500, 0, 0)
+////        lp.bottomMargin = bottomContainer!!.height + 24
+//        // Layout must match parent layout type
+//        // Layout must match parent layout type
+////        lp.setMargins(0, 0, 0, 0)
+//        // Margins relative to the parent view.
+//        // This would be 50 from the top left.
+//        // Margins relative to the parent view.
+//        // This would be 50 from the top left.
+//        snackbarLayout.layoutParams = lp
+//        snackbar.setTextMaxLines(2)
+//        snackbar.show()
     }
 
     private fun onRequestPermissionsResult(permissions: Map<String, @JvmSuppressWildcards Boolean>) {
