@@ -2,7 +2,6 @@ package com.edoctor.dlvn_sdk.sendbirdCall
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageButton
