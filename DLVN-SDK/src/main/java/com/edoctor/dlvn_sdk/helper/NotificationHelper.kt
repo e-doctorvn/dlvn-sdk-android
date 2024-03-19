@@ -67,6 +67,7 @@ object NotificationHelper {
             .addAction(R.drawable.end_call_24, context.getString(R.string.incoming_decline_label), declineIntent)
             .addAction(R.drawable.accept_call_24, context.getString(R.string.incoming_accept_label), fullScreenIntent)
             .setAutoCancel(true)
+            .setSilent(true)
             .setOngoing(false)
 
 //        val mediaPlayer = MediaPlayer.create(context, R.raw.ringing)

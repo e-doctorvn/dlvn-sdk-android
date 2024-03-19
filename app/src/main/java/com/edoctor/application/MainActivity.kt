@@ -5,7 +5,9 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
@@ -22,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        edoctorDlvnSdk = EdoctorDlvnSdk(this@MainActivity, intent)
+        edoctorDlvnSdk = EdoctorDlvnSdk(this@MainActivity, intent, lifecycleScope)
 
         myBtn = findViewById(R.id.btn_id)
         callManh = findViewById(R.id.call_manh)
@@ -52,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 //            edoctorDlvnSdk!!.sampleFunc("zzz")
 //            SendbirdCallImpl.startCall(this@MainActivity, "dev_manh2")
 //            edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
-            edoctorDlvnSdk!!.openWebView(supportFragmentManager, null)
+            edoctorDlvnSdk!!.openWebViewWithEncodedData(supportFragmentManager, "https://khuatz.dai-ichi-life.com.vn/rYqn")
         }
 
         myBtn!!.setOnClickListener {
@@ -73,6 +75,7 @@ class MainActivity : AppCompatActivity() {
 
         btn_dangxuat!!.setOnClickListener {
             edoctorDlvnSdk!!.deauthenticateEDR()
+            edoctorDlvnSdk!!.cancelSubscription()
         }
     }
 }

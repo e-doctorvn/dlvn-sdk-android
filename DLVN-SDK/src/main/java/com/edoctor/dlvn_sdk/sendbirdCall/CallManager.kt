@@ -247,7 +247,7 @@ class CallManager {
                                 val data = response.body()?.appointmentSchedules?.get(0)
                                 if (!data?.thirdParty?.sendbird?.channelUrl.isNullOrEmpty()) {
                                     appointmentDetail?.channelUrl =
-                                        data!!.thirdParty.sendbird.channelUrl.toString()
+                                        data!!.thirdParty?.sendbird?.channelUrl.toString()
                                 }
                                 appointmentDetail?.doctor = data?.doctor!!
                                 appointmentDetail?.callDuration = data.callDuration

@@ -35,4 +35,7 @@ interface ApiService {
 
     @POST("graphql")
     fun getAppointmentDetail(@Body params: JsonObject): Call<AppointmentDetailResponse>
+
+    @POST("graphql")
+    fun getAppointmentSchedules(@Header("Authorization") token: String, @Body params: JsonObject): Call<Any>
 }

@@ -10,24 +10,42 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
-import com.edoctor.dlvn_sdk.helper.NotificationHelper
-import com.edoctor.dlvn_sdk.model.SBAccountResponse
-import com.edoctor.dlvn_sdk.model.SendBirdAccount
-import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdCallImpl
-import com.edoctor.dlvn_sdk.store.AppStore
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleCoroutineScope
+import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.ApolloClient.*
+import com.apollographql.apollo3.api.Optional
+import com.apollographql.apollo3.api.http.HttpMethod
+import com.apollographql.apollo3.exception.ApolloException
+import com.apollographql.apollo3.network.http.HttpEngine
+import com.apollographql.apollo3.network.http.HttpNetworkTransport
+import com.apollographql.apollo3.network.okHttpClient
+import com.apollographql.apollo3.network.ws.SubscriptionWsProtocol
+import com.apollographql.apollo3.network.ws.WebSocketEngine
+import com.apollographql.apollo3.network.ws.WebSocketNetworkTransport
 import com.edoctor.dlvn_sdk.Constants.Env
 import com.edoctor.dlvn_sdk.Constants.webViewTag
 import com.edoctor.dlvn_sdk.api.ApiService
+import com.edoctor.dlvn_sdk.api.GraphInterceptor
+import com.edoctor.dlvn_sdk.api.GraphQLInterceptor
 import com.edoctor.dlvn_sdk.api.RetrofitClient
 import com.edoctor.dlvn_sdk.graphql.GraphAction
+import com.edoctor.dlvn_sdk.helper.NotificationHelper
 import com.edoctor.dlvn_sdk.helper.PrefUtils
 import com.edoctor.dlvn_sdk.model.AccountInitResponse
+import com.edoctor.dlvn_sdk.model.SBAccountResponse
+import com.edoctor.dlvn_sdk.model.SendBirdAccount
 import com.edoctor.dlvn_sdk.sendbirdCall.CallManager
+import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdCallImpl
 import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdChatImpl
+import com.edoctor.dlvn_sdk.store.AppStore
 import com.edoctor.dlvn_sdk.webview.SdkWebView
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.JsonObject
 import com.sendbird.calls.SendBirdCall
+import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.WebSocket
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
@@ -35,9 +53,11 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.create
 
+
 class EdoctorDlvnSdk(
     context: Context,
     intent: Intent?,
+    lifecycleScope: LifecycleCoroutineScope,
     env: Env = Env.SANDBOX
 ) {
     private val edrAppId: String = context.getString(R.string.EDR_APP_ID)
@@ -46,6 +66,9 @@ class EdoctorDlvnSdk(
     private var authParams: JSONObject? = null
     private var isFetching: Boolean = false
     var isShortLinkAuthen: Boolean = false
+    private var apolloClient: ApolloClient? = null
+    private var webSocket: WebSocket? = null
+    private var lc: LifecycleCoroutineScope? = null
 
     companion object {
         const val LOG_TAG = "EDOCTOR_SDK"
@@ -126,6 +149,7 @@ class EdoctorDlvnSdk(
     init {
         EdoctorDlvnSdk.context = context
         AppStore.sdkInstance = this
+        lc = lifecycleScope
 
         if (apiService === null) {
             apiService = RetrofitClient(env)
@@ -141,7 +165,7 @@ class EdoctorDlvnSdk(
         if (intent != null) {
             checkSavedAuthCredentials()
             SendbirdCallImpl.initSendbirdCall(context, edrAppId)
-            
+
             if (intent.action?.equals("CallAction") == true) {
                 if (intent.getStringExtra("Key") == "END_CALL") {
                     NotificationHelper.action = "_decline"
@@ -164,16 +188,9 @@ class EdoctorDlvnSdk(
 
         if (authParams != null && !isFetching && !webView.isVisible) {
             if (isNetworkConnected()) {
-                checkAccountExist(authParams?.get("dcid").toString()) {
-                    if (it) { // Account exists, normal flow
-                        webView.show(fragmentManager, webViewTag)
-                        initDLVNAccount {
-                            webView.reload()
-                        }
-                    } else { // Account not exists, set `consent=true` to sessionStorage
-                        webView.hideLoading = true
-                        webView.show(fragmentManager, webViewTag)
-                    }
+                webView.show(fragmentManager, webViewTag)
+                initDLVNAccount {
+                    webView.reload()
                 }
             } else {
                 showError(context.getString(R.string.no_internet_msg))
@@ -309,6 +326,9 @@ class EdoctorDlvnSdk(
                                             data.accountId,
                                             data.thirdParty.sendbird?.token,
                                         )
+                                        lc?.launch {
+                                            initializeSchedulesSubscription()
+                                        }
                                         SendbirdCallImpl.authenticate(
                                             context,
                                             sendBirdAccount?.accountId.toString(),
@@ -386,6 +406,81 @@ class EdoctorDlvnSdk(
                 }
             })
         }
+    }
+
+    fun getAppointmentSchedules(mCallback: (Array<Any>) -> Unit) {
+        val params = JsonObject()
+        val variables = JSONObject()
+        val limit = JSONObject()
+        limit.put("start", 0)
+        limit.put("limit", 6)
+
+        variables.put("limit", limit)
+        variables.put("accountId", "dev_89ynlP0Qn1EV98tD")
+        variables.put("sort", JSONObject().put("scheduledAt", "DESC"))
+        params.addProperty("variables", variables.toString())
+        params.addProperty("query", GraphAction.Query.appointmentSchedules)
+
+        edrAccessToken?.let {
+            apiService?.getAppointmentSchedules(it, params)?.enqueue(object : Callback<Any> {
+                override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                    if (response.body() != null) {
+                        Log.d("zzz", response.body().toString())
+                    }
+                }
+
+                override fun onFailure(call: Call<Any>, t: Throwable) {
+                    Log.d(LOG_TAG, "An error happened!")
+                    showError(t.message.toString())
+                    t.printStackTrace()
+                }
+            })
+        }
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    private suspend fun initializeSchedulesSubscription() {
+        edrAccessToken?.let {
+            try {
+                val okHttpClient = OkHttpClient.Builder()
+                    .addNetworkInterceptor { chain ->
+                        val builder = chain.request().newBuilder()
+                        builder.header("authorization", it)
+                        chain.proceed(builder.build())
+                    }
+                    .addInterceptor { chain ->
+                        val builder = chain.request().newBuilder()
+                        builder.header("authorization", it)
+                        chain.proceed(builder.build())
+                    }.build()
+
+                apolloClient = Builder()
+                    .networkTransport(
+                        HttpNetworkTransport.Builder()
+                            .serverUrl("https://virtual-clinic.api.e-doctor.dev/graphql")
+                            .okHttpClient(okHttpClient)
+                            .build()
+                    )
+                    .build()
+
+                apolloClient!!.subscription(
+                    SubscribeToScheduleSubscription(
+                        accountId = Optional.Present(sendBirdAccount?.accountId)
+                    )
+                )
+                    .toFlow()
+                    .collect { it1 ->
+                        Log.d("zzz", it1.data.toString())
+                    }
+            } catch (e: ApolloException) {
+                Log.d("zzz", e.cause?.message.toString())
+                Log.d("zzz", "Error: " + e.message.toString())
+            }
+        }
+    }
+
+    fun cancelSubscription() {
+        webSocket?.cancel()
     }
 
     fun handleAgreeConsentOnWeb() {

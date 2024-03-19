@@ -1,0 +1,5 @@
+query AccountQuery($accountId: String) {
+  account(accountId: $accountId) {
+    fullName
+  }
+}

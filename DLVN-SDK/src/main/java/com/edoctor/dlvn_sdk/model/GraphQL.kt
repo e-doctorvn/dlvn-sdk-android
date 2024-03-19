@@ -22,7 +22,7 @@ data class ThirdParty(
     val sendbird: SendBirdAccount?
 )
 data class ADThirdParty(
-    val sendbird: Sendbird
+    val sendbird: Sendbird?
 )
 data class Account(
     val accountId: String,
@@ -43,7 +43,7 @@ data class Doctor(
 )
 data class AppointmentDetail(
     val doctor: Doctor,
-    val thirdParty: ADThirdParty,
+    val thirdParty: ADThirdParty?,
     val callDuration: Int?
 )
 

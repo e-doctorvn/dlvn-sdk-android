@@ -82,9 +82,7 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                 sdkInstance?.handleAgreeConsentOnWeb()
             }
             Constants.WebviewParams.onLoginSendBird -> {
-                Handler().postDelayed({
-                    sdkInstance?.getSendbirdAccount()
-                },3500)
+                sdkInstance?.getSendbirdAccount()
             }
         }
         return true

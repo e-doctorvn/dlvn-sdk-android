@@ -1,0 +1,102 @@
+subscription subscribeToSchedule($eClinicId: String, $accountId: String) {
+  appointmentSchedule(eClinicId: $eClinicId, accountId: $accountId) {
+    appointmentScheduleId
+    doctor {
+      fullName
+      degree {
+        degreeId
+        name
+        shortName
+      }
+      workingRegion
+      graduateYear
+      doctorId
+      avatar
+      statistic {
+        fusionRateCustomerAverage
+        fusionRateAnswerCount
+      }
+      account {
+        fullName
+      }
+    }
+    thirdParty {
+      sendbird {
+        channelUrl
+      }
+    }
+    eClinic {
+      appointment {
+        prepareJoin
+        lateJoin
+        callRingingTime
+      }
+      workingTimes {
+        type
+        duration
+        data {
+          dayOfWeek
+          isActive
+          blocks {
+            from
+            to
+            isActive
+          }
+        }
+      }
+      displayName
+      isCloseChat
+      eClinicId
+      avatar
+      title
+      description
+      cover
+      slug
+    }
+    profile {
+      profileCode
+      profileId
+      avatar
+      birthday
+      account {
+        accountId
+        fullName
+        type
+        gender
+        sourceType
+        deviceId
+        accessToken
+        thirdParty {
+          sendbird {
+            token
+          }
+        }
+      }
+      fullName
+      relation
+      phone
+    }
+    comment {
+      star
+      content
+    }
+    warehouse {
+      warehouseId
+    }
+    package
+    reason
+    reasonImage
+    scheduledAt
+    scheduleToken
+    createdAt
+    updatedAt
+    state
+    joinNumber
+    joinMode
+    joinAt
+    supportNumber
+    medicalExamination {
+      medicalExaminationId
+    }
+  }
+}
