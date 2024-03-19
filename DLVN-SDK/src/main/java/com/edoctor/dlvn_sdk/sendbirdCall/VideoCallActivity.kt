@@ -17,6 +17,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -24,6 +25,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -78,6 +80,8 @@ class VideoCallActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_call)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         callManager = CallManager.getInstance()
         initView()
         initCallEventListener()
@@ -221,37 +225,22 @@ class VideoCallActivity : AppCompatActivity() {
         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
     }
 
-    @SuppressLint("ShowToast")
+    @SuppressLint("ShowToast", "InflateParams")
     private fun showOutputActionToast(messageId: Int) {
-//        val snackbar = Snackbar.make(
-//            this.findViewById(android.R.id.content),
-//            getString(messageId),
-//            Snackbar.LENGTH_SHORT
-//        )
-//
-//        val snackbarLayout: View = snackbar.view
-////        val message = snackbarLayout.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-////        message.gravity = Gravity.CENTER_HORIZONTAL
-////        message.textAlignment = View.TEXT_ALIGNMENT_CENTER
-//
-//        val lp = FrameLayout.LayoutParams(
-//            FrameLayout.LayoutParams.WRAP_CONTENT,
-//            FrameLayout.LayoutParams.WRAP_CONTENT
-//        )
-//        val screenSize: Dimension = DimensionUtils.getScreenSize(this)
-//        lp.gravity = Gravity.CENTER_HORIZONTAL
-//        lp.setMargins(0, screenSize.height - bottomContainer!!.height - 136, 0, 0)
-////        lp.bottomMargin = bottomContainer!!.height + 24
-//        // Layout must match parent layout type
-//        // Layout must match parent layout type
-////        lp.setMargins(0, 0, 0, 0)
-//        // Margins relative to the parent view.
-//        // This would be 50 from the top left.
-//        // Margins relative to the parent view.
-//        // This would be 50 from the top left.
-//        snackbarLayout.layoutParams = lp
-//        snackbar.setTextMaxLines(2)
-////        snackbar.show()
+        val inflater = layoutInflater
+        val layout: View = inflater.inflate(
+            R.layout.media_toast,
+            null
+        )
+
+        val text = layout.findViewById<View>(R.id.tv_media_toast) as TextView
+        text.text = getString(messageId)
+
+        val toast = Toast(applicationContext)
+        toast.setGravity(Gravity.BOTTOM, 0, 420)
+        toast.duration = Toast.LENGTH_SHORT
+        toast.view = layout
+        toast.show()
     }
 
     override fun onUserLeaveHint() {
@@ -340,7 +329,7 @@ class VideoCallActivity : AppCompatActivity() {
             }
         }
 
-        callManager?.onTotalTimeFetched = {total ->
+        callManager?.onTotalTimeFetched = { total ->
             totalCallTime = callManager?.appointmentDetail?.callDuration?.let { duration ->
                 total.minus(duration).div(1000).let { result -> if (result >= 0) abs(result) else 0 }
             } ?: totalCallTime

@@ -2,11 +2,17 @@ package com.edoctor.application
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import org.json.JSONObject
+
 
 class MainActivity : AppCompatActivity() {
     private var myBtn: Button? = null
@@ -39,6 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         loginManh!!.setOnClickListener {
             txtName!!.text = "Danh (EDR)"
+            showToast()
 //            edoctorDlvnSdk!!.authenticateSb(
 //                this@MainActivity, "dev_danh2", "3b98b5e8b0c2c560d651d02ce1551b6a69cf76ca"
 ////                "dev_xUqOcSQLXGsxR1i1",
@@ -74,5 +81,22 @@ class MainActivity : AppCompatActivity() {
         btn_dangxuat!!.setOnClickListener {
             edoctorDlvnSdk!!.deauthenticateEDR()
         }
+    }
+
+    private fun showToast() {
+        val inflater = layoutInflater
+        val layout: View = inflater.inflate(
+            R.layout.toast,
+            null
+        )
+
+        val text = layout.findViewById<View>(R.id.text_toast) as TextView
+        text.text = "Hello! This is a custom toast!"
+
+        val toast = Toast(applicationContext)
+        toast.setGravity(Gravity.BOTTOM, 0, 300)
+        toast.duration = Toast.LENGTH_SHORT
+        toast.view = layout
+        toast.show()
     }
 }

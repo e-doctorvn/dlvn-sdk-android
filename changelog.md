@@ -2,7 +2,13 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.0 (Updated: 12/03/2024)**
+Latest version: **1.2.1 (Updated: 19/03/2024)**
+
+## Version 1.2.1 (19/03/2024)
+
+- Update agree call from notification in quit state.
+- Remove `checkAccountExist`
+- Add toast when on/off mic/cam in VideoCallActivity
 
 ## Version 1.2.0 (12/03/2024)
 

@@ -39,10 +39,10 @@ object SendbirdCallImpl {
     private const val TAG = "RNSendBirdCalls"
 
     @JvmStatic
-    fun initSendbirdCall(context: Context, APP_ID: String) {
+    fun initSendbirdCall(context: Context, appId: String) {
         if (!isInitialized) {
-            if (SendBirdCall.init(context, APP_ID)) {
-                edrAppId = APP_ID
+            if (SendBirdCall.init(context, appId)) {
+                edrAppId = appId
                 isInitialized = true
 //                checkLoggedInUser(context)
             }

@@ -54,7 +54,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation 'com.sendbird.sdk:sendbird-calls:1.11.5'
     implementation 'com.sendbird.sdk:sendbird-chat:4.14.0'
-    implementation("com.google.firebase:firebase-messaging:23.4.0")
+    implementation("com.google.firebase:firebase-messaging:23.4.1")
     implementation 'jp.wasabeef:glide-transformations:4.3.0'
 }
 
@@ -63,7 +63,7 @@ publishing {
         release(MavenPublication) {
             groupId = 'com.github.e-doctorvn'
             artifactId = 'dlvn-sdk-android'
-            version = '1.2.0'
+            version = '1.2.1'
 
             afterEvaluate {
                 from components.release

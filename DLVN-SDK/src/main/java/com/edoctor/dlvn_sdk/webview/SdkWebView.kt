@@ -411,6 +411,16 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         }
     }
 
+    fun requestCameraAndMicrophonePermissionForVideoCall() {
+        requestPermissions(
+            arrayOf(
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.CAMERA,
+            ),
+            PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
+        )
+    }
+
     @Throws(IOException::class)
     private fun createImageFile(): File {
         @SuppressLint("SimpleDateFormat") val timeStamp: String =

@@ -78,10 +78,12 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                 sdkInstance?.handleAuthenticateShortLink(userId, edrToken, dlvnToken)
             }
             Constants.WebviewParams.onAgreeConsent -> {
-                sdkInstance?.handleAgreeConsentOnWeb()
+//                sdkInstance?.handleAgreeConsentOnWeb()
             }
             Constants.WebviewParams.onLoginSendBird -> {
                 sdkInstance?.getSendbirdAccount()
+//                Request Mic + Cam permissions
+                mWebview?.requestCameraAndMicrophonePermissionForVideoCall()
             }
         }
         return true

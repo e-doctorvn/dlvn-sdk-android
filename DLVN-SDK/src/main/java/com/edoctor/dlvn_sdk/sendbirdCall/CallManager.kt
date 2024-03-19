@@ -36,6 +36,7 @@ class CallManager {
     var mContext: Context? = null
     var totalTime: Int = 0
     private var apiService: ApiService? = null
+    var acceptCallFromQuitState: Boolean = false
     var acceptCallSetting: AcceptSetting? = AcceptSetting()
     var appointmentDetail: AppointmentDetailInfo? = AppointmentDetailInfo()
 
