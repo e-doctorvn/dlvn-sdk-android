@@ -414,9 +414,14 @@ class EdoctorDlvnSdk(
     }
 
     fun authenticateEDR(params: JSONObject) { // Goi luc login thanh cong, ko goi moi lan mo app
-        if (DLVNSendData(params)) {
-            initDLVNAccount {
-                Log.d("zzz", "initDLVNAccount success")
+        val dcid = params.getString("dcid")
+        checkAccountExist(dcid) {
+            if (it) {
+                if (DLVNSendData(params)) {
+                    initDLVNAccount {
+                        Log.d("zzz", "initDLVNAccount success")
+                    }
+                }
             }
         }
     }
