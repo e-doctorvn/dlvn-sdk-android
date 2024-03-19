@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.view.View
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.FrameLayout
@@ -44,6 +45,7 @@ class IncomingCallActivity : AppCompatActivity() {
     private var btnToggleMic: ImageButton? = null
     private var btnToggleCam: ImageButton? = null
     private var bgColorIncoming: LinearLayout? = null
+    private var bottomStack: LinearLayout? = null
     private var txtCaller: TextView? = null
 //    private var txtCallee: TextView? = null
 //    private var txtTimeout: TextView? = null
@@ -148,6 +150,20 @@ class IncomingCallActivity : AppCompatActivity() {
         btnToggleCam = findViewById(R.id.btn_toggle_cam_incoming)
         btnToggleMic = findViewById(R.id.btn_toggle_mic_incoming)
         bgColorIncoming = findViewById(R.id.bg_color_incoming)
+        bottomStack = findViewById(R.id.incoming_bottom_stack)
+
+        if (callManager?.acceptCallFromQuitState == true) {
+            bottomStack!!.visibility = View.GONE
+            if (checkMicCamPermissions()) {
+                val context: Context = this@IncomingCallActivity
+                val intent = Intent(context, VideoCallActivity::class.java)
+                context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
+
+                finish()
+            } else {
+                bottomStack!!.visibility = View.VISIBLE
+            }
+        }
 
         callManager?.getAppointmentDetail {
             Glide

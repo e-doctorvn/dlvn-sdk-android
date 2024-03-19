@@ -152,6 +152,8 @@ class EdoctorDlvnSdk(
                 } else {
                     NotificationHelper.action = "_accept"
                 }
+            } else if (intent.action.equals("ACCEPT_CALL_FROM_QUIT_STATE")) {
+                CallManager.getInstance()?.acceptCallFromQuitState = true
             }
             if (intent.hasExtra(Constants.IntentExtra.chatNotification)
                 && intent.getBooleanExtra(Constants.IntentExtra.chatNotification, false)

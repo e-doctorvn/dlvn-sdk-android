@@ -49,6 +49,11 @@ object NotificationHelper {
         val intent = Intent(context, mainActivityClass).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
+        val accept = Intent(context, mainActivityClass).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            action = "ACCEPT_CALL_FROM_QUIT_STATE"
+        }
+        val acceptIntent: PendingIntent = PendingIntent.getActivity(context, 0, accept, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val fullScreenIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         val decline = Intent(context, CallActionReceiver::class.java)
@@ -66,7 +71,7 @@ object NotificationHelper {
             .setSilent(true)
             .setFullScreenIntent(fullScreenIntent, true)
             .addAction(R.drawable.end_call_24, context.getString(R.string.incoming_decline_label), declineIntent)
-            .addAction(R.drawable.accept_call_24, context.getString(R.string.incoming_accept_label), fullScreenIntent)
+            .addAction(R.drawable.accept_call_24, context.getString(R.string.incoming_accept_label), acceptIntent)
             .setAutoCancel(true)
             .setOngoing(false)
 

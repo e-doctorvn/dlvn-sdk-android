@@ -81,9 +81,9 @@ class CallService : Service() {
 
     private fun getNotification(serviceData: ServiceData): Notification {
         val content: String = if (serviceData.isVideoCall) {
-            "video call"
+            "Video call"
         } else {
-            "call"
+            "Call"
         }
         val currentTime = System.currentTimeMillis().toInt()
         val channelId = mContext!!.packageName + currentTime
