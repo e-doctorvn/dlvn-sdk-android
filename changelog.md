@@ -2,7 +2,12 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.1 (Updated: 19/03/2024)**
+Latest version: **1.2.2 (Updated: 20/03/2024)**
+
+## Version 1.2.2 (20/03/2024)
+
+- Remove `silent = true` for call notification.
+- Lock orientation `portrait` for Call activities.
 
 ## Version 1.2.1 (19/03/2024)
 
