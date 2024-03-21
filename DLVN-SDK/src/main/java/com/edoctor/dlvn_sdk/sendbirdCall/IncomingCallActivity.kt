@@ -155,6 +155,7 @@ class IncomingCallActivity : AppCompatActivity() {
 
         if (callManager?.acceptCallFromQuitState == true) {
             bottomStack!!.visibility = View.GONE
+            callManager?.acceptCallFromQuitState = false
             if (checkMicCamPermissions()) {
                 val context: Context = this@IncomingCallActivity
                 val intent = Intent(context, VideoCallActivity::class.java)
