@@ -2,7 +2,12 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.2 (Updated: 20/03/2024)**
+Latest version: **1.2.3 (Updated: 21/03/2024)**
+
+## Version 1.2.3 (21/03/2024)
+
+- Remove `pictureInPicture` support for VideoCallActivity.
+- Fix infinite loading when upload image to doctor while having video call.
 
 ## Version 1.2.2 (20/03/2024)
 
