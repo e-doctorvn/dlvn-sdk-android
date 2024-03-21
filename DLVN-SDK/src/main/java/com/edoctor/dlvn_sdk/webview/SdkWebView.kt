@@ -99,6 +99,13 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         setStyle(STYLE_NO_FRAME, R.style.EDRDialogStyle)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (hideLoading && webViewCallActivity != null) {
+            loading.visibility = View.GONE
+        }
+    }
+
     @SuppressLint("ServiceCast")
     private fun isNetworkConnected(): Boolean {
         val cm =
@@ -232,11 +239,11 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 }
 
                 override fun onPageFinished(view: WebView?, url: String?) {
+                    checkTimeoutLoadWebView = true
                     Handler().postDelayed({
                         if (loading.visibility != View.GONE && hideLoading) {
                             hideLoading = false
                             loading.visibility = View.GONE
-                            checkTimeoutLoadWebView = true
                             EdoctorDlvnSdk.debounceWVShortLink = false
 
                             requireActivity().runOnUiThread {

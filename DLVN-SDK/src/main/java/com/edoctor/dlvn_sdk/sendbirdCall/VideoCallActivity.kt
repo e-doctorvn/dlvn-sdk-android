@@ -247,17 +247,17 @@ class VideoCallActivity : AppCompatActivity() {
 
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val pictureInPictureParamsBuilder = PictureInPictureParams.Builder()
-            pictureInPictureParamsBuilder.setAspectRatio(Rational(9, 16))
-            pictureInPictureParamsBuilder.setSourceRectHint(Rect(0, 0, 140, 100))
-            val pictureInPictureParams = pictureInPictureParamsBuilder.build()
-            enterPictureInPictureMode(pictureInPictureParams)
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                enterPictureInPictureMode()
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            val pictureInPictureParamsBuilder = PictureInPictureParams.Builder()
+//            pictureInPictureParamsBuilder.setAspectRatio(Rational(9, 16))
+//            pictureInPictureParamsBuilder.setSourceRectHint(Rect(0, 0, 140, 100))
+//            val pictureInPictureParams = pictureInPictureParamsBuilder.build()
+//            enterPictureInPictureMode(pictureInPictureParams)
+//        } else {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                enterPictureInPictureMode()
+//            }
+//        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

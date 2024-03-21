@@ -62,7 +62,7 @@
             android:showWhenLocked="true"
             android:showOnLockScreen="true"
             android:screenOrientation="portrait"
-            android:supportsPictureInPicture="true"
+            android:supportsPictureInPicture="false"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             tools:targetApi="o_mr1" />
         <activity
