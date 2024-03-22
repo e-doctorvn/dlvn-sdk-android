@@ -2,12 +2,15 @@
 
 package com.edoctor.dlvn_sdk
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.edoctor.dlvn_sdk.helper.NotificationHelper
@@ -46,6 +49,7 @@ class EdoctorDlvnSdk(
     private var authParams: JSONObject? = null
     private var isFetching: Boolean = false
     var isShortLinkAuthen: Boolean = false
+    private var requestPermissionLauncher: ActivityResultLauncher<Array<String>>? = null
 
     companion object {
         const val LOG_TAG = "EDOCTOR_SDK"
@@ -126,6 +130,11 @@ class EdoctorDlvnSdk(
     init {
         EdoctorDlvnSdk.context = context
         AppStore.sdkInstance = this
+        if (context is AppCompatActivity) {
+            requestPermissionLauncher = context.registerForActivityResult(
+                ActivityResultContracts.RequestMultiplePermissions()
+            ) { permissions -> onRequestPermissionsResult(permissions)}
+        }
 
         if (apiService === null) {
             apiService = RetrofitClient(env)
@@ -316,6 +325,7 @@ class EdoctorDlvnSdk(
                                             sendBirdAccount?.token,
                                             saveCredentials
                                         )
+                                        requestNotificationPermission()
                                     }
                                 }
                             }
@@ -396,6 +406,14 @@ class EdoctorDlvnSdk(
                 webView.reload()
             }
         }
+    }
+
+    private fun requestNotificationPermission() {
+        requestPermissionLauncher?.launch(
+            arrayOf(
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+        )
     }
 
     fun deauthenticateEDR() {
@@ -502,5 +520,20 @@ class EdoctorDlvnSdk(
     private fun isNetworkConnected(): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return cm.activeNetworkInfo != null && cm.activeNetworkInfo!!.isConnected
+    }
+
+    private fun onRequestPermissionsResult(permissions: Map<String, @JvmSuppressWildcards Boolean>) {
+        try {
+            // 0 - Cam, 1 - Mic, 2 - Notification
+            val results = permissions.entries.map { it.value }
+
+            if (results[0]) {
+                NotificationHelper.initialize(context)
+            }
+
+            return
+        } catch (_: Error) {
+
+        }
     }
 }

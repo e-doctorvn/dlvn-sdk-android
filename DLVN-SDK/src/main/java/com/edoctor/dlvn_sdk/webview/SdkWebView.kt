@@ -71,6 +71,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     var hideLoading: Boolean = false
     private var mUMA: ValueCallback<Array<Uri>>? = null
     private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
+    private var requestMultipleCallPermissionLauncher: ActivityResultLauncher<Array<String>>? = null
     private var requestMultiplePermissionLauncher: ActivityResultLauncher<Array<String>>? = null
 
     init {
@@ -96,6 +97,9 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         requestMultiplePermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions -> onRequestPermissionsResult(permissions)}
+        requestMultipleCallPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions -> onRequestCallPermissionsResult(permissions)}
         setStyle(STYLE_NO_FRAME, R.style.EDRDialogStyle)
     }
 
@@ -419,12 +423,12 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     }
 
     fun requestCameraAndMicrophonePermissionForVideoCall() {
-        requestPermissions(
+        requestMultipleCallPermissionLauncher?.launch(
             arrayOf(
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.CAMERA,
-            ),
-            PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
+                Manifest.permission.POST_NOTIFICATIONS
+            )
         )
     }
 
@@ -540,6 +544,38 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             chooserIntent.putExtra(Intent.EXTRA_TITLE, "Chọn ảnh từ")
             chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
             startActivityForResult(chooserIntent, FCR)
+            return
+        } catch (_: Error) {
+
+        }
+    }
+
+    private fun onRequestCallPermissionsResult(permissions: Map<String, @JvmSuppressWildcards Boolean>) {
+        try {
+            // 0 - Cam, 1 - Mic, 2 - Notification
+            val results = permissions.entries.map { it.value }
+
+            if (results[0]) {
+                NotificationHelper.initialize(EdoctorDlvnSdk.context)
+            }
+//            if (Build.MANUFACTURER.equals("Google", true)) {
+//                var dialog: AlertDialog? = null
+//                val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+//                builder.setTitle(getString(R.string.need_show_on_lockscreen_permission_label))
+//                builder.setMessage(getString(R.string.request_show_on_lockscreen_permission_msg))
+//                builder.setPositiveButton(getString(R.string.end_time_ok_label)) { _, _ ->
+//                    dialog?.dismiss()
+//                    PermissionManager.checkAndRequestShowOnLockScreenXiaomiDevice(requireActivity())
+//                }
+//                builder.setNegativeButton("Đóng") { _, _ ->
+//                    dialog?.dismiss()
+//                }
+//                dialog = builder.create()
+//                dialog.show()
+//                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.gray_primary))
+//                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.dlvn_primary))
+//            }
+
             return
         } catch (_: Error) {
 
