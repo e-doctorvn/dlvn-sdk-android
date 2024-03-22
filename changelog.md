@@ -2,7 +2,12 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.3 (Updated: 21/03/2024)**
+Latest version: **1.2.4 (Updated: 22/03/2024)**
+
+## Version 1.2.4 (22/03/2024)
+
+- Only request Camera + Microphone permissions when booking VIDEO consultant.
+- Request Notification permission when user opens app (already used EDR's services).
 
 ## Version 1.2.3 (21/03/2024)
 
