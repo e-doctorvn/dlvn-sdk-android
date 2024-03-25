@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.4 (Updated: 22/03/2024)**
+Latest version: **1.2.5 (Updated: 25/03/2024)**
+
+## Version 1.2.5 (25/03/2024)
+
+- **Remove**: Request Notification permission when user opens app (already used EDR's services) to fix app crashing.
 
 ## Version 1.2.4 (22/03/2024)
 

@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
 import com.edoctor.dlvn_sdk.helper.NotificationHelper
 import com.edoctor.dlvn_sdk.model.SBAccountResponse
 import com.edoctor.dlvn_sdk.model.SendBirdAccount
@@ -131,9 +132,9 @@ class EdoctorDlvnSdk(
         EdoctorDlvnSdk.context = context
         AppStore.sdkInstance = this
         if (context is AppCompatActivity) {
-            requestPermissionLauncher = context.registerForActivityResult(
-                ActivityResultContracts.RequestMultiplePermissions()
-            ) { permissions -> onRequestPermissionsResult(permissions)}
+//            requestPermissionLauncher = context.registerForActivityResult(
+//                ActivityResultContracts.RequestMultiplePermissions()
+//            ) { permissions -> onRequestPermissionsResult(permissions)}
         }
 
         if (apiService === null) {
@@ -325,7 +326,7 @@ class EdoctorDlvnSdk(
                                             sendBirdAccount?.token,
                                             saveCredentials
                                         )
-                                        requestNotificationPermission()
+//                                        requestNotificationPermission()
                                     }
                                 }
                             }
