@@ -1,0 +1,6174 @@
+scalar Date
+
+enum DayOfWeek {
+  MONDAY
+
+  TUESDAY
+
+  WEDNESDAY
+
+  THURSDAY
+
+  FRIDAY
+
+  SATURDAY
+
+  SUNDAY
+}
+
+input PageLimitInput {
+  start: Int = 0
+
+  limit: Int = 20
+}
+
+"""
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+"""
+scalar Int
+
+type Query {
+  account(accountId: String, phone: String): Account
+
+  boAccounts(phone: String, fullName: String, state: String, createdAt: Date, isActive: Boolean, keyword: String, tags: [String], limit: PageLimitInput, sort: AccountSort): [BoAccount]
+
+  checkAccountExist(accountId: String, phone: String, "payload thô chưa decyprt DLVN trả về" data: String, "signature thô chưa decyprt DLVN trả về" signature: String): Boolean
+
+  consultations(accountId: String, filter: ConsultationFilterInput, limit: PageLimitInput): [Consultation]
+
+  customer(accountId: String): Customer
+
+  boCustomer: BoCustomer
+
+  device(deviceId: String!): Device
+
+  eClinicPatient(eClinicId: String, profileId: String): EClinicPatient
+
+  hospitalPatient(patientCode: String!, fullname: String, hospitalCode: String): HospitalPatient
+
+  boHospitalProfles(patientCode: String, phone: String, hospitalCode: String!, limit: PageLimitInput): [BoHospitalProfile]
+
+  boHospitalPatient(patientCode: String!, fullname: String, hospitalCode: String): HospitalPatient
+
+  boHospitalPatients(hospitalCode: String, patientCode: String, limit: PageLimitInput, sort: EclinicPatientSort): [HospitalPatient]
+
+  eClinicPatients(eClinicId: String, keyword: String, limit: PageLimitInput, sort: EclinicPatientSort): [EClinicPatient]
+
+  boEClinicPatients(eClinicId: String!, limit: PageLimitInput, sort: EclinicPatientSort): [EClinicPatient]
+
+  ehrs(keyword: String, ehrId: String, profileId: String, targetId: String, limit: PageLimitInput, sort: EHRSort): [EHR]
+
+  ExaminationRequests(examinationRequestId: String, examinationRequestIds: [String], profileId: String, accountId: String, eClinicId: String, ehrId: String, limit: PageLimitInput, sort: ExaminationRequestSort): [ExaminationRequest]
+
+  boExaminationRequests(examinationRequestIds: [String], eClinicIds: [String], examinationRequestOrderIds: [String], createDate: createDateInput, isContainOrder: Boolean, limit: PageLimitInput, sort: ExaminationRequestSort): [ExaminationRequest]
+
+  examinationServices(examinationServiceIds: [String], keyword: String, type: examintationType, limit: PageLimitInput, sort: ExaminationRequestSort): [ExaminationService]
+
+  examinationRequestOrders(examinationRequestId: String, orderIds: [String], profileId: String, eClinicId: String, limit: PageLimitInput, sort: prescriptionSort): [ExaminationRequestOrder]
+
+  boExaminationRequestOrders(examinationRequestId: String, orderIds: [String], profileId: String, eClinicId: String, limit: PageLimitInput, sort: prescriptionSort): [ExaminationRequestOrder]
+
+  prescriptions(prescriptionId: String, prescriptionIds: [String], accountId: String, profileId: String, eClinicId: String, ehrId: String, limit: PageLimitInput, sort: prescriptionSort): [prescription]
+
+  boPrescriptions(prescriptionIds: [String], eClinicIds: [String], prescriptionOrderIds: [String], createDate: createDateInput, isContainOrder: Boolean, limit: PageLimitInput, sort: prescriptionSort): [prescription]
+
+  prescriptionOrders(prescriptionId: String, orderIds: [String], profileId: String, eClinicId: String, ehrId: String, limit: PageLimitInput, sort: prescriptionSort): [PrescriptionOrder]
+
+  boPrescriptionOrders(prescriptionId: String, orderIds: [String], profileId: String, eClinicId: String, ehrId: String, limit: PageLimitInput, sort: prescriptionSort): [PrescriptionOrder]
+
+  medicines(medicineSupplierId: String, medicineId: String, keyword: String, limit: PageLimitInput, sort: prescriptionSort): [Medicine]
+
+  medicineSuppliers(limit: PageLimitInput, sort: prescriptionSort): [MedicineSupplier]
+
+  products(eClinicId: String, eClinicIds: [String], package: ProductPackageEnum, limit: PageLimitInput): [Product]
+
+  boProducts(eClinicId: String, eClinicIds: [String], package: ProductPackageEnum, limit: PageLimitInput): [Product]
+
+  questions: [QuestionV2]
+
+  question(questionId: String!, sourceType: QuestionSourceType): QuestionV2
+
+  questionUserHistory(questionId: String, limit: PageLimitInput): [QuestionV2]
+
+  questionAnswerHistory(state: AnswerState, limit: PageLimitInput, sort: QuestionSort): [QuestionV2]
+
+  questionCustomer(questionId: String!): Question
+
+  questionCustomerList(limit: PageLimitInput): [QuestionV2]
+
+  boQuestion(questionId: String!): BoQuestion
+
+  boQuestions(sourceType: QuestionSourceType!, questionId: String, dcId: String, content: String, answerState: AnswerState, answerReviewState: AnswerReviewState, createdAt: QuestionDate, limit: PageLimitInput): [BoQuestion]
+
+  reacts(accountId: String, eClinicId: String, limit: PageLimitInput): [React]
+
+  settingSystem: SettingSystem
+
+  boSettings(key: String, limit: PageLimitInput, sort: VoucherSort): [Setting]
+
+  settings(key: String, limit: PageLimitInput, sort: VoucherSort): [Setting]
+
+  staff(eClinicId: String, accountId: String): Staff
+
+  staffs(accountId: String, slug: String, phone: String, email: String, isActive: Boolean, username: String, tags: [String], isDeleted: Boolean, limit: PageLimitInput, sort: eClinicSort): [Staff]
+
+  checkStaff(scope: String, accountId: String!): Boolean
+
+  checkStaffUserName(username: String): Boolean
+
+  utilities: Utilities
+
+  boWarehouses(warehouseId: String, accountIds: [String], accountId: String, eClinicIds: [String], eClinicId: String, orderId: String, supplierTransaction: String, payMethod: OrderMethod, package: ProductPackageEnum, createdAt: ExportDate, eClinic: String, phone: String, state: [WarehouseState], sort: WarehouseSort, limit: PageLimitInput): [BoWarehouse]
+
+  warehouses(warehouseId: String, accountId: String, eClinicId: String, state: [WarehouseState], package: ProductPackageEnum, sort: WarehouseSort, limit: PageLimitInput): [Warehouse]
+
+  banners(state: [BannerState], tag: String, isActive: Boolean, limit: PageLimitInput, sort: BannerSort): [Banner]
+
+  boBanners(bannerId: String, tags: [String], tag: String, state: [BannerState], isActive: Boolean, limit: PageLimitInput, sort: BannerSort): [Banner]
+
+  boBannerTags(keyword: String): [String]
+
+  comments(accountId: String, eClinicId: String, appointmentScheduleId: String, state: [CommentState], limit: PageLimitInput, sort: NewsSort): [Comment]
+
+  degree(degreeId: String!, doctorId: String): Degree
+
+  degrees(degreeId: String, partnerId: String, limit: PageLimitInput, sort: DegreeSort): [Degree]
+
+  boDlvnTags(dlvnTagId: String, dlvnTag: String, state: [TagState], isActive: Boolean, limit: PageLimitInput, sort: TagSort): [DLVNTag]
+
+  dlvnTags(dlvnTag: String, isActive: Boolean, limit: PageLimitInput, sort: TagSort): [DLVNTag]
+
+  boDoctors(fullName: String, phone: String, isVerified: Boolean, isActive: Boolean, eClinicIds: [String], tags: [String], partnerId: String, limit: PageLimitInput, sort: eClinicSort): [BoDoctor]
+
+  boDoctor(doctorId: String, accountId: String, phone: String): BoDoctor
+
+  doctor(accountId: String): Doctor
+
+  doctors(medicalSpecialties: [MedicalSpecialties], limit: PageLimitInput): [Doctor]
+
+  boEdoctor(phone: String): Edoctor
+
+  hospitals(hospitalName: String, slug: String, status: [HospitalState], tag: String, isActive: Boolean, limit: PageLimitInput, sort: HospitalSort): [Hospital]
+
+  boHospitals(hospitalId: String, hospitalName: String, tag: String, status: [HospitalState], isActive: Boolean, limit: PageLimitInput, sort: HospitalSort): [Hospital]
+
+  boHospitalTags(keyword: String): [String]
+
+  locations(parentIdentifyCode: String, identifyCode: String, limit: PageLimitInput): [Location]
+
+  mainServices(isHighlighted: Boolean, category: MainServiceCategory, tag: String, isActive: Boolean, limit: PageLimitInput, sort: MainServiceSort): [MainService]
+
+  boMainServices(category: String, tag: String, state: [MainServiceState], isActive: Boolean, limit: PageLimitInput, sort: MainServiceSort): [MainService]
+
+  boMainServiceCategory(category: String, limit: PageLimitInput, sort: MainServiceSort): [MainServiceCategoryInfo]
+
+  medicalExaminations(medicalExaminationId: String, accountId: String, profileId: String, eClinicId: String, eClinicIds: String, createdAt: createdExaminationInput, limit: PageLimitInput, sort: MedicalExaminationSort): [MedicalExamination]
+
+  boMedicalExaminations(medicalExaminationId: String, accountId: String, profileId: String, eClinicId: String, phone: String, eClinicIds: [String], supportNumber: String, createdAt: createdExaminationInput, limit: PageLimitInput, sort: MedicalExaminationSort): [MedicalExamination]
+
+  ICD10s(ICD10Id: String, medicalId: String, keyword: String, limit: PageLimitInput): [ICD10]
+
+  medicalSpeciality(medicalSpecialtyId: String): MedicalSpeciality
+
+  medicalSpecialities(medicalSpecialtyId: String, partnerId: String, limit: PageLimitInput, sort: MedicalSpecialitySort): [MedicalSpeciality]
+
+  news(newsId: String, isHighlighted: Boolean, newsCategoryId: String, limit: PageLimitInput, sort: NewsSort): [News]
+
+  boNews(newsId: String, isHighlighted: Boolean, name: String, publishAt: publishedAtInput, newsCategoryId: String, state: [NewsState], isActive: Boolean, limit: PageLimitInput, sort: NewsSort): [News]
+
+  newsCategory(hospitalId: String, category: String, limit: PageLimitInput, sort: NewsSort): [NewsCategoryInfo]
+
+  boNewsCategory(newsCategoryId: String, hospitalId: String, category: String, limit: PageLimitInput, sort: NewsSort): [NewsCategoryInfo]
+
+  order(orderId: String, orderCheck: Boolean): Order
+
+  orders(accountId: String, orderId: String, orderCheck: Boolean, createdAt: OrderInput, state: OrderState, sort: OrderSort, limit: PageLimitInput): [Order]
+
+  boOrder(orderId: String): [Order]
+
+  boOrders(orderId: String, payMethod: OrderMethod, state: OrderState, phone: String, eClinicId: String, sort: OrderSort, limit: PageLimitInput): [Order]
+
+  partner(partnerId: String!): Partner
+
+  partners(partnerId: String, limit: PageLimitInput, sort: DegreeSort): [Partner]
+
+  boQuestionFeedTags(keyword: String, questionFeedTagId: String, questionFeedTag: String, state: [TagState], isActive: Boolean, isHighlighted: Boolean, limit: PageLimitInput, sort: QuestionFeedTagSort): [QuestionFeedTag]
+
+  questionFeedTags(keyword: String, questionFeedTags: [String], questionFeedTagIds: [String], questionFeedTagId: String, questionFeedTag: String, isActive: Boolean, isHighlighted: Boolean, limit: PageLimitInput, sort: QuestionFeedTagSort): [QuestionFeedTag]
+
+  testStringee: Stringee
+
+  boTags(tag: String, state: [TagState], isActive: Boolean, limit: PageLimitInput, sort: TagSort): [Tag]
+
+  tags(tag: String, isActive: Boolean, limit: PageLimitInput, sort: TagSort): [Tag]
+
+  questionFeed(slug: String, keyword: String, questionFeedId: String, tags: [String], sourceType: QuestionFeedSourceType, publishAt: createDateInput, updatedAt: createDateInput, createdAt: createDateInput, isActive: Boolean, isPublished: Boolean, isHighlighted: Boolean, questionFeedCategoryId: String, limit: PageLimitInput, sort: QuestionFeedSort): [QuestionFeed]
+
+  boQuestionFeed(keyword: String, slug: String, isFromQuestion: Boolean, questionFeedId: String, tags: [String], sourceType: QuestionFeedSourceType, updatedAt: createDateInput, createdAt: createDateInput, isPublished: Boolean, isHighlighted: Boolean, name: String, publishAt: publishedAtInput, questionFeedCategoryId: String, state: [QuestionFeedState], isActive: Boolean, limit: PageLimitInput, sort: QuestionFeedSort): [QuestionFeed]
+
+  questionFeedCategory(hospitalId: String, category: String, limit: PageLimitInput, sort: QuestionFeedSort): [QuestionFeedCategoryInfo]
+
+  boQuestionFeedCategory(questionFeedCategoryId: String, hospitalId: String, category: String, limit: PageLimitInput, sort: QuestionFeedSort): [QuestionFeedCategoryInfo]
+
+  questionFeedBookmarks(accountId: String, limit: PageLimitInput, sort: QuestionFeedSort): QuestionFeedBookmarkList
+
+  updateExpired: Boolean
+
+  boDLVNDoctors(keyword: String, doctorId: String, limit: PageLimitInput, sort: DLVNAccountSort): [DLVNDoctor]
+
+  dlvnMenus: [DLVNMenu]
+
+  dlvnMenuString: String
+
+  DLVNValidateToken(deviceid: String!, dcid: String!, token: String!): Int
+
+  eClinics(eClinicIds: [String], medicalSpecialties: [String], doctor: DoctorInfoInput, displayName: String, doctorId: String, eClinicTypes: [EClinicTypeEnum], visibleOnly: Boolean, tag: String, tags: [String], dlvnTag: String, limit: PageLimitInput, sort: eClinicSort): [EClinic]
+
+  boEClinics(eClinicId: String, eClinicIds: [String], doctor: DoctorInfoInput, slug: String, slugs: [String], isCheckSlug: Boolean, displayName: String, isActive: Boolean, tag: String, dlvnTag: String, eClinicType: EClinicTypeEnum, isVisible: Boolean, status: [EClinicStatusEnum], departmentType: DepartmentType, subjectTypes: [EClinicSubjectTypeEnum], limit: PageLimitInput, sort: eClinicSort): [BoEClinic]
+
+  eClinic(slug: String, accountId: String, eClinicId: String): EClinic
+
+  boEClinic(accountId: String, eClinicId: String, slug: String): BoEClinic
+
+  EClinicSpeciality(eClinicId: String, eClinicSpeciality: String, eClinicSpecialityId: String, limit: PageLimitInput, sort: eClinicSort): [EClinicSpeciality]
+
+  boEClinicSpeciality(eClinicSpecialityId: String, eClinicId: String, eClinicSpeciality: String, limit: PageLimitInput, sort: eClinicSort): [EClinicSpeciality]
+
+  notifications(deviceId: String!, appType: AppType!, sourceType: QuestionSourceType, limit: PageLimitInput): [Notification]
+
+  boPushNotifications(pushNotificationId: String, hospitalCode: String!, key: String, status: PushNotificationStatus, limit: PageLimitInput, sort: PushNotificationSort): [PushNotification]
+
+  appointmentSchedule(appointmentScheduleId: String, package: ProductPackageEnum, joinNumber: String): AppointmentSchedule
+
+  appointmentSchedules(appointmentScheduleId: String, accountId: String, eClinicId: String, eClinicIds: [String], profileId: String, warehouseId: String, slug: String, package: ProductPackageEnum, state: [AppointmentScheduleState], scheduledAt: AppointmentScheduleScheduleAt, supportNumber: String, isMedicalExamination: Boolean, hospitalCode: String, limit: PageLimitInput, sort: AppointmentScheduleSort): [AppointmentSchedule]
+
+  boAppointmentSchedule(appointmentScheduleId: String, package: ProductPackageEnum, joinNumber: String, scheduledAt: Date): BoAppointmentSchedule
+
+  boAppointmentSchedules(appointmentScheduleId: String, appointmentScheduleIds: [String], supportNumber: String, package: ProductPackageEnum, packages: [ProductPackageEnum], eClinic: String, eClinicIds: [String], slug: String, profile: String, warehouseId: String, state: AppointmentScheduleState, states: [AppointmentScheduleState], tags: [String], tag: String, phone: String, patientCode: String, hospitalCode: String, profileCode: String, patientName: String, joinNumber: String, joinNumberSourceType: SerialNumberSourceType, joinNumberType: SerialNumberNumberType, createdAt: AppointmentScheduleScheduleAt, scheduledAt: AppointmentScheduleScheduleAt, limit: PageLimitInput, sort: AppointmentScheduleSort): [BoAppointmentSchedule]
+
+  statistic(createdAt: StatisticDate): Statistic
+
+  boEClinicStatistic: BoEClinicStatistic
+
+  boStatistic: BoStatistic
+
+  boProfile(accountId: String, profileId: String): BoProfile
+
+  profiles(accountId: String, profileId: String, limit: PageLimitInput): [Profile]
+
+  boProfiles(accountId: String, profileId: String, limit: PageLimitInput): [BoProfile]
+
+  boSerialNumber(eClinicId: String, type: SerialNumberType!, scheduleDate: SerialNumberScheduleDate, sourceType: SerialNumberSourceType): [SerialNumber]
+
+  boVoucher(code: String): Voucher
+
+  boVouchers(voucherCampaignId: String, code: String, eClinicId: String, eClinicIds: [String], productId: String, state: VoucherState, limit: PageLimitInput, sort: VoucherSort): [Voucher]
+
+  boVoucherCampaigns(voucherCampaignId: String, eClinicId: String, eClinicIds: [String], productId: String, state: VoucherCampaignState, limit: PageLimitInput, sort: VoucherSort): [VoucherCampaign]
+}
+
+"""
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+"""
+scalar String
+
+"""
+The `Boolean` scalar type represents `true` or `false`.
+"""
+scalar Boolean
+
+type Mutation {
+  accountUpdateAggrement(isAcceptAgreement: Date, isAcceptShareInfo: Date): Boolean
+
+  accountUpdateSendbird: Boolean
+
+  accountCreateGuest(deviceId: String!): Account
+
+  accountOTP(accountId: String!, fullName: String!, phone: String!): Boolean
+
+  accountVerifyOTP(accountId: String!, otp: String!): Account
+
+  accountId: String!
+
+  deviceRegister(sourceType: SourceType!, platform: String!, deviceId: String!, appType: AppType!, fcmProjectId: String!, fcmToken: String!, deviceInfo: DeviceInfoInput!, nativeVersion: String!, jsVersion: String!, tracking: DeviceTrackingInput, apnRegistrationId: String): Device
+
+  linkHospitalPatient(profileId: String!, patientCode: String!, hospitalCode: String): Profile
+
+  unlinkHospitalPatient(profileId: String!, patientCode: String!, hospitalCode: String): Profile
+
+  boLinkHospitalPatient(profileId: String!, patientCode: String!, hospitalCode: String): Profile
+
+  boUnlinkHospitalPatient(profileId: String!, patientCode: String!, hospitalCode: String): Profile
+
+  boCreateHospitalPatient(hospitalCode: String, patientCode: String, accountId: String, fullName: String!, birthDate_date: Int!, birthDate_month: Int!, birthDate_year: Int!, gender: Gender!, phoneNumber: String, email: String, homeLocation: HospitalPatientLocationInput, workLocation: HospitalPatientLocationInput, isSync: Boolean): HospitalPatient
+
+  boUpdateHospitalPatient(patientCode: String!, fullName: String, birthDate_date: Int, birthDate_month: Int, birthDate_year: Int, gender: Gender, phoneNumber: String, email: String, homeLocation: HospitalPatientLocationInput, workLocation: HospitalPatientLocationInput): Boolean
+
+  boChangeHospitalPatient(patientCode: String!, patientCodeChange: String!): Boolean
+
+  boChangePhoneHospitalPatient(patientCode: String!, newPhone: String!): Boolean
+
+  eClinicPatientUpdate(eClinicId: String!, patientId: String, profileId: String!, fullName: String, phone: String, address: String, description: String, extraInfo: [PatientExtraInfoInput]): EClinicPatient
+
+  boEClinicPatientUpdate(eClinicId: String!, patientId: String, fullName: String, phone: String, address: String, description: String, extraInfo: [PatientExtraInfoInput]): EClinicPatient
+
+  eClinicPatientRequestInfoUpdate(eClinicId: String!, profileId: String!, appointmentScheduleId: String): Boolean
+
+  convertAppointmentToPatient: Boolean
+
+  boEClinicPatientCreate(input: EclinicPatientCreateInput): EClinicPatient
+
+  ehrCreate(eClinicId: String, profileId: String!, type: EHRType!, data: EHRDataInput!, title: String!, description: String, finishedAt: Date): EHR
+
+  ehrUpdate(ehrId: String!, title: String, description: String, data: EHRCustomerCreateInput): EHR
+
+  ehrShare(ehrId: String!, targetId: String!): EHR
+
+  ehrUnshare(ehrId: String!, targetId: String!): EHR
+
+  ehrClearShare(profileId: String!, targetId: String!): [EHR]
+
+  ehrDelete(ehrId: String!): Boolean
+
+  ExaminationRequestCreate(examinationRequest: ExaminationRequestInput): ExaminationRequest
+
+  examinationRequestOrderCreate(examinationRequestId: String, customerInfo: customerInfoInput): ExaminationRequestOrder
+
+  prescriptionCreate(prescription: prescriptionInput): prescription
+
+  prescriptionOrderCreate(prescriptionId: String!, customerInfo: customerInfoInput): PrescriptionOrder
+
+  productUpdate(productId: String!, title: String, description: String, descriptionDetail: String, cover: String, amount: Int, expiry: Int, package: ProductPackageInput, isActive: Boolean): Product
+
+  boProductCreate(eClinicId: String!, title: String!, description: String!, descriptionDetail: String, cover: String, amount: Int!, expiry: Int!, package: ProductPackageInput!): Product
+
+  boProductUpdate(productId: String!, title: String, description: String, descriptionDetail: String, cover: String, amount: Int, expiry: Int, package: ProductPackageInput, isActive: Boolean): Product
+
+  boProductDelete(productId: String!): Boolean
+
+  questionSkip(questionId: String!, reason: String!): QuestionV2
+
+  questionLock(questionId: String): Boolean
+
+  questionAnswer(questionId: String, content: String, attachmentIds: [String]): QuestionV2
+
+  questionUpdateAnswer(answerId: String, content: String, attachmentIds: [String]): QuestionV2
+
+  questionCustomerCreate(profileId: String!, content: String!, attachmentIds: [String], sourceType: QuestionSourceType!): QuestionV2
+
+  questionCustomerRate(answerId: String!, point: Int!, content: String!): Boolean
+
+  boQuestionStatistic(createdAt: QuestionDate!): QuestionStatistic
+
+  boQuestionReviewAnswer(answerId: String!, isApproved: Boolean!, rejectReason: String, rejectComment: String): BoQuestion
+
+  boQuestionUpdateAnswer(answerId: String!, content: String!): BoQuestion
+
+  reactCreate(eClinicId: String!, type: ReactType): React
+
+  reactDelete(reactId: String!): Boolean
+
+  boSettingUpdate(id: Int!, value: String, description: String): Setting
+
+  accountStaffCreate(input: StaffCreateInput): Staff
+
+  accountStaffUpdate(input: StaffUpdateInput): Staff
+
+  accountStaffUpdatePassword(input: StaffUpdatePasswordInput): Boolean
+
+  accountStaffLogin(input: StaffLoginInput): StaffLoginResponse
+
+  warehouseCreate(eClinicId: String): Warehouse
+
+  boWarehouseCancel(warehouseId: String!, reason: String!): Warehouse
+
+  boWarehouseUpdate(warehouseId: String!, state: WarehouseState): Warehouse
+
+  bannerCreate(name: String, image: String, appImage: String, appRedirectUrl: String, webRedirectUrl: String, isHighlighted: Boolean, order: Int, tags: [String]): Banner
+
+  bannerUpdate(bannerId: String!, name: String, image: String, appImage: String, appRedirectUrl: String, webRedirectUrl: String, tags: [String], bannerState: BannerState, isActive: Boolean, isHighlighted: Boolean, order: Int): Banner
+
+  bannerActionUpdate(bannerId: String!, actionType: BannerAction, count: Int): Boolean
+
+  commentCreate(appointmentScheduleId: String!, eClinicId: String!, accountId: String, star: Int!, content: String!): Comment
+
+  boDlvnTagCreate(name: String, dlvnTag: String, description: String, avatar: String, cover: String, displayName: String, order: Int, eClinicIds: [String]): DLVNTag
+
+  boDlvnTagDelete(dlvnTagId: String!): Boolean
+
+  boDlvnTagUpdate(dlvnTagId: String!, name: String, dlvnTag: String, description: String, avatar: String, cover: String, displayName: String, isActive: Boolean, order: Int, eClinicIds: [String]): DLVNTag
+
+  boDoctorCreate(phone: String!, fullName: String!, birthday: Date!, gender: Gender!, graduateYear: Int!, partnerId: String!, degreeId: String, medicalSpecialties: [String]): BoDoctor
+
+  boDoctorUpdate(doctorId: String!, fullName: String, birthday: Date, gender: Gender, avatar: String, location: LocationInput, email: String, description: String, workingRegion: String, graduateYear: Int, partnerId: String, degreeId: String, signature: String, medicalSpecialties: [String], education: [EducationInput], certification: [CertificationInput], reward: [RewardInput], workingProcess: [JobInput], isVerified: Boolean, isActive: Boolean, isLockAnswer: Boolean): BoDoctor
+
+  doctorUpdate(fullName: String, birthday: Date, gender: Gender, avatar: String, location: LocationInput, email: String, description: String, identifyCardNumber: String, signature: String, workingRegion: String, graduateYear: Int, partnerId: String, degreeId: String, medicalSpecialties: [String], education: [EducationInput], certification: [CertificationInput], reward: [RewardInput], workingProcess: [JobInput]): Doctor
+
+  doctorCreate(title: String!, fullName: String!, identifyCardNumber: String, avatar: String, birthday: Date, gender: Gender, workingRegion: String, medicalSpecialties: [MedicalSpecialties]!, graduateYear: Int, education: [EducationInput], workingProcess: [JobInput], certification: [CertificationInput]): Doctor
+
+  boDoctorChangePassword(doctorId: String!, password: String, newPassword: String!): Boolean
+
+  doctorChangePassword(password: String, newPassword: String!): Boolean
+
+  boDoctorResetPassword(doctorId: String!): Boolean
+
+  doctorCancelAppointmentSchedule(appointmentScheduleId: String!, reason: String): AppointmentSchedule
+
+  convert: Boolean
+
+  createEClinic: Boolean
+
+  createProduct: Boolean
+
+  eventCreate(slug: String): AppointmentSchedule
+
+  exportAppointmentSchedules(appointmentScheduleIds: [String], phone: String, patientCode: String, accountId: String, profile: String, profileId: String, supportNumber: String, tags: [String], tag: String, createdAt: AppointmentScheduleScheduleAt, scheduledAt: AppointmentScheduleScheduleAt, hospitalCode: String, sort: AppointmentScheduleSort): ExportResponsed
+
+  exportBOAppointmentSchedules(appointmentScheduleId: String, appointmentScheduleIds: [String], supportNumber: String, package: ProductPackageEnum, eClinic: String, eClinicIds: [String], slug: String, profile: String, profileCode: String, warehouseId: String, state: AppointmentScheduleState, states: [AppointmentScheduleState], tags: [String], tag: String, phone: String, patientCode: String, joinNumber: String, hospitalCode: String, createdAt: AppointmentScheduleScheduleAt, scheduledAt: AppointmentScheduleScheduleAt, limit: PageLimitInput, sort: AppointmentScheduleSort): ExportResponsed
+
+  exportBoWarehouse(warehouseId: String, accountIds: [String], accountId: String, eClinicIds: [String], eClinicId: String, profileCode: String, orderId: String, supplierTransaction: String, payMethod: OrderMethod, package: ProductPackageEnum, createdAt: ExportDate, state: [WarehouseState], sort: WarehouseSort, limit: PageLimitInput): ExportResponsed
+
+  exportLogchat(appointmentScheduleId: String!): ExportResponsed
+
+  boHospitalCreate(slug: String, tagVC: String, displayName: String, description: String, avatar: String, cover: String, thumbnail: String, color: String, hotlineNumber: String, activatedAt: Date, tags: [String], eClinicIds: [String], location: LocationInput): Hospital
+
+  boHospitalServiceCreate(hospitalId: String, name: String, cover: String, appRedirectUrl: String, webRedirectUrl: String, isHighlighted: Boolean, order: Int): Hospital
+
+  boHospitalServiceUpdate(hospitalId: String, serviceId: String, isDelete: Boolean, name: String, cover: String, appRedirectUrl: String, webRedirectUrl: String, isHighlighted: Boolean, order: Int): Hospital
+
+  boHospitalUpdate(hospitalId: String!, slug: String, tagVC: String, displayName: String, description: String, avatar: String, cover: String, thumbnail: String, color: String, hotlineNumber: String, activatedAt: Date, tags: [String], eClinicIds: [String], location: LocationInput, isActive: Boolean, isDelete: Boolean, isVisible: Boolean, status: HospitalState, isMaintain: Boolean): Hospital
+
+  mainServiceCreate(name: String, description: String, category: MainServiceCategory, image: String, actionType: MainServiceActionType, isHighlighted: Boolean, order: Int, actionValue: String, tags: [String]): MainService
+
+  mainServiceUpdate(mainServiceId: String!, name: String, image: String, actionType: String, actionValue: String, isHighlighted: Boolean, order: Int, tags: [String], mainServiceState: MainServiceState, isActive: Boolean): MainService
+
+  boMainServiceCategoryCreate(categoryName: String, description: String, categoryCode: String, order: Int): MainServiceCategoryInfo
+
+  boMainServiceCategoryUpdate(mainServiceCategoryId: String!, categoryName: String, description: String, categoryCode: String, order: Int, state: MainServiceState): MainServiceCategoryInfo
+
+  medicalExaminationCreate(appointmentScheduleId: String!, eClinicId: String!, profileId: String!, warehouseId: String!, "Mô tả triệu chứng" reason: String!, content: String!, result: String!, appointmentScheduleNext: String, prescriptionIds: [String], examinationRequestIds: [String], ICD10MedicalIds: [String]): MedicalExamination
+
+  boNewsCreate(hospitalId: String!, name: String, content: String, avatar: String, newsCategoryId: String!, publishAt: Date, isHighlighted: Boolean, order: Int, status: NewsStatus): News
+
+  boNewsUpdate(newsId: String, hospitalId: String, name: String, content: String, avatar: String, newsCategoryId: String, publishAt: Date, isHighlighted: Boolean, order: Int, status: NewsStatus, isActive: Boolean, isDelete: Boolean): News
+
+  boNewsCategoryCreate(hospitalId: String, categoryName: String!, avatar: String, order: Int): NewsCategoryInfo
+
+  boNewsCategoryUpdate(newsCategoryId: String!, categoryName: String, avatar: String, hospitalId: String, order: Int, isActive: Boolean, isDelete: Boolean): NewsCategoryInfo
+
+  orderCreate(eClinicId: String!, contact: OrderContactInput, payMethod: OrderMethod!, products: [OrderProductInput]!, description: String!, appointmentSchedule: OrderAppointmentScheduleInput, sourceType: OrderSourceType!, voucherCode: String, cashPaymentPassword: String): Order
+
+  boOrderRefund(orderId: String!, reason: String!): Order
+
+  boQuestionFeedTagCreate(name: String, questionFeedTag: String, description: String, megaImage: String, seoMetaDesc: String, seoMetaKeyword: String, canonical: String, order: Int, createdAt: Date, updatedAt: Date, isActive: Boolean, isHighlighted: Boolean, isMetaIndex: Boolean, isMetaFollow: Boolean): QuestionFeedTag
+
+  boQuestionFeedTagDelete(questionFeedTagId: String!): Boolean
+
+  boQuestionFeedTagUpdate(questionFeedTagId: String!, name: String, questionFeedTag: String, description: String, megaImage: String, seoMetaDesc: String, seoMetaKeyword: String, canonical: String, order: Int, isActive: Boolean, isHighlighted: Boolean, isMetaIndex: Boolean, isMetaFollow: Boolean): QuestionFeedTag
+
+  boTagCreate(name: String, tag: String, description: String, avatar: String, cover: String, displayName: String, order: Int, eClinicIds: [String]): Tag
+
+  boTagDelete(tagId: String!): Boolean
+
+  boTagUpdate(tagId: String!, name: String, tag: String, description: String, avatar: String, cover: String, displayName: String, isActive: Boolean, order: Int, eClinicIds: [String]): Tag
+
+  boQuestionFeedCreate(questionId: String, sourceType: QuestionFeedSourceType!, title: String!, slug: String!, tags: [String], question: String!, answer: String!, doctorId: String, customerInfo: QuestionFeedCustomerInfoInput, publishAt: Date, thumbnail: String, seoTitle: String, seoMetaDesc: String, seoMetaKeyword: String, canonical: String, isActive: Boolean, isHighlighted: Boolean, order: Boolean, status: QuestionFeedStatus, isMetaIndex: Boolean, isMetaFollow: Boolean, isPublished: Boolean): QuestionFeed
+
+  boQuestionFeedUpdate(questionFeedId: String, title: String, slug: String, doctorId: String, tags: [String], question: String, answer: String, customerInfo: QuestionFeedCustomerInfoInput, publishAt: Date, thumbnail: String, seoTitle: String, seoMetaDesc: String, seoMetaKeyword: String, canonical: String, isActive: Boolean, isHighlighted: Boolean, order: Boolean, status: QuestionFeedStatus, isMetaIndex: Boolean, isMetaFollow: Boolean, isPublished: Boolean, isDelete: Boolean): QuestionFeed
+
+  QuestionFeedBookmarkCreate(questionFeedId: String!, type: QuestionFeedBookmarkType!): Boolean
+
+  QuestionFeedBookmarkRemove(questionFeedId: String!, type: QuestionFeedBookmarkType!): Boolean
+
+  dlvnAccountInit("payload thô chưa decyprt DLVN trả về" data: String, "signature thô chưa decyprt DLVN trả về" signature: String, "data test chỉ định dcId do client hardcode gửi lên tạo account luôn trong lúc DLVN chưa có page login - chỉ dùng trong giao đoạn test" dcId: String): DLVNAccount
+
+  dlvnAccountInitBySignature("payload thô chưa decyprt DLVN trả về" data: String, "signature thô chưa decyprt DLVN trả về" signature: String): DLVNAccount
+
+  dlvnAccountInitByCode(keyRsa: String, idtoken: String, tokenString: String): DLVNAccount
+
+  testPushDLVN(case: Int): String
+
+  boEClinicCreate(doctorId: String!, displayName: String!, displayNameApp: String, slug: String!): BoEClinic
+
+  eClinicAvailableSchedule(eClinicId: String!, package: ProductPackageEnum!, scheduledAt: Date, numberType: SerialNumberNumberType): [EClinicAvailableSchedule]
+
+  eClinicUpdate(color: String, title: String, displayName: String, displayNameApp: String, description: String, descriptionApp: String, avatar: String, cover: String, slug: String!, policy: EClinicPolicyInput, appointment: ECliniAppointmentInput, workingTimes: [ECliniWorkingTimeInput], thumbnail: String, location: LocationInput, holidays: EClinicHolidayInput): EClinic
+
+  boEClinicUpdate(eClinicId: String!, slug: String!, color: String, title: String, displayName: String, displayNameApp: String, description: String, descriptionApp: String, avatar: String, cover: String, policy: EClinicPolicyInput, appointment: ECliniAppointmentInput, workingTimes: [ECliniWorkingTimeInput], isActive: Boolean, isVisible: Boolean, customerService: EClinicCustomerServiceInput, patientExtraInfoConfig: [PatientAttributeConfigInput], eClinicType: EClinicTypeEnum, isUseReferMaster: Boolean, isCloseChat: Boolean, isAllowVoucher: Boolean, customCSS: String, activatedAt: Date, thumbnail: String, location: LocationInput, status: EClinicStatusEnum, holidays: EClinicHolidayInput, isAllowCashPayment: Boolean, cashPaymentPassword: String, quickConsultation: EClinicQuickConsultationInput): BoEClinic
+
+  eClinicJoin(eClinicId: String!, appointmentScheduleId: String!): AppointmentSchedule
+
+  eClinicReissue(eClinicId: String!, appointmentScheduleId: String!): AppointmentSchedule
+
+  eClinicCancel(eClinicId: String!, appointmentScheduleId: String!, reason: String): AppointmentSchedule
+
+  eClinicCall(eClinicId: String!, appointmentScheduleId: String!): AppointmentSchedule
+
+  eClinicApprove(eClinicId: String!, appointmentScheduleId: String!): AppointmentSchedule
+
+  eClinicEndCall(eClinicId: String!, appointmentScheduleId: String!): AppointmentSchedule
+
+  eClinicFinish(eClinicId: String!, appointmentScheduleId: String!): AppointmentSchedule
+
+  eClinicExpireRinging(eClinicId: String!, appointmentScheduleId: String!): AppointmentSchedule
+
+  eClinicCreateChat(eClinicId: String!, profileId: String!): String
+
+  eClinicCreateSupportChat(profileId: String!, helpType: EClinicHelpTypeEnum!, eClinicId: String, appointmentScheduleId: String, topic: String!, description: String!): String
+
+  boEClinicAppointmentScheduleCreate(eClinicId: String!, customerId: String!, profileId: String, ehrTitle: String!, ehrDescription: String!, ehrAttachments: [String]!, reason: String!): AppointmentSchedule
+
+  boEClinicAppointmentScheduleCancel(appointmentScheduleId: String!, reason: String!): AppointmentSchedule
+
+  boEClinicLinked("Phòng khám tổng" eClinicId: String!, "Danh sách phòng khám nhánh" referNodes: [String]!): EClinic
+
+  boEClinicUnlinked("Phòng khám tổng" eClinicId: String!, "Phòng khám nhánh" referNode: String): EClinic
+
+  eClinicActive: Doctor
+
+  eClinicJoined(eClinicId: String!, appointmentScheduleId: String!): AppointmentSchedule
+
+  eClinicActiveChat(channelUrl: String!, isChat: Boolean!): Boolean
+
+  eClinicScheduleBlocks(eClinicId: String!, package: ProductPackageEnum!): EClinicAvailableSchedule
+
+  boeClinicSpecialityCreate(eClinicId: String, specialityName: String!, avatar: String, order: Int): EClinicSpeciality
+
+  boeClinicSpecialityUpdate(eClinicSpecialityId: String!, specialityName: String, avatar: String, order: Int, isActive: Boolean, isDelete: Boolean): EClinicSpeciality
+
+  notificationRead(deviceId: String!, appType: AppType!, notificationId: String!, token: String): Boolean
+
+  notificationReadAll(deviceId: String!, appType: AppType!, token: String): Boolean
+
+  notificationHidden(deviceId: String!, appType: AppType!, notificationId: String!): Boolean
+
+  notificationCount(deviceId: String!, appType: AppType!, sourceType: QuestionSourceType): Int
+
+  boPushNotificationCreate(title: String, message: String, status: PushNotificationStatus, "có hẹn giờ thì gửi, ko thi skip" sendTime: String, audience: PushNotificationAudience, "Nếu là true, tin push sẽ lưu trong danh sách tin của user, Nếu false, chỉ push tin qua device" isPersistence: Boolean, consumers: [String], data: NotificationDataInput, hospitalCode: String!): PushNotification
+
+  boPushNotificationUpdate(pushNotificationId: String!, title: String, message: String, status: PushNotificationStatus, "có hẹn giờ thì gửi, ko thi skip" sendTime: String, audience: PushNotificationAudience, "Nếu là true, tin push sẽ lưu trong danh sách tin của user, Nếu false, chỉ push tin qua device" isPersistence: Boolean, consumers: [String], data: NotificationDataInput, hospitalCode: String!): PushNotification
+
+  appointmentScheduleCreate(eClinicId: String!, profileId: String!, patientCode: String, hospitalCode: String, warehouseId: String!, productId: String, package: ProductPackageEnum!, "Mô tả triệu chứng" reason: String!, reasonImage: [String], scheduleToken: String, sourceType: String, appointmentPlace: AppointmentSchedulePlace): AppointmentSchedule
+
+  appointmentScheduleNextCreate(eClinicId: String!, profileId: String!, package: ProductPackageEnum!, warehouseId: String, "Mô tả triệu chứng" reason: String!, reasonImage: [String], scheduleToken: String!): AppointmentSchedule
+
+  appointmentScheduleNextPayment(appointmentScheduleId: String!, warehouseId: String!, productId: String): AppointmentSchedule
+
+  boAppointmentScheduleCreate(package: ProductPackageEnum!, profileId: String!, warehouseId: String!, patientCode: String, hospitalCode: String, productId: String, eClinicId: String, reason: String!, reasonImage: [String], scheduleToken: String, scheduleDate: Date, serialNumber: String, appointmentPlace: AppointmentSchedulePlace, sourceType: String): AppointmentSchedule
+
+  boAppointmentScheduleNextCreate(eClinicId: String!, profileId: String!, package: ProductPackageEnum!, "Mô tả triệu chứng" reason: String!, reasonImage: [String], scheduleToken: String, scheduleDate: Date, serialNumber: String): AppointmentSchedule
+
+  boAppointmentScheduleOnCounter(departmentType: DepartmentType!, eClinicSubjectType: EClinicSubjectTypeEnum!, scheduleDate: Date!, reason: String!, reasonImage: [String], isPriority: Boolean): AppointmentSchedule
+
+  appointmentScheduleFinished(eClinicId: String!): Boolean
+
+  appointmentScheduleUploadRecords(appointmentScheduleId: String!, records: [AppointmentRecordDataInput]): AppointmentSchedule
+
+  appointmentSchedulereSubscription(eClinicId: String!, limit: Int): Boolean
+
+  appointmentScheduleUpdate(appointmentScheduleId: String!, log: AppointmentScheduleLogInput, scheduleToken: String): AppointmentSchedule
+
+  boAppointmentScheduleUpdate(appointmentScheduleId: String!, state: AppointmentScheduleState, note: String, scheduleToken: String, patientCode: String): BoAppointmentSchedule
+
+  appointmentScheduleCreateGuest(eClinicId: String!): AppointmentSchedule
+
+  appointmentScheduleReworkTime: Boolean
+
+  appointmentScheduleCheckTurn(accountId: String): AppointmentScheduleTurn
+
+  profileCreate(fullName: String!, gender: Gender!, body: ProfileBodyInput, bloodType: ProfileBloodType, relation: ProfileRelation!, avatar: String, phone: String, birthday: Date): Profile
+
+  profileUpdate(profileId: String!, fullName: String!, gender: Gender!, body: ProfileBodyInput, bloodType: ProfileBloodType, relation: ProfileRelation!, avatar: String, phone: String, birthday: Date): Profile
+
+  profileDelete(profileId: String!): Boolean
+
+  boSerialNumberCreate(eClinicId: String!, type: SerialNumberType!, dayNumber: Int): [SerialNumber]
+
+  boSerialNumberUpdate(eClinicId: String!, type: SerialNumberType!, scheduleSerialNumbers: [SerialNumberScheduleInput]!): Boolean
+
+  boSerialNumberAdd(eClinicId: String!, data: [SerialNumberScheduleAddInput]!): [SerialNumber]
+
+  boSerialNumberRemove(eClinicId: String!, scheduleDate: Date!, serialNumber: String!): Boolean
+
+  boSerialNumberReset(eClinicId: String!, type: SerialNumberType!): Boolean
+
+  boSerialNumberAssign(eClinicId: String!, scheduleDate: Date!, serialNumber: String!, appointmentScheduleId: String!): Boolean
+
+  bthEClinicAvailableSchedule(eClinicIds: [String]!, type: SerialNumberType!, startDate: Date, endDate: Date): Boolean
+
+  boVoucherCreate(eClinicId: String!, type: VoucherType!, extraData: VoucherExtraDataInput!, productId: String, title: String!, description: String, code: String, quantity: Int!, expiredAt: ExpiredDateInput!): Voucher
+
+  boVoucherUpdate(voucherId: String!, title: String, description: String, expiredAt: ExpiredDateInput, quantity: Int, extraData: VoucherExtraDataInput): Voucher
+
+  boVoucherCancel(voucherId: String!): Voucher
+
+  boVoucherCampaignCreate(eClinicId: String!, productId: String!, title: String!, description: String, quantity: Int!, expiredAt: ExpiredDateInput!): VoucherCampaign
+
+  boVoucherCampaignUpdate(voucherCampaignId: String!, title: String, description: String, expiredAt: ExpiredDateInput): VoucherCampaign
+
+  boVoucherCampaignPause(voucherCampaignId: String!): VoucherCampaign
+
+  boVoucherCampaignAvailable(voucherCampaignId: String!, expiredDate: ExpiredDateInput): VoucherCampaign
+
+  voucherScratch(code: String!): Voucher
+
+  boVoucherScratch(phone: String!, code: String!): Voucher
+
+  voucherDiscount(code: String!, productId: String!): VoucherDiscount
+}
+
+type Subscription {
+  SubExport: SubscriptionBo
+
+  appointmentSchedule(eClinicId: String, accountId: String): [AppointmentSchedule]
+}
+
+type AccountSendBird {
+  token: String
+}
+
+type AccountThirdParty {
+  sendbird: AccountSendBird
+}
+
+type LinkedInfo {
+  acceptAgreement: Date
+
+  acceptShareInfo: Date
+}
+
+type Account {
+  accountId: String
+
+  fullName: String
+
+  gender: Gender
+
+  phone: String
+
+  thirdParty: AccountThirdParty
+
+  deviceId: String
+
+  type: AccountType
+
+  sourceType: String
+
+  accessToken: String
+
+  linkedInfo: LinkedInfo
+}
+
+type BoAccount {
+  accountId: String
+
+  fullName: String
+
+  gender: Gender
+
+  phone: String
+
+  thirdParty: AccountThirdParty
+
+  profileCount: Int
+
+  state: String
+
+  createdAt: Date
+
+  tags: [String]
+
+  type: AccountType
+
+  sourceType: String
+
+  linkedInfo: LinkedInfo
+
+  appointmentCount: Int
+}
+
+type Consultation {
+  account: Account
+
+  doctor: Doctor
+
+  question: String
+
+  answer: String
+
+  publishedAt: Date
+}
+
+type Customer {
+  customerId: String
+
+  account: Account
+
+  fullName: String
+
+  warehouse: [Warehouse]
+
+  profiles(profileId: String, limit: PageLimitInput): [Profile]
+}
+
+type BoCustomer {
+  customerId: String
+
+  account: Account
+
+  fullName: String
+
+  warehouse: [Warehouse]
+
+  profiles: [Profile]
+}
+
+type DeviceInfo {
+  appName: String
+
+  brand: String
+
+  buildNumber: String
+
+  bundleId: String
+
+  deviceId: String
+
+  model: String
+
+  systemName: String
+
+  systemVersion: String
+
+  uniqueId: String
+
+  appVersion: String
+
+  userAgent: String
+
+  deviceName: String
+
+  manufacturer: String
+
+  apiLevel: String
+
+  fontScale: String
+
+  firstInstallTime: String
+
+  hasGms: String
+
+  hasHms: String
+}
+
+type DeviceTracking {
+  utm_campaign: String
+
+  utm_content: String
+
+  utm_medium: String
+
+  utm_source: String
+
+  utm_term: String
+
+  traffic_id: String
+
+  extraData: String
+}
+
+type Device {
+  platform: String
+
+  deviceId: String
+
+  appType: AppType
+
+  account: Account
+
+  fcmProjectId: String
+
+  fcmToken: String
+
+  deviceInfo: DeviceInfo
+
+  nativeVersion: String
+
+  jsVersion: String
+
+  tracking: DeviceTracking
+
+  apnRegistrationId: String
+}
+
+type EClinicPatient {
+  eClinicPatientId: String
+
+  eClinic: EClinic
+
+  doctor: Doctor
+
+  customer: Customer
+
+  profile: Profile
+
+  fullName: String
+
+  patientId: String
+
+  phone: String
+
+  address: String
+
+  description: String
+
+  createdAt: Date
+
+  extraInfo: [PatientExtraInfo]
+
+  thirdParty: PatientThirdParty
+}
+
+type PatientExtraInfo {
+  key: String
+
+  data: PatientExtraInfoData
+}
+
+type PatientExtraInfoTextData {
+  value: String
+}
+
+type PatientExtraInfoCheckboxData {
+  value: String
+}
+
+type PatientExtraInfoRadioData {
+  value: String
+}
+
+type PatientExtraInfoSelectboxData {
+  value: String
+}
+
+type PatientExtraInfoTextAreaData {
+  value: String
+}
+
+type PatientExtraInfoDatePickerData {
+  date: Date
+}
+
+type PatientExtraInfoDateRangeData {
+  fromDate: Date
+
+  toDate: Date
+}
+
+type PatientExtraInfoUploadData {
+  url: String
+
+  fileType: String
+}
+
+type PatientThirdParty {
+  sendbird: PatientSendBird
+}
+
+type PatientSendBird {
+  channelUrl: String
+}
+
+type HospitalPatient {
+  patientCode: String
+
+  hospitalCode: String
+
+  linkedAt: Date
+
+  createdAt: Date
+
+  fullName: String
+
+  birthday: String
+
+  gender: String
+
+  phone: String
+
+  homeLocation: HospitalPatientLocation
+
+  healthInsurance: String
+
+  isIdentify: Boolean
+
+  profile: Profile
+
+  profileCode: String
+
+  profilePhone: String
+}
+
+type BoHospitalProfile {
+  profileId: String
+
+  profile: Profile
+
+  account: Account
+
+  hospitalPatient: HospitalPatient
+}
+
+type HospitalPatientLocation {
+  address: String
+
+  ward: String
+
+  district: String
+
+  region: String
+}
+
+type EHRLaboratoryReport {
+  ehrAttachments: [String]
+
+  appointmentScheduleId: String
+}
+
+type EHRMedicalExamination {
+  medicalExaminationId: String
+
+  appointmentScheduleId: String
+
+  accountId: String
+
+  customerId: String
+
+  doctorId: String
+
+  profileId: String
+
+  reason: String
+
+  content: String
+
+  result: String
+}
+
+type EHRCustomerCreate {
+  attachmentId: String
+}
+
+type SharedDate {
+  from: Date
+
+  to: Date
+}
+
+type EHRShared {
+  sharedType: SharedType
+
+  targetId: String
+
+  sharedAt: SharedDate
+
+  targetData: EHRTargetData
+}
+
+type Test {
+  data: String
+}
+
+type EHR {
+  ehrId: String
+
+  account: Account
+
+  customer: Customer
+
+  profile: Profile
+
+  shares: [EHRShared]
+
+  title: String
+
+  description: String
+
+  type: EHRType
+
+  data: EHRData
+
+  createdAt: Date
+
+  finishedAt: Date
+}
+
+type ExaminationRequest {
+  examinationRequestId: String
+
+  account: Account
+
+  submittedAccount: Account
+
+  profile: Profile
+
+  eClinic: EClinic
+
+  doctor: Doctor
+
+  ehr: EHR
+
+  details: [ExaminationRequestDetail]
+
+  note: String
+
+  diagnose: String
+
+  signatureId: String
+
+  attachment: [String]
+
+  createdAt: Date
+
+  orders: [String]
+}
+
+type ExaminationRequestOrder {
+  orderId: String
+
+  examinationRequest: ExaminationRequest
+
+  note: String
+
+  state: String
+
+  customerInfo: CustomerInfo
+
+  amount: Int
+
+  discount: Int
+
+  fee: Int
+
+  commision: Int
+
+  total: Int
+
+  supplierTransaction: String
+
+  createdAt: Date
+}
+
+type ExaminationRequestDetail {
+  examinationServiceId: String
+
+  name: String
+
+  type: examintationType
+
+  examinationServiceData: ExaminationService
+}
+
+type ExaminationService {
+  examinationServiceId: String
+
+  name: String
+
+  description: String
+
+  type: examintationType
+}
+
+type prescription {
+  name: String
+
+  prescriptionId: String
+
+  account: Account
+
+  customer: Customer
+
+  profile: Profile
+
+  eClinic: EClinic
+
+  doctor: Doctor
+
+  ehr: EHR
+
+  medicineSupplier: MedicineSupplier
+
+  details: [MedicineDetails]
+
+  note: String
+
+  diagnose: String
+
+  signatureId: String
+
+  attachment: [String]
+
+  createdAt: Date
+
+  state: prescriptionState
+
+  customerInfo: CustomerInfo
+
+  orders: [String]
+}
+
+type MedicineDetails {
+  medicine: Medicine
+
+  dose: [MedicineDose]
+
+  duration: MedicineDuration
+
+  quantity: MedicineQuantity
+
+  indication: String
+}
+
+type Medicine {
+  medicineId: String
+
+  brandname: String
+
+  ingredient: String
+
+  ratio: String
+
+  type: String
+
+  packing: String
+
+  unit: String
+
+  manufacturer: String
+
+  madeIn: String
+}
+
+type MedicineQuantity {
+  unit: unitType
+
+  quantity: Float
+}
+
+"""
+The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).
+"""
+scalar Float
+
+type MedicineDose {
+  time: timeType
+
+  unit: unitType
+
+  quantity: Float
+}
+
+type MedicineDuration {
+  type: durationType
+
+  quantity: Float
+}
+
+type MedicineSupplier {
+  medicineSupplierId: String
+
+  name: String
+
+  description: String
+}
+
+type CustomerInfo {
+  fullName: String
+
+  phone: String
+
+  location: CustomerLocation
+}
+
+type CustomerLocation {
+  address: String
+
+  ward: String
+
+  district: String
+
+  province: String
+
+  country: String
+
+  identifyCode: String
+}
+
+type PrescriptionOrder {
+  orderId: String
+
+  prescription: prescription
+
+  note: String
+
+  createdAt: Date
+
+  state: prescriptionState
+
+  customerInfo: CustomerInfo
+
+  amount: Int
+
+  discount: Int
+
+  fee: Int
+
+  commision: Int
+
+  total: Int
+
+  medicineSupplier: MedicineSupplier
+
+  medicineSupplierTransaction: String
+}
+
+type ProductPackageVideo {
+  quantity: Int
+
+  time: Int
+
+  amount: Int
+
+  total: Int
+
+  type: String
+
+  eClinicIds: [String]
+}
+
+type ProductPackageChat {
+  quantity: Int
+
+  time: Int
+
+  amount: Int
+
+  total: Int
+
+  type: String
+
+  eClinicIds: [String]
+}
+
+type ProductPackageOffline {
+  quantity: Int
+
+  amount: Int
+
+  total: Int
+
+  type: String
+
+  eClinicIds: [String]
+}
+
+type ProductPackageEPharmacy {
+  items: [ProductEPharmacy]
+
+  total: Int
+}
+
+type ProductPackageLaboratoryReport {
+  items: [ProductLaboratoryReport]
+
+  total: Int
+}
+
+type ProductEPharmacy {
+  itemId: String
+
+  title: String
+
+  amount: Int
+
+  type: String
+}
+
+type ProductLaboratoryReport {
+  itemId: String
+
+  title: String
+
+  amount: Int
+
+  type: String
+}
+
+type Product {
+  productId: String
+
+  account: Account
+
+  doctor: Doctor
+
+  title: String
+
+  description: String
+
+  descriptionDetail: String
+
+  cover: String
+
+  amount: Int
+
+  price: Int
+
+  expiry: Int
+
+  packages: [ProductPackage]
+
+  isActive: Boolean
+}
+
+type Question {
+  questionId: String
+
+  profile: Profile
+
+  content: String
+
+  state: QuestionState
+
+  medicalSpecialties: [MedicalSpeciality]
+
+  attachmentIds: [String]
+
+  review: QuestionReview
+
+  answers: [Answer]
+
+  createdAt: Date
+
+  questionFeed: QuestionFeed
+}
+
+type BoQuestion {
+  questionId: String
+
+  profile: BoProfile
+
+  content: String
+
+  state: QuestionState
+
+  medicalSpecialties: [MedicalSpeciality]
+
+  attachmentIds: [String]
+
+  review: QuestionReview
+
+  answers: [Answer]
+
+  createdAt: Date
+
+  questionFeed: QuestionFeed
+}
+
+type QuestionV2 {
+  questionId: String
+
+  profile: BasicProfile
+
+  content: String
+
+  state: QuestionState
+
+  medicalSpecialties: [MedicalSpeciality]
+
+  attachmentIds: [String]
+
+  review: QuestionReview
+
+  answers: [Answer]
+
+  createdAt: Date
+
+  questionFeed: QuestionFeed
+}
+
+type Answer {
+  answerId: String
+
+  doctor: Doctor
+
+  content: String
+
+  attachmentIds: [String]
+
+  thankCount: Int
+
+  rate: AnswerRate
+
+  state: AnswerState
+
+  createdAt: Date
+
+  reason: String
+}
+
+type AnswerRate {
+  content: String
+
+  point: Int
+
+  createdAt: Date
+}
+
+type QuestionReview {
+  state: String
+
+  reason: String
+
+  reviewedAt: Date
+}
+
+type QuestionStatistic {
+  count: Int
+
+  reviewingCount: Int
+
+  approvedCount: Int
+
+  rejectedCount: Int
+
+  pendingAnswerCount: Int
+
+  approvedAnswerCount: Int
+
+  rejectedAnswerCount: Int
+
+  rateCustomerAverage: Float
+
+  answeredTimeAverage: Float
+
+  questionPercent: Float
+}
+
+type React {
+  reactId: String
+
+  account: Account
+
+  customer: Customer
+
+  eClinic: EClinic
+
+  type: ReactType
+
+  publishedAt: Date
+
+  createdAt: Date
+
+  updatedAt: Date
+}
+
+type SettingSystem {
+  thirdParty: SettingThirdParty
+}
+
+type SettingThirdParty {
+  sendbird: SettingSendBird
+}
+
+type SettingSendBird {
+  appId: String
+}
+
+type Setting {
+  id: Int
+
+  key: String
+
+  value: String
+
+  type: String
+
+  description: String
+}
+
+type Staff {
+  username: String
+
+  account: Account
+
+  eClinicIds: [String]
+
+  eClinics: [EClinic]
+
+  scopes: [String]
+
+  role: String
+
+  slug: String
+
+  email: String
+
+  phone: String
+
+  tags: [String]
+
+  isActive: Boolean
+
+  isDeleted: Boolean
+
+  createdAt: Date
+}
+
+type StaffLoginResponse {
+  isSucceeded: Boolean
+
+  accessToken: String
+
+  uploadToken: String
+
+  staff: Staff
+
+  tags: [String]
+}
+
+type SubscriptionBo {
+  SubExportExcel: Result
+}
+
+type Result {
+  message: String
+
+  succeeded: Boolean
+
+  type: String
+
+  accountId: String
+
+  url: String
+
+  data: String
+}
+
+type Utilities {
+  medicalSpecialties: [MedicalSpecialtyItem]
+
+  doctorTitle: [DoctorTitleItem]
+
+  relations: [Relations]
+}
+
+type DoctorTitleItem {
+  label: String
+
+  value: String
+}
+
+type MedicalSpecialtyItem {
+  label: String
+
+  value: String
+}
+
+type Relations {
+  label: String
+
+  value: String
+}
+
+type WarehousePackage {
+  video: Int
+
+  voice: Int
+
+  chat: Int
+
+  offline: Int
+
+  ePharmacy: Int
+
+  laboratoryReport: Int
+}
+
+type WarehouseHistory {
+  target: String
+
+  accountId: String
+
+  description: String
+
+  state: WarehouseState
+
+  data: String
+
+  createdAt: Date
+}
+
+type Warehouse {
+  warehouseId: String
+
+  account: Account
+
+  customer: Customer
+
+  eClinic: EClinic
+
+  product: Product
+
+  title: String
+
+  package: WarehousePackage
+
+  order: Order
+
+  expiredAt: Date
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  state: WarehouseState
+}
+
+type BoWarehouse {
+  warehouseId: String
+
+  account: Account
+
+  customer: Customer
+
+  eClinic: EClinic
+
+  product: Product
+
+  title: String
+
+  package: WarehousePackage
+
+  order: Order
+
+  expiredAt: Date
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  state: WarehouseState
+
+  supplierTransaction: String
+
+  history: [WarehouseHistory]
+}
+
+type Banner {
+  bannerId: String
+
+  name: String
+
+  image: String
+
+  appImage: String
+
+  appRedirectUrl: String
+
+  webRedirectUrl: String
+
+  tags: [String]
+
+  publishedAt: Date
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  isHighlighted: Boolean
+
+  order: Int
+
+  state: BannerState
+
+  isActive: Boolean
+
+  updateAccountId: String
+
+  accountId: String
+
+  account: Account
+
+  lastUpdateAccount: Account
+}
+
+type Comment {
+  account: Account
+
+  customer: Customer
+
+  star: Int
+
+  content: String
+
+  publishedAt: Date
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  appointmentScheduleId: String
+
+  appointmentSchedule: AppointmentSchedule
+
+  state: CommentState
+}
+
+type DegreeStatistic {
+  doctorCount: Int
+
+  eclinicCount: Int
+}
+
+type Degree {
+  degreeId: String
+
+  name: String
+
+  shortName: String
+
+  description: String
+
+  partnerId: String
+
+  isActive: Boolean
+
+  order: Int
+
+  doctors(limit: PageLimitInput): [Doctor]
+
+  eClinics(limit: PageLimitInput): [EClinic]
+
+  statistic: DegreeStatistic
+
+  createdAt: Date
+}
+
+type DLVNTag {
+  dlvnTagId: String
+
+  name: String
+
+  accountId: String
+
+  dlvnTag: String
+
+  description: String
+
+  avatar: String
+
+  cover: String
+
+  order: Int
+
+  displayName: String
+
+  eClinics: [EClinic]
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  state: TagState
+
+  isActive: Boolean
+}
+
+type Certification {
+  name: String
+
+  issuer: String
+
+  issueYear: Int
+}
+
+type Education {
+  name: String
+
+  issuer: String
+
+  issueYear: Int
+}
+
+type Reward {
+  name: String
+
+  issuer: String
+
+  issueYear: Int
+}
+
+type JobRange {
+  from: String
+
+  to: String
+}
+
+type Job {
+  title: String
+
+  workplace: String
+
+  description: String
+
+  range: JobRange
+}
+
+type DoctorLocation {
+  address: String
+
+  ward: String
+
+  district: String
+
+  province: String
+
+  country: String
+
+  identifyCode: String
+}
+
+type Doctor {
+  doctorId: String
+
+  account: Account
+
+  eClinic: EClinic
+
+  news(filter: NewsFilterInput, limit: PageLimitInput): [News]
+
+  consultations(filter: ConsultationFilterInput, limit: PageLimitInput): [Consultation]
+
+  fullName: String
+
+  birthday: Date
+
+  gender: Gender
+
+  avatar: String
+
+  location: DoctorLocation
+
+  email: String
+
+  description: String
+
+  identifyCardNumber: String
+
+  signature: String
+
+  workingRegion: String
+
+  graduateYear: Int
+
+  """
+  Chức danh
+  """
+  partner: Partner
+
+  """
+  Học vị (bỏ)
+  """
+  title: String
+
+  """
+  Học vị
+  """
+  degree: Degree
+
+  """
+  Chuyên khoa
+  """
+  medicalSpecialties: [MedicalSpeciality]
+
+  """
+  Năm tốt nghiệp
+  """
+  education: [Education]
+
+  """
+  Quá trình làm việc
+  """
+  workingProcess: [Job]
+
+  """
+  Chứng chỉ
+  """
+  certification: [Certification]
+
+  """
+  Giải thưởng
+  """
+  reward: [Reward]
+
+  isVerified: Boolean
+
+  isActive: Boolean
+
+  createdAt: Date
+
+  statistic: DoctorStatistic
+}
+
+type BoDoctor {
+  doctorId: String
+
+  account: Account
+
+  eClinic: EClinic
+
+  news(filter: NewsFilterInput, limit: PageLimitInput): [News]
+
+  consultations(filter: ConsultationFilterInput, limit: PageLimitInput): [Consultation]
+
+  fullName: String
+
+  birthday: Date
+
+  gender: Gender
+
+  avatar: String
+
+  location: DoctorLocation
+
+  email: String
+
+  description: String
+
+  identifyCardNumber: String
+
+  signature: String
+
+  workingRegion: String
+
+  """
+  Năm tốt nghiệp
+  """
+  graduateYear: Int
+
+  """
+  Chức danh
+  """
+  partner: Partner
+
+  """
+  Học vị(bỏ)
+  """
+  title: String
+
+  """
+  Học vị
+  """
+  degree: Degree
+
+  """
+  Chuyên khoa
+  """
+  medicalSpecialties: [MedicalSpeciality]
+
+  """
+  Năm tốt nghiệp
+  """
+  education: [Education]
+
+  """
+  Quá trình làm việc
+  """
+  workingProcess: [Job]
+
+  """
+  Chứng chỉ
+  """
+  certification: [Certification]
+
+  """
+  Giải thưởng
+  """
+  reward: [Reward]
+
+  isVerified: Boolean
+
+  isActive: Boolean
+
+  createdAt: Date
+
+  isLockAnswer: Boolean
+}
+
+type DoctorStatistic {
+  thankFeedCount: Int
+
+  rateAnswerCount: Int
+
+  rateCustomerAverage: Float
+
+  fusionRateAnswerCount: Int
+
+  fusionRateCustomerAverage: Float
+}
+
+type Edoctor {
+  graduateYear: Int
+
+  phone: String
+
+  fullName: String
+
+  title: String
+
+  gender: Gender
+
+  medicalSpecialties: [MedicalSpecialties]
+}
+
+type ExportResponsed {
+  message: String
+
+  exportToken: String
+
+  succeeded: Boolean
+}
+
+type Hospital {
+  hospitalId: String
+
+  slug: String
+
+  tagVC: String
+
+  displayName: String
+
+  description: String
+
+  avatar: String
+
+  cover: String
+
+  thumbnail: String
+
+  color: String
+
+  hotlineNumber: String
+
+  isActive: Boolean
+
+  isVisible: Boolean
+
+  createdAt: Date
+
+  hospitalServices: [HospitalService]
+
+  activatedAt: Date
+
+  location: EClinicLocation
+
+  tags: [String]
+
+  status: HospitalState
+
+  eClinicIds: [String]
+
+  eClinics: [EClinic]
+
+  isMaintain: Boolean
+}
+
+type HospitalService {
+  _id: String
+
+  name: String
+
+  cover: String
+
+  appRedirectUrl: String
+
+  webRedirectUrl: String
+
+  isHighlighted: Boolean
+
+  order: Int
+
+  isActive: Boolean
+}
+
+type Location {
+  id: Int
+
+  """
+  Mã xác minh của địa điểm
+  """
+  identifyCode: String
+
+  """
+  Đường dẫn theo id (vd: root>75>732>26080)
+  """
+  path: String
+
+  """
+  Tên địa điểm
+  """
+  title: String
+
+  """
+  Mã xác minh của địa điểm cấp trên
+  """
+  parentIdentifyCode: String
+
+  """
+  Đường dẫn gồm object các cấp cha
+  """
+  parentPath: [LocationParentPath]
+}
+
+type LocationParentPath {
+  identifyCode: String
+
+  path: String
+
+  title: String
+}
+
+type MainService {
+  mainServiceId: String
+
+  name: String
+
+  description: String
+
+  category: String
+
+  image: String
+
+  actionType: MainServiceActionType
+
+  """
+  data dùng cho action type, nếu REDIRECT value sẽ là sceenid/schema chuyển đến, nếu OPEN_URL sẽ là url load link, nếu là popup_banner sẽ là img hình ảnh hiện ra (ví dụ Coming soon)
+  """
+  actionValue: String
+
+  isHighlighted: Boolean
+
+  order: Int
+
+  tags: [String]
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  state: MainServiceState
+
+  isActive: Boolean
+}
+
+type MainServiceCategoryInfo {
+  mainServiceCategoryId: String
+
+  categoryName: String
+
+  description: String
+
+  categoryCode: String
+
+  order: Int
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  state: MainServiceState
+}
+
+type MedicalExamination {
+  medicalExaminationId: String
+
+  account: Account
+
+  customer: Customer
+
+  doctor: Doctor
+
+  profile: Profile
+
+  product: Product
+
+  warehouse: Warehouse
+
+  package: ProductPackageEnum
+
+  appointmentSchedule: AppointmentSchedule
+
+  appointmentScheduleNext: AppointmentSchedule
+
+  """
+  Mô tả triệu chứng
+  """
+  reason: String
+
+  """
+  Nội dung thăm khám
+  """
+  content: String
+
+  """
+  Kết luận
+  """
+  result: String
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  prescriptions: [prescription]
+
+  examinationRequests: [ExaminationRequest]
+
+  ICD10MedicalIds: [String]
+
+  ICD10Medicals: [ICD10]
+}
+
+type ICD10 {
+  ICD10Id: String
+
+  chapterId: String
+
+  chapterName: String
+
+  groupId: String
+
+  groupName: String
+
+  typeId: String
+
+  typeName: String
+
+  medicalId: String
+
+  medicalName: String
+
+  medicalReportId: String
+}
+
+type MedicalSpecialityStatistic {
+  doctorCount: Int
+
+  eclinicCount: Int
+}
+
+type MedicalSpeciality {
+  medicalSpecialtyId: String
+
+  name: String
+
+  description: String
+
+  state: String
+
+  order: Int
+
+  doctors(limit: PageLimitInput): [Doctor]
+
+  eClinics(limit: PageLimitInput): [EClinic]
+
+  statistic: MedicalSpecialityStatistic
+
+  iconUrl: String
+
+  dlvnIconUrl: String
+}
+
+type News {
+  newsId: String
+
+  hospitalId: String
+
+  name: String
+
+  content: String
+
+  newsCategoryId: String
+
+  avatar: String
+
+  isHighlighted: Boolean
+
+  order: Int
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  publishAt: Date
+
+  status: NewsStatus
+
+  state: NewsState
+
+  isActive: Boolean
+}
+
+type NewsCategoryInfo {
+  newsCategoryId: String
+
+  categoryName: String
+
+  avatar: String
+
+  order: Int
+
+  newsCount: Int
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  isActive: Boolean
+
+  state: NewsState
+}
+
+type OrderContact {
+  fullName: String
+
+  phone: String
+
+  address: String
+}
+
+type OrderProduct {
+  product: Product
+
+  quantity: Int
+}
+
+type Order {
+  orderId: String
+
+  account: Account
+
+  customer: Customer
+
+  doctor: Doctor
+
+  eClinic: EClinic
+
+  appointmentSchedule: AppointmentSchedule
+
+  appointmentScheduleCreate: AppointmentScheduleCreate
+
+  appointmentScheduleReason: String
+
+  description: String
+
+  contact: OrderContact
+
+  payMethod: String
+
+  products: [OrderProduct]
+
+  warehouses: [Warehouse]
+
+  state: OrderState
+
+  refunds: [Order]
+
+  amount: Int
+
+  fee: Int
+
+  total: Int
+
+  discount: Int
+
+  url: String
+
+  paidAt: Date
+
+  paymentType: String
+
+  isRefund: Boolean
+
+  voucher: Voucher
+
+  createdAt: Date
+
+  updatedAt: Date
+}
+
+type AppointmentScheduleCreate {
+  profileId: String
+
+  package: ProductPackageEnum
+
+  """
+  Mô tả triệu chứng
+  """
+  reason: String
+
+  reasonImage: [String]
+
+  scheduleToken: String
+}
+
+type OrderStatistic {
+  amount: Int
+
+  fee: Int
+
+  total: Int
+
+  count: Int
+
+  revCount: Int
+
+  voucherCount: Int
+}
+
+type Partner {
+  partnerId: String
+
+  name: String
+
+  description: String
+
+  isActive: Boolean
+
+  order: Int
+
+  createdAt: Date
+}
+
+type ProxyResponse {
+  httpCode: Int
+
+  payload: String
+
+  headers: String
+}
+
+type QuestionFeedTag {
+  questionFeedTagId: String
+
+  name: String
+
+  accountId: String
+
+  questionFeedTag: String
+
+  description: String
+
+  megaImage: String
+
+  seoMetaDesc: String
+
+  seoMetaKeyword: String
+
+  canonical: String
+
+  order: Int
+
+  displayName: String
+
+  questionFeeds: [QuestionFeed]
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  state: TagState
+
+  isActive: Boolean
+
+  isHighlighted: Boolean
+
+  isMetaIndex: Boolean
+
+  isMetaFollow: Boolean
+
+  feedCount: Int
+
+  updateAccountId: String
+
+  account: Account
+
+  lastUpdateAccount: Account
+}
+
+type Stringee {
+  result: String
+}
+
+type Tag {
+  tagId: String
+
+  name: String
+
+  accountId: String
+
+  tag: String
+
+  description: String
+
+  avatar: String
+
+  cover: String
+
+  order: Int
+
+  displayName: String
+
+  eClinics: [EClinic]
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  state: TagState
+
+  isActive: Boolean
+}
+
+type QuestionFeed {
+  questionFeedId: String
+
+  questionId: String
+
+  accountId: String
+
+  account: Account
+
+  sourceType: QuestionFeedSourceType
+
+  title: String
+
+  slug: String
+
+  tags: [String]
+
+  tagNames: [String]
+
+  question: String
+
+  answer: String
+
+  doctor: Doctor
+
+  doctorId: String
+
+  customerInfo: QuestionFeedCustomerInfo
+
+  publishAt: Date
+
+  thumbnail: String
+
+  seoTitle: String
+
+  seoMetaDesc: String
+
+  seoMetaKeyword: String
+
+  canonical: String
+
+  isActive: Boolean
+
+  isHighlighted: Boolean
+
+  order: Boolean
+
+  status: QuestionFeedStatus
+
+  state: QuestionFeedState
+
+  isMetaIndex: Boolean
+
+  isMetaFollow: Boolean
+
+  isBookmarked: Boolean
+
+  isLiked: Boolean
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  isPublished: Boolean
+
+  lastUpdateAccount: Account
+
+  likeCount: Int
+}
+
+type QuestionFeedBookMark {
+  questionFeedBookmarkId: String
+
+  questionFeedId: String
+
+  questionFeed: QuestionFeed
+
+  accountId: String
+
+  createdAt: Date
+
+  updatedAt: Date
+}
+
+type QuestionFeedCustomerInfo {
+  fullName: String
+
+  gender: String
+
+  age: Int
+}
+
+type QuestionFeedCategoryInfo {
+  questionFeedCategoryId: String
+
+  categoryName: String
+
+  avatar: String
+
+  order: Int
+
+  questionFeedCount: Int
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  isActive: Boolean
+
+  state: QuestionFeedState
+}
+
+type QuestionFeedBookmarkList {
+  totalRecord: Int
+
+  questionFeedIds: [String]
+
+  questionFeedBookMarks: [QuestionFeedBookMark]
+
+  questionFeeds: [QuestionFeed]
+}
+
+type DLVNAccount {
+  accountId: String
+
+  account: Account
+
+  profiles: [Profile]
+
+  dcId: String
+
+  type: DLVNAccountType
+
+  phone: String
+
+  deviceId: String
+
+  accessToken: String
+
+  dcAccessToken: String
+
+  role: String
+
+  screen: String
+}
+
+type DLVNDoctor {
+  doctor: BoDoctor
+
+  answerCount: Int
+}
+
+type DLVNMenu {
+  id: Int
+
+  title: String
+
+  itemId: String
+
+  disabled: Boolean
+
+  isExternal: Boolean
+
+  role: String
+
+  listItemSubMenu: [DLVNSubMenu]
+
+  content: String
+}
+
+type DLVNSubMenu {
+  id: Int
+
+  link: String
+
+  idSubMenu: String
+
+  external: Boolean
+
+  role: String
+
+  itemId: String
+
+  content: String
+}
+
+type EClinicPolicy {
+  isActive: Boolean
+
+  content: String
+}
+
+type ECliniAppointment {
+  """
+  Thời gian một cuộc hẹn
+  """
+  duration: Int
+
+  """
+  Giới hạn khách vãn lai
+  """
+  limitImmediate: Int
+
+  """
+  Thời gian sớm nhất có thể checkin
+  """
+  prepareJoin: Int
+
+  """
+  Thời gian trễ nhất có thể checkin
+  """
+  lateJoin: Int
+
+  """
+  Thời gian đợi bệnh nhân trả lời cuộc gọi
+  """
+  callRingingTime: Int
+}
+
+type ECliniWorkingTimingBlock {
+  from: String
+
+  to: String
+
+  isActive: Boolean
+}
+
+type ECliniWorkingTiming {
+  dayOfWeek: [DayOfWeek]
+
+  blocks: [ECliniWorkingTimingBlock]
+
+  isActive: Boolean
+}
+
+type ECliniWorkingTime {
+  type: ECliniWorkingTimeEnum
+
+  duration: Int
+
+  isActive: Boolean
+
+  isOpening: Boolean
+
+  data: [ECliniWorkingTimeData]
+}
+
+type ECliniWorkingTimeData {
+  dayOfWeek: [DayOfWeek]
+
+  blocks: [ECliniWorkingTimeBlock]
+
+  isActive: Boolean
+}
+
+type ECliniWorkingTimeBlock {
+  from: String
+
+  to: String
+
+  isActive: Boolean
+}
+
+type EClinicAvailableScheduleBlock {
+  time: String
+
+  available: Boolean
+
+  scheduleToken: String
+}
+
+type EClinicAvailableSchedule {
+  type: ECliniWorkingTimeEnum
+
+  data: [EClinicAvailableScheduleData]
+}
+
+type EClinicAvailableScheduleData {
+  date: String
+
+  blocks: [[EClinicAvailableScheduleBlock]]
+}
+
+type eClinicStatistic {
+  star: String
+
+  react: Int
+
+  comment: Int
+}
+
+type EClinicTelegram {
+  username: String
+
+  token: String
+}
+
+type EClinicPatientExtraInfo {
+  label: String
+
+  order: Int
+
+  key: String!
+
+  isActive: Boolean
+
+  isCustomerEditable: Boolean
+
+  attribute: PatientAttributeData
+}
+
+type SelectItem {
+  label: String
+
+  value: String
+}
+
+type PatientAttributeText {
+  placeHolder: String
+}
+
+type PatientAttributeCheckbox {
+  items: [SelectItem]
+}
+
+type PatientAttributeRadio {
+  items: [SelectItem]
+}
+
+type PatientAttributeSelectbox {
+  items: [SelectItem]
+}
+
+type PatientAttributeTextArea {
+  placeHolder: String
+}
+
+type PatientAttributeDatePicker {
+  date: Date
+}
+
+type PatientAttributeDateRange {
+  fromLabel: String
+
+  fromDate: Date
+
+  toLabel: String
+
+  toDate: Date
+}
+
+type PatientAttributeUpload {
+  placeHolder: String
+
+  fileType: [SelectItem]
+}
+
+type EClinicCustomerService {
+  isActive: Boolean
+
+  eClinic: EClinic
+}
+
+type EClinicHoliday {
+  video: [String]
+
+  chat: [String]
+
+  offline: [String]
+}
+
+type EClinicQuickConsultation {
+  isEnable: Boolean
+
+  defaultProductId: String
+}
+
+type EClinic {
+  eClinicId: String
+
+  account: Account
+
+  doctor: Doctor
+
+  products(limit: PageLimitInput): [Product]
+
+  statistic: eClinicStatistic
+
+  reacts(limit: PageLimitInput): [React]
+
+  comments(limit: PageLimitInput): [Comment]
+
+  """
+  Màu thương hiệu
+  """
+  color: String
+
+  title: String
+
+  """
+  Tên phòng khám
+  """
+  displayName: String
+
+  displayNameApp: String
+
+  description: String
+
+  descriptionApp: String
+
+  avatar: String
+
+  cover: String
+
+  """
+  Tên thể hiện trên đường dẫn vào phòng khám
+  """
+  slug: String
+
+  policy: EClinicPolicy
+
+  appointment: ECliniAppointment
+
+  workingTimes: [ECliniWorkingTime]
+
+  medicalSpecialties: [MedicalSpecialties]
+
+  availableSchedule: [EClinicAvailableSchedule]
+
+  isActive: Boolean
+
+  createdAt: Date
+
+  isOpening: Boolean
+
+  customerService: EClinicCustomerService
+
+  telegram: EClinicTelegram
+
+  eClinicType: String
+
+  patientExtraInfoConfig: [EClinicPatientExtraInfo]
+
+  """
+  Loại liên kết phòng khám
+  """
+  referType: EClinicReferTypeEnum
+
+  """
+  Danh sách phòng khám tổng
+  """
+  referMasters: [String]
+
+  """
+  Danh sách phòng khám nhánh
+  """
+  referNodes: [String]
+
+  """
+  Sử dụng gói dịch vụ của phòng khám tổng
+  """
+  isUseReferMaster: Boolean
+
+  customCSS: String
+
+  isCloseChat: Boolean
+
+  isAllowVoucher: Boolean
+
+  activatedAt: Date
+
+  thumbnail: String
+
+  location: EClinicLocation
+
+  tags: [String]
+
+  status: EClinicStatusEnum
+
+  holidays: EClinicHoliday
+
+  isAllowCashPayment: Boolean
+
+  quickConsultation: EClinicQuickConsultation
+
+  subjectType: EClinicSubjectTypeEnum
+}
+
+type BoEClinic {
+  eClinicId: String
+
+  account: Account
+
+  doctor: BoDoctor
+
+  products(limit: PageLimitInput): [Product]
+
+  statistic: eClinicStatistic
+
+  reacts(limit: PageLimitInput): [React]
+
+  comments(limit: PageLimitInput): [Comment]
+
+  """
+  Màu thương hiệu
+  """
+  color: String
+
+  title: String
+
+  """
+  Tên phòng khám
+  """
+  displayName: String
+
+  displayNameApp: String
+
+  description: String
+
+  descriptionApp: String
+
+  avatar: String
+
+  cover: String
+
+  """
+  Tên thể hiện trên đường dẫn vào phòng khám
+  """
+  slug: String
+
+  policy: EClinicPolicy
+
+  appointment: ECliniAppointment
+
+  workingTimes: [ECliniWorkingTime]
+
+  medicalSpecialties: [MedicalSpeciality]
+
+  availableSchedule: [EClinicAvailableSchedule]
+
+  isActive: Boolean
+
+  isVisible: Boolean
+
+  isOpening: Boolean
+
+  customerService: EClinicCustomerService
+
+  createdAt: Date
+
+  telegram: EClinicTelegram
+
+  patientExtraInfoConfig: [EClinicPatientExtraInfo]
+
+  eClinicType: String
+
+  """
+  Loại liên kết phòng khám
+  """
+  referType: EClinicReferTypeEnum
+
+  """
+  Danh sách phòng khám tổng
+  """
+  referMasters: [String]
+
+  """
+  Danh sách phòng khám nhánh
+  """
+  referNodes: [String]
+
+  """
+  Sử dụng gói dịch vụ của phòng khám tổng
+  """
+  isUseReferMaster: Boolean
+
+  customCSS: String
+
+  """
+  Đóng chat tư vấn ngoài giờ mở cửa
+  """
+  isCloseChat: Boolean
+
+  isAllowVoucher: Boolean
+
+  activatedAt: Date
+
+  location: EClinicLocation
+
+  thumbnail: String
+
+  isAllowCashPayment: Boolean
+
+  cashPaymentPassword: String
+
+  tags: [String]
+
+  status: EClinicStatusEnum
+
+  holidays: EClinicHoliday
+
+  quickConsultation: EClinicQuickConsultation
+
+  subjectType: EClinicSubjectTypeEnum
+}
+
+type EClinicLocation {
+  address: String
+
+  ward: String
+
+  district: String
+
+  province: String
+
+  country: String
+
+  identifyCode: String
+}
+
+type EClinicSpeciality {
+  eClinicSpecialityId: String
+
+  specialityName: String
+
+  avatar: String
+
+  order: Int
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  isActive: Boolean
+
+  state: EClinicSpecialityEnum
+}
+
+type Notification {
+  id: String
+
+  title: String
+
+  message: String
+
+  data: String
+
+  isRead: Boolean
+
+  createTime: Date
+}
+
+type PushNotification {
+  pushNotificationId: String
+
+  title: String
+
+  message: String
+
+  status: PushNotificationStatus
+
+  """
+  có hẹn giờ thì gửi, ko thi skip
+  """
+  sendTime: String
+
+  audience: PushNotificationAudience
+
+  """
+  Nếu là true, tin push sẽ lưu trong danh sách tin của user, Nếu false, chỉ push tin qua device
+  """
+  isPersistence: Boolean
+
+  consumers: [String]
+
+  data: NotificationData
+
+  createdAt: Date
+}
+
+type NotificationData {
+  type: String
+
+  appointmentScheduleId: String
+
+  url: String
+
+  appUrl: String
+}
+
+type AppointmentScheduleThirdParty {
+  sendbird: AppointmentScheduleSendBird
+}
+
+type AppointmentScheduleSendBird {
+  channelUrl: String
+}
+
+type AppointmentScheduleLog {
+  type: THIRDPARTY_TYPE
+
+  createdAt: Date
+
+  data: String
+}
+
+type AppointmentScheduleHistory {
+  state: AppointmentScheduleState
+
+  description: String
+
+  target: String
+
+  stateAt: Date
+}
+
+type AppointmentSync {
+  createdBy: String
+
+  createdAt: Date
+}
+
+type AppointmentNote {
+  content: String
+
+  createdBy: String
+
+  createdAt: Date
+}
+
+type AppointmentSchedule {
+  appointmentScheduleId: String
+
+  doctor: Doctor
+
+  eClinic: EClinic
+
+  profile: Profile
+
+  warehouse: Warehouse
+
+  product: Product
+
+  package: ProductPackageEnum
+
+  """
+  Mô tả triệu chứng
+  """
+  reason: String
+
+  reasonImage: [String]
+
+  scheduledAt: Date
+
+  scheduleToken: String
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  state: AppointmentScheduleState
+
+  joinShiftIndex: Int
+
+  joinNumberSourceType: SerialNumberSourceType
+
+  joinNumber: String
+
+  counter: String
+
+  joinAt: Date
+
+  joinMode: AppointmentScheduleMode
+
+  supportNumber: String
+
+  stateAt: Date
+
+  thirdParty: AppointmentScheduleThirdParty
+
+  medicalExamination: MedicalExamination
+
+  comment: Comment
+
+  logs: [AppointmentScheduleLog]
+
+  isMedicalExamination: Boolean
+
+  qrContent: String
+
+  syncInfo: AppointmentSync
+
+  patientInfo: AppointmentSchedulePatient
+
+  isVideoRecord: Boolean
+
+  records: [AppointmentRecordData]
+
+  appointmentPlace: AppointmentSchedulePlace
+
+  joinNumberType: SerialNumberNumberType
+
+  departmentType: DepartmentType
+
+  cancelReason: String
+
+  cancelBy: String
+}
+
+type BoAppointmentSchedule {
+  appointmentScheduleId: String
+
+  doctor: Doctor
+
+  eClinic: EClinic
+
+  profile: Profile
+
+  warehouse: Warehouse
+
+  product: Product
+
+  package: ProductPackageEnum
+
+  """
+  Mô tả triệu chứng
+  """
+  reason: String
+
+  reasonImage: [String]
+
+  scheduledAt: Date
+
+  scheduleToken: String
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  state: AppointmentScheduleState
+
+  joinShiftIndex: Int
+
+  joinNumberSourceType: SerialNumberSourceType
+
+  joinNumber: String
+
+  counter: String
+
+  joinAt: Date
+
+  joinMode: AppointmentScheduleMode
+
+  supportNumber: String
+
+  stateAt: Date
+
+  thirdParty: AppointmentScheduleThirdParty
+
+  medicalExamination: MedicalExamination
+
+  comment: Comment
+
+  history: [AppointmentScheduleHistory]
+
+  logs: [AppointmentScheduleLog]
+
+  callDuration: Int
+
+  waitingDuration: Int
+
+  isMedicalExamination: Boolean
+
+  tags: [String]
+
+  qrContent: String
+
+  syncInfo: AppointmentSync
+
+  patientInfo: AppointmentSchedulePatient
+
+  isVideoRecord: Boolean
+
+  records: [AppointmentRecordData]
+
+  notes: [AppointmentNote]
+
+  createdBy: String
+
+  createdByAccount: BoAccount
+
+  appointmentPlace: AppointmentSchedulePlace
+
+  joinNumberType: SerialNumberNumberType
+
+  departmentType: DepartmentType
+
+  cancelReason: String
+
+  cancelBy: String
+}
+
+type AppointmentSchedulePatient {
+  id: String
+
+  code: String
+
+  fullName: String
+
+  birthday: Date
+
+  gender: Gender
+
+  location: String
+
+  phone: String
+
+  healthInsurance: String
+
+  hospitalCode: String
+
+  hospitalName: String
+
+  isIdentify: Boolean
+}
+
+type AppointmentRecordData {
+  index: Int
+
+  path: String
+
+  creator: RecordCreatorType
+
+  createdAt: Date
+}
+
+type AppointmentScheduleTurn {
+  isAvailable: Boolean
+
+  currentTurnCount: Int
+
+  remainTurnCount: Int
+}
+
+type Statistic {
+  order: OrderStatistic
+
+  appointmentScheduleStatistic(slugs: [String], eClinicIds: [String], statisticDate: StatisticDate, package: ProductPackageEnum): [AppointmentScheduleStatistic]
+
+  eClinicPatientStatistic(slugs: [String], createdAt: StatisticDate): EClinicPatientStatistic
+}
+
+type BoEClinicStatistic {
+  accountStatistic(slugs: [String], createdAt: StatisticDate, isActive: Boolean, tag: String): AccountStatistic
+
+  hospitalProfileStatistic(slugs: [String], hospitalCode: String!): HospitalProfileStatistic
+
+  orderStatistic(slugs: [String], createdAt: StatisticDate, eClinicTypes: [String]): OrderStatistic
+
+  eClinicTypeStatistics(eClinicTypes: [String]): [EClinicTypeStatistic]
+
+  eClinicSummaryStatistic(eClinicTypes: [String]): EClinicSummaryStatistic
+
+  eClinicPatientStatistic(slugs: [String], createdAt: StatisticDate, eClinicTypes: [String]): EClinicPatientStatistic
+
+  eClinicOrderStatistic(slugs: [String], eClinicIds: [String], createdAt: StatisticDate): EClinicOrderStatistic
+
+  eClinicWarehouseStatistic(slugs: [String], eClinicIds: [String], createdAt: StatisticDate): EClinicWarehouseStatistic
+
+  eClinicStatustatistic(eClinicIds: [String], createdAt: StatisticDate): [EClinicStatusStatistic]
+
+  appointmentScheduleStatistic(slugs: [String], eClinicIds: [String], eClinicTypes: [String], profileCode: String, package: ProductPackageEnum, createdAt: StatisticDate, tag: String, joinNumber: String, patientCode: String, profileId: String, eClinic: String, phone: String, patientName: String, supportNumber: String, scheduledAt: StatisticDate): [AppointmentScheduleStatistic]
+
+  appointmentRatingStatistic(slugs: [String], eClinicIds: [String], eClinicTypes: [String], package: ProductPackageEnum, createdAt: StatisticDate, tag: String): [AppointmentRatingStatistic]
+
+  appointmentDoctorStatistic(eClinicIds: [String], package: ProductPackageEnum, createdAt: StatisticDate, tag: String): [AppointmentDoctorStatistic]
+
+  appointmentTimeStatistic(eClinicIds: [String], package: ProductPackageEnum, createdAt: StatisticDate, tag: String): AppointmentTimeStatistic
+
+  appointmentPackageStatistic(eClinicIds: [String], createdAt: StatisticDate, scheduledAt: StatisticDate, state: AppointmentScheduleState): [AppointmentPackageStatistic]
+
+  appointmentScheduleSpesicalStatistic(patientName: String, eClinicIds: [String], package: ProductPackageEnum, createdAt: StatisticDate, tag: String, patientCode: String, joinNumber: String, phone: String, supportNumber: String, scheduledAt: StatisticDate): AppointmentScheduleSpesicalStatistic
+
+  prescriptionStatistic(slugs: [String], eClinicIds: [String], eClinicTypes: [String], createdAt: StatisticDate): PrescriptionStatistic
+
+  examRequestStatistic(slugs: [String], eClinicIds: [String], eClinicTypes: [String], createdAt: StatisticDate): ExamRequestStatistic
+
+  serialNumberStatistic(scheduleDate: StatisticDate): SerialNumberStatistic
+
+  serialNumberStatisticByTime(scheduleDate: StatisticDate, sourceType: String): SerialNumberByTimeStatistic
+
+  appointmentScheduleTopEclinicStatistic(topType: StatisticTopType, createdAt: StatisticDate, scheduledAt: StatisticDate, limit: PageLimitInput): [AppointmentScheduleTopEclinicStatistic]
+}
+
+type BoStatistic {
+  doctorStatistic(eClinicIds: [String], createdAt: StatisticDate): BoDoctorStatistic
+}
+
+type EClinicTypeStatistic {
+  eClinicType: EClinicTypeEnum
+
+  count: Int
+}
+
+type AccountStatistic {
+  count: Int
+
+  consentCount: Int
+
+  edoctorCount: Int
+
+  guestCount: Int
+}
+
+type HospitalProfileStatistic {
+  linkPatientCodeCount: Int
+
+  remainTicketCount: Int
+}
+
+type PrescriptionStatistic {
+  count: Int
+
+  orderCount: Int
+}
+
+type ExamRequestStatistic {
+  count: Int
+
+  orderCount: Int
+}
+
+type EClinicSummaryStatistic {
+  count: Int
+
+  activeCount: Int
+
+  inactiveCount: Int
+
+  visibleCount: Int
+}
+
+type EClinicPatientStatistic {
+  count: Int
+
+  scheduledCount: Int
+
+  newAccountCount: Int
+
+  originalAccountCount: Int
+}
+
+type EClinicOrderStatistic {
+  totalCount: Int
+
+  totalAmount: Int
+
+  totalRefundAmount: Int
+
+  totalRefundCount: Int
+
+  methodDetail: [EClinicOrderMethodDetail]
+}
+
+type EClinicOrderMethodDetail {
+  totalCount: Int
+
+  totalAmount: Int
+
+  methodName: String
+}
+
+type EClinicWarehouseStatistic {
+  stateStatistic: [EClinicWarehouseStateStatistic]
+}
+
+type EClinicWarehouseStateStatistic {
+  totalCount: Int
+
+  state: String
+}
+
+type AppointmentScheduleStatistic {
+  appointmentScheduleState: AppointmentScheduleState
+
+  count: Int
+}
+
+type AppointmentRatingStatistic {
+  rating: String
+
+  count: Int
+}
+
+type AppointmentDoctorStatistic {
+  doctor: Doctor
+
+  count: Int
+
+  succeededCount: Int
+}
+
+type BoDoctorStatistic {
+  count: Int
+
+  unverifiedCount: Int
+
+  inactiveCount: Int
+
+  activeCount: Int
+
+  partnerStatistics: [PartnerStatistic]
+
+  questionCount: Int
+
+  dlvnDoctorCount: Int
+}
+
+type PartnerStatistic {
+  partnerId: String
+
+  count: Int
+}
+
+type EClinicStatusStatistic {
+  eClinicStatus: EClinicStatusEnum
+
+  count: Int
+}
+
+type AppointmentTimeStatistic {
+  totalWaitingDuration: Float
+
+  totalCallDuration: Float
+
+  appointmentScheduleRating: Float
+}
+
+type AppointmentScheduleSpesicalStatistic {
+  count: Int
+
+  patientCount: Int
+}
+
+type EclinicSerialNumberStatistic {
+  hospitalName: String
+
+  slug: String
+
+  bookedNumber: Int
+
+  remainNumber: Int
+
+  sourceList: [SerialNumberSourceTypeStatistic]
+
+  total: Int
+}
+
+type EclinicSerialNumberByTimeStatistic {
+  eClinicId: String
+
+  hospitalName: String
+
+  slug: String
+
+  timeStatistics: [EclinicSerialNumberTimeStatistic]
+}
+
+type EclinicSerialNumberTimeStatistic {
+  time: String
+
+  bookedNumber: Int
+
+  remainNumber: Int
+
+  sourceList: [SerialNumberSourceTypeStatistic]
+
+  total: Int
+}
+
+type SerialNumberSourceTypeStatistic {
+  name: String
+
+  bookedNumber: Int
+
+  remainNumber: Int
+}
+
+type AppointmentScheduleTopEclinicStatistic {
+  displayName: String
+
+  count: Int
+}
+
+type AppointmentPackageStatistic {
+  package: String
+
+  count: Int
+}
+
+type SerialNumberStatistic {
+  eclinicSerialNumberStatistic: [EclinicSerialNumberStatistic]
+}
+
+type SerialNumberByTimeStatistic {
+  eclinicSerialNumberByTimeStatistic: [EclinicSerialNumberByTimeStatistic]
+}
+
+type ProfileBody {
+  height: Float
+
+  weight: Float
+}
+
+type Profile {
+  profileId: String
+
+  profileCode: String
+
+  account: Account
+
+  customer: Customer
+
+  fullName: String
+
+  gender: Gender
+
+  relation: ProfileRelation
+
+  body: ProfileBody
+
+  bloodType: ProfileBloodType
+
+  avatar: String
+
+  phone: String
+
+  birthday: Date
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  hospitalProfiles: [HospitalPatient]
+}
+
+type BasicProfile {
+  profileCode: String
+
+  fullName: String
+
+  gender: Gender
+
+  birthday: Date
+}
+
+type BoProfile {
+  profileId: String
+
+  profileCode: String
+
+  account: Account
+
+  customer: Customer
+
+  fullName: String
+
+  gender: Gender
+
+  relation: ProfileRelation
+
+  body: ProfileBody
+
+  bloodType: ProfileBloodType
+
+  avatar: String
+
+  phone: String
+
+  birthday: Date
+
+  createdAt: Date
+
+  updatedAt: Date
+
+  hospitalProfiles: [HospitalPatient]
+}
+
+type SerialNumber {
+  serialNumberId: String
+
+  eClinic: EClinic
+
+  type: SerialNumberType
+
+  subjectType: SerialNumberSubjectType
+
+  scheduleDate: Date
+
+  scheduleSerialNumbers: [SerialNumberSchedule]
+}
+
+type SerialNumberSchedule {
+  time: String
+
+  data: [SerialNumberScheduleData]
+}
+
+type SerialNumberScheduleData {
+  serialNumber: String
+
+  numberType: SerialNumberNumberType
+
+  counter: String
+
+  isBooked: Boolean
+}
+
+type VoucherExpiredDate {
+  from: Date
+
+  to: Date
+}
+
+type VoucherScratcher {
+  account: Account
+
+  scratchedAt: Date
+
+  order: Order
+}
+
+type VoucherStatistic {
+  scratchTotal: Int
+
+  total: Int
+}
+
+type Voucher {
+  voucherId: String
+
+  eClinic: EClinic
+
+  product: Product
+
+  staffBy: String
+
+  scratchers: [VoucherScratcher]
+
+  title: String
+
+  description: String
+
+  code: String
+
+  quantity: Int
+
+  quantityRemain: Int
+
+  type: VoucherType
+
+  extraData: VoucherExtraData
+
+  state: VoucherState
+
+  expiredAt: VoucherExpiredDate
+
+  createdAt: Date
+
+  history: [VoucherHistory]
+}
+
+type VoucherCampaign {
+  voucherCampaignId: String
+
+  eClinic: EClinic
+
+  product: Product
+
+  staffBy: String
+
+  title: String
+
+  description: String
+
+  state: VoucherCampaignState
+
+  statistic: VoucherStatistic
+
+  expiredAt: VoucherExpiredDate
+
+  createdAt: Date
+}
+
+type ExtraDataVoucher {
+  product: Product
+}
+
+type ExtraDataCoupon {
+  condition: ExtraDataCouponCondition
+
+  promotion: ExtraDataCouponPromotion
+}
+
+type ExtraDataCouponCondition {
+  type: String
+
+  product: [Product]
+
+  value: Int
+}
+
+type ExtraDataCouponPromotion {
+  type: String
+
+  value: Float
+
+  minimize: Float
+}
+
+type VoucherDiscount {
+  discount: Float
+
+  detail: ExtraDataCoupon
+}
+
+type VoucherHistory {
+  target: String
+
+  accountId: String
+
+  description: String
+
+  state: VoucherState
+
+  data: String
+
+  createdAt: Date
+}
+
+union PatientExtraInfoData = PatientExtraInfoTextData|PatientExtraInfoRadioData|PatientExtraInfoCheckboxData|PatientExtraInfoDatePickerData|PatientExtraInfoTextAreaData|PatientExtraInfoDateRangeData|PatientExtraInfoUploadData|PatientExtraInfoSelectboxData
+
+union EHRData = EHRLaboratoryReport|EHRMedicalExamination|EHRCustomerCreate
+
+union EHRTargetData = EClinic|Doctor
+
+union ProductPackage = ProductPackageVideo|ProductPackageChat|ProductPackageOffline|ProductPackageEPharmacy|ProductPackageLaboratoryReport
+
+union PatientAttributeData = PatientAttributeText|PatientAttributeRadio|PatientAttributeCheckbox|PatientAttributeDatePicker|PatientAttributeTextArea|PatientAttributeDateRange|PatientAttributeUpload|PatientAttributeSelectbox
+
+union VoucherExtraData = ExtraDataVoucher|ExtraDataCoupon
+
+enum AccountType {
+  USER
+
+  DOCTOR
+
+  STAFF
+}
+
+enum Gender {
+  MALE
+
+  FEMALE
+}
+
+enum AppType {
+  CONSUMER
+
+  DOCTOR
+}
+
+enum SourceType {
+  DEFAULT
+
+  HUYET_HOC
+
+  TRUNG_VUONG
+
+  DLVN
+}
+
+enum EHRType {
+  LABORATORY_REPORT
+
+  MEDICAL_EXAMINATION
+
+  CUSTOMER_CREATE
+}
+
+enum SharedType {
+  ECLINIC
+}
+
+enum examintationType {
+  EXAM
+
+  SUBCLINICAL
+
+  HOME_SERVICE
+
+  PSYCHOLOGICAL_ASSESSMENT
+}
+
+enum strengthType {
+  TABLET
+
+  MG
+
+  ML
+
+  BOTTLE
+}
+
+enum durationType {
+  DAY
+
+  MONTH
+
+  YEAR
+
+  PART_OF_DAY
+}
+
+enum timeType {
+  MORNING
+
+  NOON
+
+  AFTERNOON
+
+  EVENING
+}
+
+enum unitType {
+  TABLET
+
+  BLISTER
+
+  PACKAGE
+
+  TYPE
+
+  BOTTLE
+
+  TUBE
+
+  DOSE
+
+  PIECES
+
+  BOX
+
+  CAKE
+
+  JAR
+
+  SYRINGE
+
+  INJECTION_PEN
+
+  CAN
+
+  TOOL
+
+  KIT
+
+  BIN
+
+  BAG
+
+  RING
+
+  CYLINDER
+}
+
+enum prescriptionState {
+  NEW
+
+  CONFIRMED
+
+  DELIVERING
+
+  FINSIHED
+
+  PROCESSING
+
+  CANCELED
+}
+
+enum ProductPackageEnum {
+  VIDEO
+
+  VOICE
+
+  CHAT
+
+  OFFLINE
+
+  E_PHARMACY
+
+  LABORATORY_REPORT
+}
+
+enum QuestionState {
+  OPEN
+
+  RESOLVED
+}
+
+enum AnswerState {
+  WAITING
+
+  PENDING
+
+  APPROVED
+
+  REJECTED
+}
+
+enum QuestionSourceType {
+  E_DOCTOR
+
+  DLVN
+}
+
+enum AnswerReviewState {
+  REVIEWING
+
+  APPROVED
+
+  REJECTED
+}
+
+enum QuestionRejectType {
+  MEDICAL_SPECIALTY_NOT_MATCH
+
+  CONTENT_NOT_GOOD
+
+  SKIP_QUESTION
+
+  TRANSFER_TO_SALES
+}
+
+enum ReactType {
+  LIKE
+
+  HEART
+}
+
+enum WarehouseState {
+  FINISHED
+
+  PENDING
+
+  CANCELED
+
+  EXPIRED
+}
+
+enum BannerState {
+  ACTIVE
+
+  INACTIVE
+
+  DELETED
+}
+
+enum BannerAction {
+  VIEW
+
+  CLICK
+}
+
+enum CommentState {
+  APPROVED
+
+  PENDING
+
+  REJECTED
+}
+
+enum MedicalSpecialties {
+  phuc_hoi_chuc_nang
+
+  noi_tiet
+
+  rang_ham_mat
+
+  dinh_duong
+
+  tiet_nieu
+
+  tim_mach
+
+  nam_khoa
+
+  mat
+
+  ung_thu
+
+  da_lieu
+
+  nhi_khoa
+
+  y_hoc_co_truyen
+
+  noi_khoa
+
+  ho_hap
+
+  tai_mui_hong
+
+  di_ung
+
+  than_kinh_co_xuong_khop
+
+  truyen_nhiem
+
+  ngoai_khoa
+
+  tieu_hoa
+
+  y_hoc_the_thao
+
+  san_phu_khoa
+
+  tam_ly_tam_than
+
+  duoc_lam_san
+
+  tam_ly
+}
+
+enum HospitalState {
+  """
+  Hoạt động
+  """
+  WORKING
+
+  """
+  Tạm đóng cửa
+  """
+  TEMP_CLOSED
+
+  """
+  Đang xây dựng
+  """
+  BUILDING
+}
+
+enum MainServiceState {
+  ACTIVE
+
+  INACTIVE
+
+  DELETED
+}
+
+enum MainServiceCategory {
+  """
+  dịch vụ sức khỏe
+  """
+  MEDICAL_SERVICE
+
+  """
+  dịch vụ tiện ích
+  """
+  UTILITY_SERVICE
+
+  """
+  Dịch vụ cộng đồng
+  """
+  COMMUNITY_SERVICE
+
+  """
+  Cá nhân
+  """
+  PERSONAL_SERVICE
+}
+
+enum MainServiceActionType {
+  """
+  chuyển hướng màn hình
+  """
+  REDIRECT
+
+  """
+  mở link webview
+  """
+  OPEN_URL
+
+  """
+  mở img banner popup
+  """
+  POPUP_BANNER
+}
+
+enum AppointmentScheduleNextStatus {
+  UNCONFIRMED
+
+  CONFIRMED
+
+  REFUSED
+}
+
+enum NewsState {
+  ACTIVE
+
+  INACTIVE
+
+  DELETED
+}
+
+enum NewsCategory {
+  """
+  dịch vụ sức khỏe
+  """
+  MEDICAL_SERVICE
+
+  """
+  dịch vụ tiện ích
+  """
+  UTILITY_SERVICE
+
+  """
+  Dịch vụ cộng đồng
+  """
+  COMMUNITY_SERVICE
+
+  """
+  Cá nhân
+  """
+  PERSONAL_SERVICE
+}
+
+enum NewsStatus {
+  """
+  chuyển hướng màn hình
+  """
+  NEW
+
+  """
+  chờ đăng
+  """
+  WAITING
+
+  """
+  đã đăng
+  """
+  PUBLISHED
+
+  """
+  đã đóng
+  """
+  FINISHED
+}
+
+enum OrderState {
+  SUCCEEDED
+
+  FAILED
+
+  PENDING
+
+  CANCELED
+
+  REFUNDED
+}
+
+enum OrderMethod {
+  PAYME
+
+  ATMCARD
+
+  CREDITCARD
+
+  QRPAY
+
+  MOMO
+
+  CASH
+}
+
+enum OrderSourceType {
+  WEB
+
+  APP
+
+  APP_USER_V2
+}
+
+enum TagState {
+  ACTIVE
+
+  INACTIVE
+
+  DELETED
+}
+
+enum QuestionFeedState {
+  ACTIVE
+
+  INACTIVE
+
+  DELETED
+}
+
+enum QuestionFeedBookmarkType {
+  BOOKMARK
+
+  LIKE
+}
+
+enum QuestionFeedStatus {
+  """
+  chuyển hướng màn hình
+  """
+  NEW
+
+  """
+  chờ đăng
+  """
+  WAITING
+
+  """
+  đã đăng
+  """
+  PUBLISHED
+
+  """
+  đã đóng
+  """
+  FINISHED
+}
+
+enum QuestionFeedSourceType {
+  DLVN
+
+  E_DOCTOR
+}
+
+enum DLVNAccountType {
+  GUEST
+
+  LINKED
+}
+
+enum EClinicTypeEnum {
+  """
+  bệnh viện, phòng khám, trạm tư vấn …. - sau này có nhiều VC liên kết
+  """
+  Clinic
+
+  """
+  nhà thuốc có dược sĩ tư vấn
+  """
+  Pharmacy
+
+  """
+  bác sĩ cá nhân
+  """
+  Doctor
+
+  """
+  để testing
+  """
+  Testing
+
+  """
+  các sản phẩm chăm sóc nội bộ, tools nội bộ
+  """
+  Internal
+
+  """
+  Các đối tác doanh nghiệp hợp tác
+  """
+  Partner
+
+  """
+  phòng khám cũ chưa set gì
+  """
+  None
+
+  """
+  Bệnh viện lớn
+  """
+  Hospital
+}
+
+enum ECliniWorkingTimeEnum {
+  VIDEO
+
+  CHAT
+
+  OFFLINE
+}
+
+enum EClinicHelpTypeEnum {
+  """
+  Từ trang chủ
+  """
+  GENERAL_HELP
+
+  """
+  Từ phòng khám
+  """
+  HELP_FROM_ECLINIC
+
+  """
+  từ LICH_HẸN
+  """
+  HELP_FROM_SCHEDULE
+}
+
+enum EClinicReferTypeEnum {
+  """
+  Phòng khám độc lập
+  """
+  DEFAULT
+
+  """
+  Phòng khám tổng
+  """
+  MASTER
+
+  """
+  Phòng khám nhánh
+  """
+  NODE
+}
+
+enum EClinicStatusEnum {
+  """
+  Hoạt động
+  """
+  WORKING
+
+  """
+  Tạm đóng cửa
+  """
+  TEMP_CLOSED
+
+  """
+  Chờ tiếp nhận
+  """
+  REGISTERED
+
+  """
+  Tiếp cận/Xây dựng
+  """
+  DISCUSSING
+
+  """
+  Từ chối/Huỷ
+  """
+  CANCELLED
+
+  """
+  Chưa cóp data
+  """
+  NONE
+}
+
+enum EClinicSpecialityEnum {
+  ACTIVE
+
+  INACTIVE
+
+  DELETED
+}
+
+enum EClinicSubjectTypeEnum {
+  """
+  BHYT
+  """
+  HEALTH_INSURANCE
+
+  """
+  Không BHYT
+  """
+  NONE_HEALTH_INSURANCE
+
+  """
+  Ưu Tiên
+  """
+  PRIORITY
+}
+
+enum PushNotificationStatus {
+  """
+  Bản nháp (các tin đang soạn)
+  """
+  DRAFT
+
+  """
+  Hoạt động (Các tin đang chờ gửi)
+  """
+  ACTIVE
+
+  """
+  Hoàn thành (Các tin đã gửi)
+  """
+  FINISHED
+}
+
+enum PushNotificationAudience {
+  """
+  tất cả người dùng
+  """
+  ALL
+
+  """
+  tin cho sđt cụ thể
+  """
+  SPECIFIC_USER
+}
+
+enum PushNotificationType {
+  """
+  mở lịch hẹn
+  """
+  NOTIFY_OPEN_SCHEDULE
+
+  """
+  mở webview
+  """
+  NOTIFY_OPEN_WEBVIEW
+}
+
+enum AppointmentScheduleState {
+  FINISHED
+
+  UNWRITTEN_FINISHED
+
+  CANCELED
+
+  REQUIRED_PAYMENT
+
+  PENDING
+
+  JOINED
+
+  RINGING
+
+  JOINING
+
+  EXPIRED
+
+  ENDCALL
+
+  EXPIRED_RINGING
+}
+
+enum AppointmentScheduleMode {
+  IMMEDIATELY
+
+  BOOKING
+}
+
+enum Sort {
+  ASC
+
+  DESC
+}
+
+enum THIRDPARTY_TYPE {
+  SENDBIRD
+}
+
+enum RecordCreatorType {
+  DOCTOR
+
+  PATIENT
+}
+
+enum AppointmentSchedulePlace {
+  WEB
+
+  APP
+
+  COUNTER
+}
+
+enum DepartmentType {
+  MEDICAL_EXAMINATION
+
+  TREATMENT
+}
+
+enum StatisticTopType {
+  VIDEO_COUNT
+
+  CHAT_COUNT
+
+  OFFLINE_COUNT
+
+  REACT_COUNT
+
+  REV_TOTAL
+}
+
+enum ProfileRelation {
+  self
+
+  father
+
+  mother
+
+  son
+
+  daughter
+
+  grandmother
+
+  grandfather
+
+  husband
+
+  wife
+
+  brother
+
+  sister
+
+  youngerBrother
+
+  youngerSister
+
+  uncle
+
+  aunt
+}
+
+enum ProfileBloodType {
+  A
+
+  A_PLUS
+
+  A_MINUS
+
+  B
+
+  B_PLUS
+
+  B_MINUS
+
+  O
+
+  O_PLUS
+
+  O_MINUS
+
+  AB
+
+  AB_PLUS
+
+  AB_MINUS
+
+  UNKNOWN
+}
+
+enum SerialNumberType {
+  DEFAULT
+
+  TEMPLATE
+}
+
+enum SerialNumberSubjectType {
+  HEALTH_INSURANCE
+
+  NONE_HEALTH_INSURANCE
+
+  PRIORITY
+}
+
+enum SerialNumberNumberType {
+  DEFAULT
+
+  SUPPORT
+
+  BACKUP
+}
+
+enum SerialNumberSourceType {
+  APP
+
+  CUSTOMER_SUPPORT
+
+  SWITCHBOARD
+
+  BACKUP
+}
+
+enum VoucherState {
+  NEW
+
+  SCRATCHED
+
+  CANCELED
+
+  EXPIRED
+}
+
+enum VoucherCampaignState {
+  AVAILABLE
+
+  PAUSED
+
+  EXPIRED
+}
+
+enum VoucherType {
+  VOUCHER
+
+  COUPON
+}
+
+enum VoucherConditionType {
+  PACKAGE
+
+  AMOUNT
+}
+
+enum VoucherPromotionType {
+  FIXED
+
+  PERCENT
+}
+
+input AccountSort {
+  createdAt: Sort
+}
+
+input ConsultationFilterInput {
+  consultationId: String
+}
+
+input DeviceInfoInput {
+  appName: String
+
+  brand: String
+
+  buildNumber: String
+
+  bundleId: String
+
+  deviceId: String
+
+  model: String
+
+  systemName: String
+
+  systemVersion: String
+
+  uniqueId: String
+
+  appVersion: String
+
+  userAgent: String
+
+  deviceName: String
+
+  manufacturer: String
+
+  apiLevel: String
+
+  fontScale: String
+
+  firstInstallTime: String
+
+  hasGms: String
+
+  hasHms: String
+}
+
+input DeviceTrackingInput {
+  utm_campaign: String
+
+  utm_content: String
+
+  utm_medium: String
+
+  utm_source: String
+
+  utm_term: String
+
+  traffic_id: String
+
+  extraData: String
+}
+
+input PatientExtraInfoInput {
+  key: String
+
+  textboxConfig: PatientExtraInfoTexInput
+
+  checkboxConfig: PatientExtraInfoCheckboxInput
+
+  selectConfig: PatientExtraInfoSelectboxInput
+
+  radioConfig: PatientExtraInfoRadioInput
+
+  textAreaConfig: PatientExtraInfoTextAreaInput
+
+  datePickerConfig: PatientExtraInfoDatePickerInput
+
+  dateRangeConfig: PatientExtraInfoDateRangeInput
+
+  updloadConfig: PatientExtraInfoUploadInput
+}
+
+input PatientExtraInfoTexInput {
+  value: String
+}
+
+input PatientExtraInfoCheckboxInput {
+  value: String
+}
+
+input PatientExtraInfoRadioInput {
+  value: String
+}
+
+input PatientExtraInfoSelectboxInput {
+  value: String
+}
+
+input PatientExtraInfoTextAreaInput {
+  value: String
+}
+
+input PatientExtraInfoDatePickerInput {
+  date: Date
+}
+
+input PatientExtraInfoDateRangeInput {
+  fromDate: Date
+
+  toDate: Date
+}
+
+input PatientExtraInfoUploadInput {
+  url: String
+
+  fileType: String
+}
+
+input EclinicPatientSort {
+  createdAt: Sort
+}
+
+input EclinicPatientCreateInput {
+  eClinicId: String!
+
+  package: ProductPackageEnum!
+
+  patientId: String
+
+  phone: String
+
+  productId: String
+
+  fullName: String
+
+  gender: String
+
+  birthday: Date
+
+  attachmentId: String
+}
+
+input HospitalPatientLocationInput {
+  address: String
+
+  ward: String
+
+  district: String
+
+  region: String
+}
+
+input EHRLaboratoryReportInput {
+  reasonImages: [String]
+}
+
+input EHRMedicalExaminationInput {
+  medicalExaminationId: String
+
+  appointmentScheduleId: String
+
+  accountId: String
+
+  customerId: String
+
+  doctorId: String
+
+  profileId: String
+
+  reason: String
+
+  content: String
+
+  result: String
+}
+
+input EHRCustomerCreateInput {
+  attachmentId: String
+}
+
+input EHRDataInput {
+  ehrCustomerCreate: EHRCustomerCreateInput
+}
+
+input EHRSort {
+  createdAt: Sort
+}
+
+input ExaminationRequestSort {
+  createdAt: Sort
+}
+
+input ExaminationRequestInput {
+  examinationRequestId: String
+
+  accountId: String
+
+  submittedAccountId: String
+
+  profileId: String
+
+  eClinicId: String
+
+  doctorId: String
+
+  ehrId: String
+
+  details: [ExaminationServiceInput]
+
+  note: String
+
+  diagnose: String
+
+  signatureId: String
+
+  attachment: [String]
+}
+
+input ExaminationServiceInput {
+  examinationServiceId: String
+}
+
+input createDateInput {
+  from: Date
+
+  to: Date
+}
+
+input prescriptionSort {
+  createdAt: Sort
+}
+
+input prescriptionInput {
+  prescriptionId: String
+
+  name: String
+
+  medicineSupplierId: String
+
+  accountId: String
+
+  customerId: String
+
+  profileId: String
+
+  eClinicId: String
+
+  doctorId: String
+
+  ehrId: String
+
+  medicalExaminationId: String
+
+  details: [medicineDetailInput]
+
+  note: String
+
+  diagnose: String
+
+  signatureId: String
+
+  attachment: [String]
+}
+
+input medicineDetailInput {
+  medicine: medicineInput
+
+  dose: [medicineDoseInput]
+
+  duration: medicineDurationInput
+
+  quantity: medicineQuantityInput
+
+  indication: String
+}
+
+input medicineInput {
+  medicineId: String
+
+  brandname: String
+
+  ingredient: String
+}
+
+input medicineDoseInput {
+  time: timeType
+
+  unit: unitType
+
+  quantity: Float
+}
+
+input medicineDurationInput {
+  type: durationType
+
+  quantity: Float
+}
+
+input medicineQuantityInput {
+  unit: unitType
+
+  quantity: Float
+}
+
+input customerInfoInput {
+  fullName: String
+
+  phone: String
+
+  location: locationInput
+}
+
+input locationInput {
+  address: String
+
+  ward: String
+
+  district: String
+
+  province: String
+
+  country: String
+
+  identifyCode: String
+}
+
+input ProductPackageInput {
+  productPackageVideo: ProductPackageVideoInput
+
+  productPackageChat: ProductPackageChatInput
+
+  productPackageOffline: ProductPackageOfflineInput
+
+  productPackageEPharmacy: ProductPackageEPharmacyInput
+
+  productPackageLaboratoryReport: ProductPackageLaboratoryReportInput
+}
+
+input ProductPackageVideoInput {
+  quantity: Int!
+
+  time: Int!
+
+  amount: Int!
+
+  total: Int!
+
+  eClinicIds: [String]
+}
+
+input ProductPackageChatInput {
+  quantity: Int!
+
+  time: Int!
+
+  amount: Int!
+
+  total: Int!
+
+  eClinicIds: [String]
+}
+
+input ProductPackageOfflineInput {
+  quantity: Int!
+
+  amount: Int!
+
+  total: Int!
+
+  eClinicIds: [String]
+}
+
+input ProductPackageEPharmacyInput {
+  items: [ProductEPharmacyInput]!
+
+  total: Int!
+}
+
+input ProductPackageLaboratoryReportInput {
+  items: [ProductLaboratoryReportInput]!
+
+  total: Int!
+}
+
+input ProductEPharmacyInput {
+  itemId: String!
+
+  title: String!
+
+  amount: Int!
+}
+
+input ProductLaboratoryReportInput {
+  itemId: String!
+
+  title: String!
+
+  amount: Int!
+}
+
+input QuestionSort {
+  thanks: Sort
+
+  answerTime: Sort
+}
+
+input QuestionDate {
+  from: Date!
+
+  to: Date!
+}
+
+input StaffCreateInput {
+  username: String!
+
+  password: String!
+
+  scopes: [String]
+
+  eClinicIds: [String]
+
+  role: String
+
+  slug: String!
+
+  email: String
+
+  phone: String
+
+  tags: [String]
+}
+
+input StaffUpdateInput {
+  accountId: String!
+
+  password: String
+
+  scopes: [String]
+
+  eClinicIds: [String]
+
+  role: String
+
+  slug: String
+
+  email: String
+
+  phone: String
+
+  tags: [String]
+
+  isActive: Boolean
+
+  isDeleted: Boolean
+}
+
+input StaffUpdatePasswordInput {
+  newPassword: String
+
+  oldPassword: String
+}
+
+input StaffLoginInput {
+  username: String
+
+  password: String
+}
+
+input staffSort {
+  createdAt: Sort
+}
+
+input WarehouseSort {
+  createdAt: Sort
+}
+
+input BannerSort {
+  createdAt: Sort
+
+  isActive: Sort
+}
+
+input DegreeSort {
+  createdAt: Sort
+
+  degreeId: Sort
+
+  order: Sort
+}
+
+input EducationInput {
+  name: String!
+
+  issuer: String!
+
+  issueYear: Int!
+}
+
+input CertificationInput {
+  name: String
+
+  issuer: String
+
+  issueYear: Int
+}
+
+input JobRangeInput {
+  from: String!
+
+  to: String!
+}
+
+input JobInput {
+  title: String!
+
+  workplace: String!
+
+  description: String!
+
+  range: JobRangeInput
+}
+
+input LocationInput {
+  address: String!
+
+  ward: String!
+
+  district: String!
+
+  province: String!
+
+  identifyCode: String!
+}
+
+input RewardInput {
+  name: String
+
+  issuer: String
+
+  issueYear: Int
+}
+
+input ExportDate {
+  from: Date
+
+  to: Date
+}
+
+input HospitalSort {
+  createdAt: Sort
+
+  isActive: Sort
+}
+
+input MainServiceSort {
+  createdAt: Sort
+
+  isActive: Sort
+
+  order: Sort
+}
+
+input MedicalExaminationSort {
+  createdAt: Sort
+}
+
+input createdExaminationInput {
+  from: Date
+
+  to: Date
+}
+
+input MedicalSpecialitySort {
+  createdAt: Sort
+
+  medicalSpecialtyId: Sort
+
+  order: Sort
+}
+
+input NewsSort {
+  createdAt: Sort
+
+  publishAt: Sort
+
+  isActive: Sort
+
+  order: Sort
+}
+
+input NewsFilterInput {
+  newsId: String
+}
+
+input publishedAtInput {
+  from: Date
+
+  to: Date
+}
+
+input OrderAppointmentScheduleInput {
+  profileId: String!
+
+  package: ProductPackageEnum!
+
+  """
+  Mô tả triệu chứng
+  """
+  reason: String!
+
+  reasonImage: [String]
+
+  scheduleToken: String
+
+  """
+  Lịch hẹn tái khám tư vấn
+  """
+  appointmentScheduleNextId: String
+}
+
+input OrderContactInput {
+  fullName: String
+
+  phone: String
+
+  address: String
+}
+
+input OrderProductInput {
+  productId: String
+
+  quantity: Int
+}
+
+input OrderInput {
+  from: Date
+
+  to: Date
+}
+
+input OrderSort {
+  createdAt: Sort
+}
+
+input PartnerSort {
+  createdAt: Sort
+
+  partnerId: Sort
+
+  order: Sort
+}
+
+input QuestionFeedTagSort {
+  createdAt: Sort
+
+  updatedAt: Sort
+
+  feedCount: Sort
+}
+
+input TagSort {
+  createdAt: Sort
+
+  isActive: Sort
+
+  order: Sort
+}
+
+input QuestionFeedSort {
+  createdAt: Sort
+
+  publishAt: Sort
+
+  isActive: Sort
+
+  order: Sort
+}
+
+input QuestionFeedFilterInput {
+  questionFeedId: String
+
+  tags: String
+
+  sourceType: QuestionFeedSourceType
+}
+
+input QuestionFeedCustomerInfoInput {
+  fullName: String
+
+  gender: String
+
+  age: Int
+}
+
+input DLVNAccountSort {
+  createdAt: Sort
+}
+
+input DoctorInfoInput {
+  isVerified: Boolean
+
+  fullName: String
+
+  phone: String
+}
+
+input EClinicPolicyInput {
+  isActive: Boolean
+
+  content: String
+}
+
+input ECliniAppointmentInput {
+  """
+  Thời gian một cuộc hẹn
+  """
+  duration: Int
+
+  """
+  Giới hạn khách vãn lai
+  """
+  limitImmediate: Int
+
+  """
+  Thời gian sớm nhất có thể checkin
+  """
+  prepareJoin: Int
+
+  """
+  Thời gian trễ nhất có thể checkin
+  """
+  lateJoin: Int
+
+  """
+  Thời gian đợi bệnh nhân trả lời cuộc gọi
+  """
+  expireRinging: Int
+}
+
+input ECliniWorkingTimeBlockInput {
+  from: String
+
+  to: String
+
+  isActive: Boolean
+}
+
+input ECliniWorkingTimeInput {
+  type: ECliniWorkingTimeEnum
+
+  duration: Int
+
+  isActive: Boolean
+
+  data: [ECliniWorkingTimeDataInput]
+}
+
+input ECliniWorkingTimeDataInput {
+  dayOfWeek: [DayOfWeek]
+
+  blocks: [ECliniWorkingTimeBlockInput]
+
+  isActive: Boolean
+}
+
+input eClinicSort {
+  createdAt: Sort
+
+  isOpening: Sort
+}
+
+input SelectItemInput {
+  label: String
+
+  value: String
+}
+
+input PatientAttributeTextConfigInput {
+  placeHolder: String
+}
+
+input PatientAttributeCheckboxConfigInput {
+  items: [SelectItemInput]
+}
+
+input PatientAttributeRadioConfigInput {
+  items: [SelectItemInput]
+}
+
+input PatientAttributeSelectboxConfigInput {
+  items: [SelectItemInput]
+}
+
+input PatientAttributeTextAreaConfigInput {
+  placeHolder: String
+}
+
+input PatientAttributeDatePickerConfigInput {
+  date: Date
+}
+
+input PatientAttributeDateRangeConfigInput {
+  fromLabel: String
+
+  fromDate: Date
+
+  toLabel: String
+
+  toDate: Date
+}
+
+input PatientAttributeUploadConfigInput {
+  placeHolder: String
+
+  fileType: [SelectItemInput]
+}
+
+input PatientAttributeConfigInput {
+  label: String!
+
+  order: Int
+
+  key: String
+
+  isActive: Boolean
+
+  isCustomerEditable: Boolean
+
+  textboxConfig: PatientAttributeTextConfigInput
+
+  checkboxConfig: PatientAttributeCheckboxConfigInput
+
+  selectConfig: PatientAttributeSelectboxConfigInput
+
+  radioConfig: PatientAttributeRadioConfigInput
+
+  textAreaConfig: PatientAttributeTextAreaConfigInput
+
+  datePickerConfig: PatientAttributeDatePickerConfigInput
+
+  dateRangeConfig: PatientAttributeDateRangeConfigInput
+
+  updloadConfig: PatientAttributeUploadConfigInput
+}
+
+input EClinicCustomerServiceInput {
+  isActive: Boolean
+
+  eClinicId: String
+}
+
+input EClinicHolidayInput {
+  video: [String]
+
+  chat: [String]
+
+  offline: [String]
+}
+
+input EClinicQuickConsultationInput {
+  isEnable: Boolean
+
+  defaultProductId: String
+}
+
+input EClinicScheduleAtInput {
+  from: Date!
+
+  to: Date!
+}
+
+input PushNotificationSort {
+  createdAt: Sort
+
+  sendAt: Sort
+
+  order: Sort
+}
+
+input NotificationDataInput {
+  type: PushNotificationType
+
+  appointmentScheduleId: String
+
+  url: String
+
+  appUrl: String
+}
+
+input AppointmentScheduleScheduleAt {
+  from: Date!
+
+  to: Date
+}
+
+input AppointmentScheduleSort {
+  createdAt: Sort
+
+  joinNumber: Sort
+
+  scheduledAt: Sort
+
+  joinNumberSourceType: Sort
+
+  eClinicId: Sort
+}
+
+input AppointmentScheduleLogInput {
+  type: THIRDPARTY_TYPE
+
+  createdAt: Date
+
+  data: String
+}
+
+input AppointmentRecordDataInput {
+  index: Int
+
+  path: String
+
+  creator: RecordCreatorType
+
+  createdAt: Date
+}
+
+input StatisticDate {
+  from: Date
+
+  to: Date
+}
+
+input ProfileBodyInput {
+  height: Float
+
+  weight: Float
+}
+
+input SerialNumberScheduleDate {
+  from: Date!
+
+  to: Date!
+}
+
+input SerialNumberScheduleInput {
+  time: String
+
+  data: [SerialNumberScheduleDataInput]
+}
+
+input SerialNumberScheduleDataInput {
+  serialNumber: String
+
+  numberType: SerialNumberNumberType
+
+  counter: String
+
+  isBooked: Boolean
+}
+
+input SerialNumberScheduleAddInput {
+  serialNumberId: String
+
+  scheduleSerialNumbers: [SerialNumberScheduleInput]
+}
+
+input ExpiredDateInput {
+  from: Date!
+
+  to: Date!
+}
+
+input VoucherSort {
+  createdAt: Sort
+}
+
+input VoucherExtraDataInput {
+  voucher: VoucherExtraDataVoucherInput
+
+  coupon: VoucherExtraDataCouponInput
+}
+
+input VoucherExtraDataVoucherInput {
+  productId: String
+}
+
+input VoucherExtraDataCouponInput {
+  condition: VoucherConditionInput
+
+  promotion: VoucherPromotionInput
+}
+
+input VoucherConditionInput {
+  type: VoucherConditionType
+
+  products: [String]
+
+  value: Int
+}
+
+input VoucherPromotionInput {
+  type: VoucherPromotionType
+
+  value: Float
+
+  minimize: Float
+}
+
+"""
+A GraphQL Schema defines the capabilities of a GraphQL server. It exposes all available types and directives on the server, as well as the entry points for query, mutation, and subscription operations.
+"""
+type __Schema {
+  description: String
+
+  """
+  A list of all types supported by this server.
+  """
+  types: [__Type!]!
+
+  """
+  The type that query operations will be rooted at.
+  """
+  queryType: __Type!
+
+  """
+  If this server supports mutation, the type that mutation operations will be rooted at.
+  """
+  mutationType: __Type
+
+  """
+  If this server support subscription, the type that subscription operations will be rooted at.
+  """
+  subscriptionType: __Type
+
+  """
+  A list of all directives supported by this server.
+  """
+  directives: [__Directive!]!
+}
+
+"""
+The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.
+
+Depending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name, description and optional `specifiedByUrl`, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.
+"""
+type __Type {
+  kind: __TypeKind!
+
+  name: String
+
+  description: String
+
+  specifiedByUrl: String
+
+  fields(includeDeprecated: Boolean = false): [__Field!]
+
+  interfaces: [__Type!]
+
+  possibleTypes: [__Type!]
+
+  enumValues(includeDeprecated: Boolean = false): [__EnumValue!]
+
+  inputFields(includeDeprecated: Boolean = false): [__InputValue!]
+
+  ofType: __Type
+}
+
+"""
+An enum describing what kind of type a given `__Type` is.
+"""
+enum __TypeKind {
+  """
+  Indicates this type is a scalar.
+  """
+  SCALAR
+
+  """
+  Indicates this type is an object. `fields` and `interfaces` are valid fields.
+  """
+  OBJECT
+
+  """
+  Indicates this type is an interface. `fields`, `interfaces`, and `possibleTypes` are valid fields.
+  """
+  INTERFACE
+
+  """
+  Indicates this type is a union. `possibleTypes` is a valid field.
+  """
+  UNION
+
+  """
+  Indicates this type is an enum. `enumValues` is a valid field.
+  """
+  ENUM
+
+  """
+  Indicates this type is an input object. `inputFields` is a valid field.
+  """
+  INPUT_OBJECT
+
+  """
+  Indicates this type is a list. `ofType` is a valid field.
+  """
+  LIST
+
+  """
+  Indicates this type is a non-null. `ofType` is a valid field.
+  """
+  NON_NULL
+}
+
+"""
+Object and Interface types are described by a list of Fields, each of which has a name, potentially a list of arguments, and a return type.
+"""
+type __Field {
+  name: String!
+
+  description: String
+
+  args(includeDeprecated: Boolean = false): [__InputValue!]!
+
+  type: __Type!
+
+  isDeprecated: Boolean!
+
+  deprecationReason: String
+}
+
+"""
+Arguments provided to Fields or Directives and the input fields of an InputObject are represented as Input Values which describe their type and optionally a default value.
+"""
+type __InputValue {
+  name: String!
+
+  description: String
+
+  type: __Type!
+
+  """
+  A GraphQL-formatted string representing the default value for this input value.
+  """
+  defaultValue: String
+
+  isDeprecated: Boolean!
+
+  deprecationReason: String
+}
+
+"""
+One possible value for a given Enum. Enum values are unique values, not a placeholder for a string or numeric value. However an Enum value is returned in a JSON response as a string.
+"""
+type __EnumValue {
+  name: String!
+
+  description: String
+
+  isDeprecated: Boolean!
+
+  deprecationReason: String
+}
+
+"""
+A Directive provides a way to describe alternate runtime execution and type validation behavior in a GraphQL document.
+
+In some cases, you need to provide options to alter GraphQL's execution behavior in ways field arguments will not suffice, such as conditionally including or skipping a field. Directives provide this by describing additional information to the executor.
+"""
+type __Directive {
+  name: String!
+
+  description: String
+
+  isRepeatable: Boolean!
+
+  locations: [__DirectiveLocation!]!
+
+  args(includeDeprecated: Boolean = false): [__InputValue!]!
+}
+
+"""
+A Directive can be adjacent to many parts of the GraphQL language, a __DirectiveLocation describes one such possible adjacencies.
+"""
+enum __DirectiveLocation {
+  """
+  Location adjacent to a query operation.
+  """
+  QUERY
+
+  """
+  Location adjacent to a mutation operation.
+  """
+  MUTATION
+
+  """
+  Location adjacent to a subscription operation.
+  """
+  SUBSCRIPTION
+
+  """
+  Location adjacent to a field.
+  """
+  FIELD
+
+  """
+  Location adjacent to a fragment definition.
+  """
+  FRAGMENT_DEFINITION
+
+  """
+  Location adjacent to a fragment spread.
+  """
+  FRAGMENT_SPREAD
+
+  """
+  Location adjacent to an inline fragment.
+  """
+  INLINE_FRAGMENT
+
+  """
+  Location adjacent to a variable definition.
+  """
+  VARIABLE_DEFINITION
+
+  """
+  Location adjacent to a schema definition.
+  """
+  SCHEMA
+
+  """
+  Location adjacent to a scalar definition.
+  """
+  SCALAR
+
+  """
+  Location adjacent to an object type definition.
+  """
+  OBJECT
+
+  """
+  Location adjacent to a field definition.
+  """
+  FIELD_DEFINITION
+
+  """
+  Location adjacent to an argument definition.
+  """
+  ARGUMENT_DEFINITION
+
+  """
+  Location adjacent to an interface definition.
+  """
+  INTERFACE
+
+  """
+  Location adjacent to a union definition.
+  """
+  UNION
+
+  """
+  Location adjacent to an enum definition.
+  """
+  ENUM
+
+  """
+  Location adjacent to an enum value definition.
+  """
+  ENUM_VALUE
+
+  """
+  Location adjacent to an input object type definition.
+  """
+  INPUT_OBJECT
+
+  """
+  Location adjacent to an input object field definition.
+  """
+  INPUT_FIELD_DEFINITION
+}
+
+"""
+Directs the executor to include this field or fragment only when the `if` argument is true.
+"""
+directive @include ("Included when true." if: Boolean!) on FIELD|FRAGMENT_SPREAD|INLINE_FRAGMENT
+
+"""
+Directs the executor to skip this field or fragment when the `if` argument is true.
+"""
+directive @skip ("Skipped when true." if: Boolean!) on FIELD|FRAGMENT_SPREAD|INLINE_FRAGMENT
+
+"""
+Marks an element of a GraphQL schema as no longer supported.
+"""
+directive @deprecated ("Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted using the Markdown syntax, as specified by [CommonMark](https:\/\/commonmark.org\/)." reason: String = "No longer supported") on FIELD_DEFINITION|ARGUMENT_DEFINITION|INPUT_FIELD_DEFINITION|ENUM_VALUE
+
+"""
+Exposes a URL that specifies the behaviour of this scalar.
+"""
+directive @specifiedBy ("The URL that specifies the behaviour of this scalar." url: String!) on SCALAR
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}

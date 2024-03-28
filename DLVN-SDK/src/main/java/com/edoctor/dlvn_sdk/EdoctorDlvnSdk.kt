@@ -14,6 +14,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.Optional
+import com.apollographql.apollo3.exception.ApolloException
+import com.apollographql.apollo3.network.http.DefaultHttpEngine
+import com.apollographql.apollo3.network.ws.SubscriptionWsProtocol
+import com.apollographql.apollo3.network.ws.WebSocketNetworkTransport
 import com.edoctor.dlvn_sdk.helper.NotificationHelper
 import com.edoctor.dlvn_sdk.model.SBAccountResponse
 import com.edoctor.dlvn_sdk.model.SendBirdAccount
@@ -32,6 +39,12 @@ import com.edoctor.dlvn_sdk.webview.SdkWebView
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.JsonObject
 import com.sendbird.calls.SendBirdCall
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import okhttp3.OkHttpClient
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
@@ -49,7 +62,9 @@ class EdoctorDlvnSdk(
     private var apiService: ApiService? = null
     private var authParams: JSONObject? = null
     private var isFetching: Boolean = false
+    private var subscriptionCreated: Boolean = false
     var isShortLinkAuthen: Boolean = false
+    private var apolloClient: ApolloClient? = null
     private var requestPermissionLauncher: ActivityResultLauncher<Array<String>>? = null
 
     companion object {
@@ -131,12 +146,11 @@ class EdoctorDlvnSdk(
     init {
         EdoctorDlvnSdk.context = context
         AppStore.sdkInstance = this
-        if (context is AppCompatActivity) {
-//            requestPermissionLauncher = context.registerForActivityResult(
-//                ActivityResultContracts.RequestMultiplePermissions()
-//            ) { permissions -> onRequestPermissionsResult(permissions)}
-        }
-
+//        if (context is AppCompatActivity) {
+////            requestPermissionLauncher = context.registerForActivityResult(
+////                ActivityResultContracts.RequestMultiplePermissions()
+////            ) { permissions -> onRequestPermissionsResult(permissions)}
+//        }
         if (apiService === null) {
             apiService = RetrofitClient(env)
                 .getInstance()
@@ -298,6 +312,7 @@ class EdoctorDlvnSdk(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun getSendbirdAccount(saveCredentials: Boolean = true) {
         try {
             if (sendBirdAccount == null || sendBirdAccount?.token == null) {
@@ -320,12 +335,15 @@ class EdoctorDlvnSdk(
                                             data.thirdParty.sendbird?.token,
                                         )
                                         // token != null: have appointmentSchedules
-                                        SendbirdCallImpl.authenticate(
-                                            context,
-                                            sendBirdAccount?.accountId.toString(),
-                                            sendBirdAccount?.token,
-                                            saveCredentials
-                                        )
+//                                        SendbirdCallImpl.authenticate(
+//                                            context,
+//                                            sendBirdAccount?.accountId.toString(),
+//                                            sendBirdAccount?.token,
+//                                            saveCredentials
+//                                        )
+                                        webView .lifecycleScope.launch {
+                                            initializeSchedulesSubscription()
+                                        }
 //                                        requestNotificationPermission()
                                     }
                                 }
@@ -407,6 +425,53 @@ class EdoctorDlvnSdk(
                     mCallback(false)
                 }
             })
+        }
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    private suspend fun initializeSchedulesSubscription() {
+        edrAccessToken?.let {
+            if (!subscriptionCreated) {
+                try {
+                    Log.d("zzz", "initializeSchedulesSubscription: ${sendBirdAccount?.accountId}")
+                    val okHttpClient = OkHttpClient.Builder()
+                        .addInterceptor { chain ->
+                            val builder = chain.request().newBuilder()
+                            builder.header("Authorization", it)
+                            chain.proceed(builder.build())
+                        }
+                        .build()
+
+                    val subscriptionWsProtocol = SubscriptionWsProtocol.Factory(
+                        connectionPayload = {
+                            mapOf("authorization" to it)
+                        })
+
+                    val webSocket = WebSocketNetworkTransport.Builder()
+                        .protocol(subscriptionWsProtocol)
+                        .serverUrl("wss://virtual-clinic.api.e-doctor.dev/graphql")
+                        .build()
+
+                    apolloClient = ApolloClient.Builder()
+                        .serverUrl("https://virtual-clinic.api.e-doctor.dev/graphql")
+                        .subscriptionNetworkTransport(webSocket)
+                        .httpEngine(DefaultHttpEngine(okHttpClient))
+                        .build()
+
+                    subscriptionCreated = true
+
+                    apolloClient!!.subscription(
+                        SubscribeToScheduleSubscription(accountId = Optional.present(sendBirdAccount?.accountId))
+                    )
+                        .toFlow()
+                        .collect {
+                            Log.d("zzz", "onMessage: ${it.data}")
+                        }
+                } catch (e: ApolloException) {
+                    Log.d("zzz", e.cause?.message.toString())
+                    Log.d("zzz", "Error: " + e.message.toString())
+                }
+            }
         }
     }
 
@@ -546,5 +611,9 @@ class EdoctorDlvnSdk(
         } catch (_: Error) {
 
         }
+    }
+
+    fun CoroutineScope.go() = launch {
+        initializeSchedulesSubscription()
     }
 }
