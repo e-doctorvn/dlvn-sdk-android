@@ -10,24 +10,16 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.ApolloClient.*
 import com.apollographql.apollo3.api.Optional
-import com.apollographql.apollo3.api.http.HttpMethod
 import com.apollographql.apollo3.exception.ApolloException
-import com.apollographql.apollo3.network.http.HttpEngine
-import com.apollographql.apollo3.network.http.HttpNetworkTransport
-import com.apollographql.apollo3.network.okHttpClient
+import com.apollographql.apollo3.network.http.DefaultHttpEngine
 import com.apollographql.apollo3.network.ws.SubscriptionWsProtocol
-import com.apollographql.apollo3.network.ws.WebSocketEngine
 import com.apollographql.apollo3.network.ws.WebSocketNetworkTransport
 import com.edoctor.dlvn_sdk.Constants.Env
 import com.edoctor.dlvn_sdk.Constants.webViewTag
 import com.edoctor.dlvn_sdk.api.ApiService
-import com.edoctor.dlvn_sdk.api.GraphInterceptor
-import com.edoctor.dlvn_sdk.api.GraphQLInterceptor
 import com.edoctor.dlvn_sdk.api.RetrofitClient
 import com.edoctor.dlvn_sdk.graphql.GraphAction
 import com.edoctor.dlvn_sdk.helper.NotificationHelper
@@ -189,8 +181,13 @@ class EdoctorDlvnSdk(
         if (authParams != null && !isFetching && !webView.isVisible) {
             if (isNetworkConnected()) {
                 webView.show(fragmentManager, webViewTag)
-                initDLVNAccount {
-                    webView.reload()
+                val dcid = authParams?.getString("dcid")
+                if (dcid != null) {
+                    checkAccountExist(dcid) {
+                        initDLVNAccount {
+                            webView.reload()
+                        }
+                    }
                 }
             } else {
                 showError(context.getString(R.string.no_internet_msg))
@@ -329,12 +326,12 @@ class EdoctorDlvnSdk(
                                         lc?.launch {
                                             initializeSchedulesSubscription()
                                         }
-                                        SendbirdCallImpl.authenticate(
-                                            context,
-                                            sendBirdAccount?.accountId.toString(),
-                                            sendBirdAccount?.token.toString(),
-                                            saveCredentials
-                                        )
+//                                        SendbirdCallImpl.authenticate(
+//                                            context,
+//                                            sendBirdAccount?.accountId.toString(),
+//                                            sendBirdAccount?.token.toString(),
+//                                            saveCredentials
+//                                        )
                                     }
                                 }
                             }
@@ -360,12 +357,22 @@ class EdoctorDlvnSdk(
 
             apiService?.checkAccountExist(params)?.enqueue(object : Callback<Any> {
                 override fun onResponse(call: Call<Any>, response: Response<Any>) {
-                    if (response.body() != null) {
-                        val data = JSONObject(response.body().toString())
-                        val exist = data.get("checkAccountExist")
-                        accountExist = exist as Boolean?
-                        Log.d("zzz", "checkAccountExist: $exist")
-                        mCallback(exist)
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        if (responseBody != null) {
+                            val responseData = responseBody.toString()
+                            try {
+                                val data = JSONObject(responseData)
+                                Log.d("zzz", "data ne: $data")
+                                val exist = data.optBoolean("checkAccountExist")
+                                accountExist = exist
+                                mCallback(exist)
+                            } catch (e: JSONException) {
+                                Log.e("zzz", "Error parsing JSON", e)
+                            }
+                        } else {
+                            // Handle empty response body
+                        }
                     }
                 }
 
@@ -442,36 +449,37 @@ class EdoctorDlvnSdk(
     private suspend fun initializeSchedulesSubscription() {
         edrAccessToken?.let {
             try {
+                Log.d("zzz", "initializeSchedulesSubscription: ${sendBirdAccount?.accountId}")
                 val okHttpClient = OkHttpClient.Builder()
-                    .addNetworkInterceptor { chain ->
+                    .addInterceptor {chain ->
                         val builder = chain.request().newBuilder()
-                        builder.header("authorization", it)
+                        builder.header("Authorization", it)
                         chain.proceed(builder.build())
                     }
-                    .addInterceptor { chain ->
-                        val builder = chain.request().newBuilder()
-                        builder.header("authorization", it)
-                        chain.proceed(builder.build())
-                    }.build()
-
-                apolloClient = Builder()
-                    .networkTransport(
-                        HttpNetworkTransport.Builder()
-                            .serverUrl("https://virtual-clinic.api.e-doctor.dev/graphql")
-                            .okHttpClient(okHttpClient)
-                            .build()
-                    )
                     .build()
 
-                apolloClient!!.subscription(
-                    SubscribeToScheduleSubscription(
-                        accountId = Optional.Present(sendBirdAccount?.accountId)
-                    )
-                )
-                    .toFlow()
-                    .collect { it1 ->
-                        Log.d("zzz", it1.data.toString())
-                    }
+                val subscriptionWsProtocol = SubscriptionWsProtocol.Factory(
+                    connectionPayload = {
+                        mapOf("authorization" to it)
+                    })
+
+                val webSocket = WebSocketNetworkTransport.Builder()
+                    .protocol(subscriptionWsProtocol)
+                    .serverUrl("wss://virtual-clinic.api.e-doctor.dev/graphql")
+                    .build()
+
+                val apolloClient = ApolloClient.Builder()
+                    .serverUrl("https://virtual-clinic.api.e-doctor.dev/graphql")
+                    .subscriptionNetworkTransport(webSocket)
+                    .httpEngine(DefaultHttpEngine(okHttpClient))
+                    .build()
+
+                apolloClient.subscription(
+                    SubscribeToScheduleSubscription(accountId =  Optional.present(sendBirdAccount?.accountId)))
+                        .toFlow()
+                        .collect {
+                            Log.d("zzz", "onMessage: ${it.data}")
+                        }
             } catch (e: ApolloException) {
                 Log.d("zzz", e.cause?.message.toString())
                 Log.d("zzz", "Error: " + e.message.toString())
