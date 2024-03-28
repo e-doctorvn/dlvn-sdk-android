@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.6 (Updated: 26/03/2024)**
+Latest version: **1.2.7 (Updated: 28/03/2024)**
+
+## Version 1.2.7 (28/03/2024)
+
+- Fix crashing app bug when meets error in parsing response from `checkAccountExist`.
 
 ## Version 1.2.6 (26/03/2024)
 

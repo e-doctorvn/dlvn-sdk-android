@@ -352,12 +352,22 @@ class EdoctorDlvnSdk(
 
             apiService?.checkAccountExist(params)?.enqueue(object : Callback<Any> {
                 override fun onResponse(call: Call<Any>, response: Response<Any>) {
-                    if (response.body() != null) {
-                        val data = JSONObject(response.body().toString())
-                        val exist = data.get("checkAccountExist")
-                        accountExist = exist as Boolean?
-                        Log.d("zzz", "checkAccountExist: $exist")
-                        mCallback(exist)
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        if (responseBody != null) {
+                            val responseData = responseBody.toString()
+                            try {
+                                val data = JSONObject(responseData)
+                                Log.d("zzz", "data ne: $data")
+                                val exist = data.optBoolean("checkAccountExist")
+                                accountExist = exist
+                                mCallback(exist)
+                            } catch (e: JSONException) {
+                                Log.e("zzz", "Error parsing JSON", e)
+                            }
+                        } else {
+                            // Handle empty response body
+                        }
                     }
                 }
 
