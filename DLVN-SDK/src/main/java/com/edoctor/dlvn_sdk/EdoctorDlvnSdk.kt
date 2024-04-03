@@ -27,6 +27,10 @@ import com.edoctor.dlvn_sdk.model.SendBirdAccount
 import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdCallImpl
 import com.edoctor.dlvn_sdk.store.AppStore
 import com.edoctor.dlvn_sdk.Constants.Env
+import com.edoctor.dlvn_sdk.Constants.edrGraphQlUrlDev
+import com.edoctor.dlvn_sdk.Constants.edrGraphQlUrlProd
+import com.edoctor.dlvn_sdk.Constants.edrGraphQlWsUrlDev
+import com.edoctor.dlvn_sdk.Constants.edrGraphQlWsUrlProd
 import com.edoctor.dlvn_sdk.Constants.webViewTag
 import com.edoctor.dlvn_sdk.api.ApiService
 import com.edoctor.dlvn_sdk.api.RetrofitClient
@@ -442,18 +446,18 @@ class EdoctorDlvnSdk(
                         }
                         .build()
 
-                    val subscriptionWsProtocol = SubscriptionWsProtocol.Factory(
-                        connectionPayload = {
-                            mapOf("authorization" to it)
-                        })
+                    val subscriptionWsProtocol =
+                        SubscriptionWsProtocol.Factory(
+                            connectionPayload = { mapOf("authorization" to it) }
+                        )
 
                     val webSocket = WebSocketNetworkTransport.Builder()
                         .protocol(subscriptionWsProtocol)
-                        .serverUrl("wss://virtual-clinic.api.e-doctor.dev/graphql")
+                        .serverUrl(if (environment == Env.SANDBOX) edrGraphQlWsUrlDev else edrGraphQlWsUrlProd)
                         .build()
 
                     apolloClient = ApolloClient.Builder()
-                        .serverUrl("https://virtual-clinic.api.e-doctor.dev/graphql")
+                        .serverUrl(if (environment == Env.SANDBOX) edrGraphQlUrlDev else edrGraphQlUrlProd)
                         .subscriptionNetworkTransport(webSocket)
                         .httpEngine(DefaultHttpEngine(okHttpClient))
                         .build()
@@ -473,6 +477,10 @@ class EdoctorDlvnSdk(
                 }
             }
         }
+    }
+
+    private fun handleScheduleSubscriptionMessage(data: SubscribeToScheduleSubscription.AppointmentSchedule) {
+
     }
 
     fun handleAgreeConsentOnWeb() {

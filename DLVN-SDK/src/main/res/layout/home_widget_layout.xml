@@ -1,0 +1,136 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="343dp"
+    android:layout_height="172dp"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/home_widget_bg">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/img_doctor_avatar_wg"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:src="@drawable/ic_default_avatar"
+            android:background="@drawable/bg_circle"
+            android:cropToPadding="true"
+            android:clipToOutline="true"
+            android:contentDescription="Ảnh bác sĩ"
+            tools:ignore="HardcodedText" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_marginStart="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tv_appointment_type_wg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lịch video:"
+                    android:textStyle="normal|bold"
+                    android:textColor="@color/black"
+                    tools:ignore="HardcodedText" />
+                <LinearLayout
+                    android:paddingVertical="4dp"
+                    android:paddingHorizontal="8dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/appointment_state_bg">
+                    <TextView
+                        android:text="Bi nho"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </LinearLayout>
+            <TextView
+                android:id="@+id/tv_appointment_time_wg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hom nay, 11h30"
+                android:textSize="12sp"
+                android:textStyle="normal|bold"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/red_primary"
+                tools:ignore="HardcodedText" />
+            <LinearLayout
+                android:layout_marginTop="2dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/tv_appointment_doctor_degree_wg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ThS. BS "
+                    android:textColor="@color/black"
+                    tools:ignore="HardcodedText" />
+                <TextView
+                    android:id="@+id/tv_appointment_doctor_name_wg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="Bui Dinh Manh"
+                    android:textStyle="normal|bold"
+                    android:textColor="@color/black"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/tv_appointment_profile_wg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textStyle="normal|bold"
+                android:text="Tư vấn cho: Trung (tôi)"
+                android:textColor="@color/gray_secondary"
+                android:layout_marginTop="2dp"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:weightSum="2"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.AppCompatButton
+            android:text="Huy"
+            android:textAllCaps="false"
+            android:layout_weight="1"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="@color/red_primary"
+            android:id="@+id/btn_negative_wg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:background="@drawable/home_widget_button_bg"
+            tools:ignore="HardcodedText" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:text="Xac nhan"
+            android:textSize="13sp"
+            android:layout_weight="1"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:id="@+id/btn_positive_wg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/white"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:background="@drawable/home_widget_pst_button_bg"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+</LinearLayout>

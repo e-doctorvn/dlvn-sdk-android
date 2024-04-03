@@ -14,6 +14,7 @@
     <color name="green">#069000</color>
     <color name="dark_green">#126a0e</color>
     <color name="gray_primary">#C6C6C6</color>
+    <color name="gray_secondary">#727272</color>
     <color name="mic_cam_incoming">#C68158</color>
     <color name="call_control_bg">#29292966</color>
     <color name="dlvn_primary">#D25540</color>
