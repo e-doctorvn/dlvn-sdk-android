@@ -10,10 +10,8 @@ import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
@@ -39,15 +37,16 @@ import com.edoctor.dlvn_sdk.helper.PrefUtils
 import com.edoctor.dlvn_sdk.model.AccountInitResponse
 import com.edoctor.dlvn_sdk.sendbirdCall.CallManager
 import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdChatImpl
+import com.edoctor.dlvn_sdk.type.AppointmentScheduleSort
+import com.edoctor.dlvn_sdk.type.PageLimitInput
+import com.edoctor.dlvn_sdk.type.Sort
 import com.edoctor.dlvn_sdk.webview.SdkWebView
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.JsonObject
 import com.sendbird.calls.SendBirdCall
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import org.json.JSONException
 import org.json.JSONObject
@@ -55,6 +54,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.create
+import java.lang.ClassCastException
 
 class EdoctorDlvnSdk(
     context: Context,
@@ -168,6 +168,7 @@ class EdoctorDlvnSdk(
 
         if (intent != null) {
             checkSavedAuthCredentials()
+            fetchInitialAppointments()
             SendbirdChatImpl.initSendbirdChat(context, edrAppId, null, null)
             SendbirdCallImpl.initSendbirdCall(context, edrAppId)
             checkAndRemoveShortLinkCredentials {
@@ -376,19 +377,22 @@ class EdoctorDlvnSdk(
                 override fun onResponse(call: Call<Any>, response: Response<Any>) {
                     if (response.isSuccessful) {
                         val responseBody = response.body()
-                        if (responseBody != null) {
-                            val responseData = responseBody.toString()
-                            try {
-                                val data = JSONObject(responseData)
-                                Log.d("zzz", "data ne: $data")
-                                val exist = data.optBoolean("checkAccountExist")
-                                accountExist = exist
-                                mCallback(exist)
-                            } catch (e: JSONException) {
-                                Log.e("zzz", "Error parsing JSON", e)
+                        try {
+                            if (responseBody != null && responseBody is String) {
+                                val responseData = responseBody.toString()
+                                try {
+                                    val data = JSONObject(responseData)
+                                    val exist = data.optBoolean("checkAccountExist")
+                                    accountExist = exist
+                                    mCallback(exist)
+                                } catch (e: JSONException) {
+                                    Log.e("zzz", "Error parsing JSON", e)
+                                }
+                            } else {
+                                // Handle empty response body
                             }
-                        } else {
-                            // Handle empty response body
+                        } catch (_: ClassCastException) {
+
                         }
                     }
                 }
@@ -464,12 +468,28 @@ class EdoctorDlvnSdk(
 
                     subscriptionCreated = true
 
+                    val response = apolloClient!!.query(AppointmentSchedulesQuery(accountId = Optional.present(
+                        sendBirdAccount?.accountId), sort = Optional.present(
+                        AppointmentScheduleSort(createdAt = Optional.present(Sort.DESC))
+                    ), limit = Optional.present(
+                        PageLimitInput(Optional.present(0), Optional.present(10))
+                    ) )).execute()
+                    AppStore.widgetList?.updateDataList(response.data?.appointmentSchedules as List<AppointmentSchedulesQuery.AppointmentSchedule>)
+//                    AppStore.widgetList?.dataSet = response.data?.appointmentSchedules as MutableList<SubscribeToScheduleSubscription.AppointmentSchedule>
+
+
                     apolloClient!!.subscription(
                         SubscribeToScheduleSubscription(accountId = Optional.present(sendBirdAccount?.accountId))
                     )
                         .toFlow()
                         .collect {
                             Log.d("zzz", "onMessage: ${it.data}")
+                            it.data?.appointmentSchedule?.get(0)?.let { it1 ->
+                                Log.d("zzz", "handleScheduleSubscriptionMessage: $it1")
+                                handleScheduleSubscriptionMessage(
+                                    it1
+                                )
+                            }
                         }
                 } catch (e: ApolloException) {
                     Log.d("zzz", e.cause?.message.toString())
@@ -480,6 +500,10 @@ class EdoctorDlvnSdk(
     }
 
     private fun handleScheduleSubscriptionMessage(data: SubscribeToScheduleSubscription.AppointmentSchedule) {
+        AppStore.widgetList?.updateData(data)
+    }
+
+    private fun fetchInitialAppointments() {
 
     }
 

@@ -1,4 +1,4 @@
-package com.edoctor.dlvn_sdk.service
+package com.edoctor.dlvn_sdk.widget
 
 import android.annotation.SuppressLint
 import android.content.Context

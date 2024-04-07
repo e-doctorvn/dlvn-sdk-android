@@ -1,0 +1,12 @@
+mutation CancelAppointment(
+  $eClinicId: String!
+  $appointmentScheduleId: String!
+) {
+  eClinicCancel(
+    eClinicId: $eClinicId
+    appointmentScheduleId: $appointmentScheduleId
+  ) {
+    appointmentScheduleId
+    state
+  }
+}

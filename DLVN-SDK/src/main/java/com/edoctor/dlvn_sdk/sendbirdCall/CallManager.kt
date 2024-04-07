@@ -148,35 +148,46 @@ class CallManager {
     fun approveEclinicCall() {
         val params = JsonObject()
         val variables = JSONObject()
-        if (directCall?.customItems?.contains("appointmentScheduleId") == true && directCall?.customItems?.contains("eClinicId")!!) {
-            variables.put("eClinicId", directCall?.customItems?.get("eClinicId"))
-            variables.put("appointmentScheduleId", directCall?.customItems?.get("appointmentScheduleId"))
-            params.addProperty("query", GraphAction.Mutation.eClinicApproveCall)
-            params.addProperty("variables", variables.toString())
+        try {
+            if (directCall?.customItems?.contains("appointmentScheduleId") == true && directCall?.customItems?.contains(
+                    "eClinicId"
+                )!!
+            ) {
+                variables.put("eClinicId", directCall?.customItems?.get("eClinicId"))
+                variables.put(
+                    "appointmentScheduleId",
+                    directCall?.customItems?.get("appointmentScheduleId")
+                )
+                params.addProperty("query", GraphAction.Mutation.eClinicApproveCall)
+                params.addProperty("variables", variables.toString())
 
-            EdoctorDlvnSdk.edrAccessToken?.let {
-                apiService?.approveEClinicCall(it, params)?.enqueue(object : Callback<Any> {
-                    override fun onResponse(call: Call<Any>, response: Response<Any>) {
-                        if (response.body() != null) {
-                            val data = JSONObject(response.body().toString())
-                            if (data.has("eClinicApprove")) {
-                                val approve = data.get("eClinicApprove") as JSONObject
-                                val product = approve.get("product") as JSONObject
-                                val packages = product.get("packages") as JSONArray
-                                val videoPackage = packages[0] as JSONObject
-                                val time = (videoPackage.get("time") as Double).toInt() * 60 * 1000
+                EdoctorDlvnSdk.edrAccessToken?.let {
+                    apiService?.approveEClinicCall(it, params)?.enqueue(object : Callback<Any> {
+                        override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                            if (response.body() != null) {
+                                val data = JSONObject(response.body().toString())
+                                if (data.has("eClinicApprove")) {
+                                    val approve = data.get("eClinicApprove") as JSONObject
+                                    val product = approve.get("product") as JSONObject
+                                    val packages = product.get("packages") as JSONArray
+                                    val videoPackage = packages[0] as JSONObject
+                                    val time =
+                                        (videoPackage.get("time") as Double).toInt() * 60 * 1000
 
-                                totalTime = time
-                                onTotalTimeFetched?.invoke(totalTime)
+                                    totalTime = time
+                                    onTotalTimeFetched?.invoke(totalTime)
+                                }
                             }
                         }
-                    }
 
-                    override fun onFailure(call: Call<Any>, t: Throwable) {
-                        TODO("Not yet implemented")
-                    }
-                })
+                        override fun onFailure(call: Call<Any>, t: Throwable) {
+                            TODO("Not yet implemented")
+                        }
+                    })
+                }
             }
+        } catch (_: Exception) {
+
         }
     }
 
@@ -272,6 +283,35 @@ class CallManager {
             if (appointmentDetail?.channelUrl != "") {
                 mCallback(appointmentDetail)
             }
+        }
+    }
+
+    fun cancelAppointmentSchedule(eClinicId: String, appointmentScheduleId: String, mCallback: (result: Any) -> Unit) {
+        val params = JsonObject()
+        val variables = JSONObject()
+
+        variables.put("eClinicId", eClinicId)
+        variables.put("appointmentScheduleId", appointmentScheduleId)
+        params.addProperty("query", GraphAction.Mutation.cancelAppointmentSchedule)
+        params.addProperty("variables", variables.toString())
+
+        try {
+            EdoctorDlvnSdk.edrAccessToken?.let {
+                apiService?.cancelAppointmentSchedule(it, params)?.enqueue(object : Callback<Any> {
+                    override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                        Log.d("zzz", response.body().toString())
+                        val data = JSONObject(response.body().toString())
+                        val returnState = JSONObject(data.get("eClinicCancel").toString()).get("state")
+                        mCallback(returnState)
+                    }
+
+                    override fun onFailure(call: Call<Any>, t: Throwable) {
+                        TODO("Not yet implemented")
+                    }
+                })
+            }
+        } catch (_: Exception) {
+
         }
     }
 

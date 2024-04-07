@@ -35,6 +35,12 @@ object GraphAction {
                 "    appointmentScheduleId\n" +
                 "  }\n" +
                 "}"
+        const val cancelAppointmentSchedule = "mutation CancelAppointment(\$eClinicId: String!, \$appointmentScheduleId: String!) {\n" +
+                "  eClinicCancel(eClinicId: \$eClinicId, appointmentScheduleId: \$appointmentScheduleId) {\n" +
+                "    appointmentScheduleId\n" +
+                "    state\n" +
+                "  }\n" +
+                "}"
     }
     object Query {
         const val sendBirdAccount = "query SendbirdAccount {\n" +
