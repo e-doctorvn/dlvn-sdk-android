@@ -299,14 +299,50 @@ class CallManager {
             EdoctorDlvnSdk.edrAccessToken?.let {
                 apiService?.cancelAppointmentSchedule(it, params)?.enqueue(object : Callback<Any> {
                     override fun onResponse(call: Call<Any>, response: Response<Any>) {
-                        Log.d("zzz", response.body().toString())
                         val data = JSONObject(response.body().toString())
-                        val returnState = JSONObject(data.get("eClinicCancel").toString()).get("state")
-                        mCallback(returnState)
+                        if (data.opt("eClinicCancel") != null && data.opt("eClinicCancel") != JSONObject.NULL) {
+                            val returnState =
+                                JSONObject(data.get("eClinicCancel").toString()).get("state")
+                            mCallback(returnState)
+                        }
                     }
 
                     override fun onFailure(call: Call<Any>, t: Throwable) {
                         TODO("Not yet implemented")
+                    }
+                })
+            }
+        } catch (_: Exception) {
+
+        }
+    }
+
+    fun confirmAppointmentSchedule(eClinicId: String, appointmentScheduleId: String, mCallback: (result: Boolean) -> Unit) {
+        val params = JsonObject()
+        val variables = JSONObject()
+
+        variables.put("eClinicId", eClinicId)
+        variables.put("appointmentScheduleId", appointmentScheduleId)
+        params.addProperty("query", GraphAction.Mutation.confirmAppointmentSchedule)
+        params.addProperty("variables", variables.toString())
+
+        try {
+            EdoctorDlvnSdk.edrAccessToken?.let {
+                apiService?.confirmAppointmentSchedule(it, params)?.enqueue(object : Callback<Any> {
+                    override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                        val data = JSONObject(response.body().toString())
+                        if (data.opt("eClinicJoin") != null && data.opt("eClinicJoin") != JSONObject.NULL) {
+//                            val returnState =
+//                                JSONObject(data.get("eClinicJoin").toString()).get("state")
+                            mCallback(true)
+                        } else {
+                            mCallback(false)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Any>, t: Throwable) {
+                        Log.d("zzz", t.message.toString())
+                        Log.d("zzz", t.toString())
                     }
                 })
             }

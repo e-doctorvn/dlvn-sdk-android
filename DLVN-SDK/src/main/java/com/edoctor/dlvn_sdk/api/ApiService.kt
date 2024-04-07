@@ -37,5 +37,8 @@ interface ApiService {
     fun cancelAppointmentSchedule(@Header("Authorization") token: String, @Body params: JsonObject): Call<Any>
 
     @POST("graphql")
+    fun confirmAppointmentSchedule(@Header("Authorization") token: String, @Body params: JsonObject): Call<Any>
+
+    @POST("graphql")
     fun getAppointmentDetail(@Body params: JsonObject): Call<AppointmentDetailResponse>
 }

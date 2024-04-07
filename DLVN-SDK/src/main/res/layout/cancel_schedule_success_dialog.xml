@@ -28,17 +28,29 @@
             tools:ignore="HardcodedText" />
     </LinearLayout>
     <ImageView
+        android:id="@+id/icon_cancel_success_dialog_wg"
         android:src="@drawable/ic_cancel_success"
         android:layout_width="287dp"
         android:layout_height="92dp"
         android:contentDescription="cancel_icon"
         tools:ignore="HardcodedText" />
     <TextView
+        android:id="@+id/tv_message_cancel_success_dialog_wg"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@color/black"
         android:layout_marginTop="32dp"
         android:text="Huỷ lịch hẹn thành công"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText" />
+    <TextView
+        android:id="@+id/tv_detail_cancel_success_dialog_wg"
+        android:textSize="14sp"
+        android:visibility="gone"
+        android:textColor="@color/black"
+        android:layout_marginTop="12dp"
+        android:text="Chưa đến khung giờ tư vấn.\n  Vui lòng chờ thử lại sau."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:ignore="HardcodedText" />
@@ -50,6 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:clickable="true"
+        android:textAllCaps="false"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:id="@+id/btn_dismiss_cancel_success_dialog_wg"

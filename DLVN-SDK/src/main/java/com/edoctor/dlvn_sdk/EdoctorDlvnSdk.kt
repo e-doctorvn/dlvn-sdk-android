@@ -378,13 +378,15 @@ class EdoctorDlvnSdk(
                     if (response.isSuccessful) {
                         val responseBody = response.body()
                         try {
-                            if (responseBody != null && responseBody is String) {
+                            if (responseBody != null && responseBody is String && responseBody != JSONObject.NULL) {
                                 val responseData = responseBody.toString()
                                 try {
-                                    val data = JSONObject(responseData)
-                                    val exist = data.optBoolean("checkAccountExist")
-                                    accountExist = exist
-                                    mCallback(exist)
+                                    if (responseData != JSONObject.NULL) {
+                                        val data = JSONObject(responseData)
+                                        val exist = data.optBoolean("checkAccountExist")
+                                        accountExist = exist
+                                        mCallback(exist)
+                                    }
                                 } catch (e: JSONException) {
                                     Log.e("zzz", "Error parsing JSON", e)
                                 }

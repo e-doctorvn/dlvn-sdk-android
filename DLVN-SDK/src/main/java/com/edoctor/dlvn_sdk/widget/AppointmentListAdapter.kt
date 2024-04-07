@@ -112,8 +112,14 @@ class AppointmentListAdapter() :
         viewHolder.positiveButton.text = getPositiveButtonLabel(dataSet[position].state)
 
         viewHolder.positiveButton.setOnClickListener {
-            dataSet[position].thirdParty?.sendbird?.channelUrl?.let { channelUrl ->
-                openConsultingRoom(channelUrl)
+            if (dataSet[position].state == AppointmentScheduleState.PENDING) {
+                CallManager.getInstance()?.confirmAppointmentSchedule(dataSet[position].eClinic?.eClinicId!!, dataSet[position].appointmentScheduleId!!) {
+                    if (!it) { showConfirmFailedDialog() }
+                }
+            } else {
+                dataSet[position].thirdParty?.sendbird?.channelUrl?.let { channelUrl ->
+                    openConsultingRoom(channelUrl)
+                }
             }
         }
         viewHolder.negativeButton.setOnClickListener {
@@ -229,6 +235,30 @@ class AppointmentListAdapter() :
 
         val closeButton = dialog.findViewById(R.id.btn_close_cancel_success_dialog) as LinearLayout
         val dismissButton = dialog.findViewById(R.id.btn_dismiss_cancel_success_dialog_wg) as AppCompatButton
+        closeButton.setOnClickListener { dialog.dismiss() }
+        dismissButton.setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showConfirmFailedDialog() {
+        val dialog = Dialog(EdoctorDlvnSdk.context as AppCompatActivity)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.cancel_schedule_success_dialog)
+        dialog.window?.setBackgroundDrawableResource(R.drawable.corner_background)
+
+        val icon = dialog.findViewById(R.id.icon_cancel_success_dialog_wg) as ImageView
+        val message = dialog.findViewById(R.id.tv_message_cancel_success_dialog_wg) as TextView
+        val detail = dialog.findViewById(R.id.tv_detail_cancel_success_dialog_wg) as TextView
+        val closeButton = dialog.findViewById(R.id.btn_close_cancel_success_dialog) as LinearLayout
+        val dismissButton = dialog.findViewById(R.id.btn_dismiss_cancel_success_dialog_wg) as AppCompatButton
+
+        icon.setImageResource(R.drawable.ic_action_failed)
+        message.text = "Chưa thể bắt đầu phiên tư vấn"
+        dismissButton.text = "Tôi đã hiểu"
+        detail.visibility = View.VISIBLE
         closeButton.setOnClickListener { dialog.dismiss() }
         dismissButton.setOnClickListener { dialog.dismiss() }
 
