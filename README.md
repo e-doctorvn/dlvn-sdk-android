@@ -2,7 +2,7 @@
 
 EDR - DLVN Android SDK
 
-## Version 1.2.8
+## Version 1.2.9
 
 ## Requirements
 
@@ -26,7 +26,7 @@ This dependency requires:
 
   ```sh
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.2.8'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.2.9'
         implementation 'com.google.firebase:firebase-messaging:23.4.0'
     }
   ```
@@ -212,3 +212,28 @@ Open URL from dynamic link. The URL should be full format with `data` and other 
 | :-------- | :---------------- | :----------- |
 | `fm`      | `FragmentManager` | **Required** |
 | `url`     | `String`          | **Required** |
+
+#### Home widget
+
+To display appointment widgets from EDR, you need to follow these steps:
+
+**1**. Add `RecyclerView` to your xml layout:
+
+- ##### Example:
+
+```xml
+  <androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/widgetList"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/>
+```
+
+**2**. Use `AppointmentListAdapter` in your activity:
+
+- ##### Example:
+
+```kotlin
+  val recyclerView: RecyclerView = findViewById(R.id.widgetList)
+  recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager HORIZONTAL, false)
+  recyclerView.adapter = AppointmentListAdapter()
+```

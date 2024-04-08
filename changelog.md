@@ -2,7 +2,13 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.8 (Updated: 08/04/2024)**
+Latest version: **1.2.9 (Updated: 08/04/2024)**
+
+## Version 1.2.9 (08/04/2024)
+
+- Release appointment widget support to use in DC app:
+  - Add `ApolloClient`, `AppointmentListAdapter`
+  - Add dialogs for widget's actions (cancel, confirm)
 
 ## Version 1.2.8 (08/04/2024)
 
