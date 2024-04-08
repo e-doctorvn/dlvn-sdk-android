@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.9 (Updated: 08/04/2024)**
+Latest version: **1.2.10 (Updated: 08/04/2024)**
+
+## Version 1.2.10 (08/04/2024)
+
+- Add `textColor="@color/black"` for warning message in CancelConfirmDialog.
 
 ## Version 1.2.9 (08/04/2024)
 
