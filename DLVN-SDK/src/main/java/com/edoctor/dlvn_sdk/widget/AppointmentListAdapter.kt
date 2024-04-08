@@ -212,6 +212,7 @@ class AppointmentListAdapter() :
         val closeButton = dialog.findViewById(R.id.btn_close_confirm_dialog) as LinearLayout
         val dismissButton = dialog.findViewById(R.id.btn_dismiss_cancel_dialog_wg) as AppCompatButton
         val confirmButton = dialog.findViewById(R.id.btn_confirm_cancel_appointment_wg) as TextView
+
         closeButton.setOnClickListener { dialog.dismiss() }
         dismissButton.setOnClickListener { dialog.dismiss() }
         confirmButton.setOnClickListener {
