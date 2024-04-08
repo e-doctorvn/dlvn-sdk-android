@@ -354,19 +354,24 @@ class EdoctorDlvnSdk(
                 override fun onResponse(call: Call<Any>, response: Response<Any>) {
                     if (response.isSuccessful) {
                         val responseBody = response.body()
-                        if (responseBody != null) {
-                            val responseData = responseBody.toString()
-                            try {
-                                val data = JSONObject(responseData)
-                                Log.d("zzz", "data ne: $data")
-                                val exist = data.optBoolean("checkAccountExist")
-                                accountExist = exist
-                                mCallback(exist)
-                            } catch (e: JSONException) {
-                                Log.e("zzz", "Error parsing JSON", e)
+                        try {
+                            if (responseBody != null && responseBody is String && responseBody != JSONObject.NULL) {
+                                val responseData = responseBody.toString()
+                                try {
+                                    if (responseData != JSONObject.NULL) {
+                                        val data = JSONObject(responseData)
+                                        val exist = data.optBoolean("checkAccountExist")
+                                        accountExist = exist
+                                        mCallback(exist)
+                                    }
+                                } catch (e: JSONException) {
+                                    Log.e("zzz", "Error parsing JSON", e)
+                                }
+                            } else {
+                                // Handle empty response body
                             }
-                        } else {
-                            // Handle empty response body
+                        } catch (_: ClassCastException) {
+
                         }
                     }
                 }

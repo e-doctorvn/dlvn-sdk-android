@@ -2,11 +2,15 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.7 (Updated: 28/03/2024)**
+Latest version: **1.2.8 (Updated: 08/04/2024)**
+
+## Version 1.2.8 (08/04/2024)
+
+- Fix crashing app bug when meets error in parsing response from `checkAccountExist`: add null safe with `JSONObject.NULL`
 
 ## Version 1.2.7 (28/03/2024)
 
-- Fix crashing app bug when meets error in parsing response from `checkAccountExist`.
+- (Failed) Fix crashing app bug when meets error in parsing response from `checkAccountExist`.
 
 ## Version 1.2.6 (26/03/2024)
 
