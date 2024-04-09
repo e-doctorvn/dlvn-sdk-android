@@ -1,20 +1,15 @@
 package com.edoctor.application
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
-import com.edoctor.dlvn_sdk.widget.AppointmentListAdapter
 import org.json.JSONObject
 
 
@@ -41,10 +36,6 @@ class MainActivity : AppCompatActivity() {
         loginDanh = findViewById(R.id.btn_login_Danh)
         txtName = findViewById(R.id.textView)
         btn_dangxuat = findViewById(R.id.btn_dangxuat)
-
-        val recyclerView: RecyclerView = findViewById(R.id.widgetList)
-        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView.adapter = AppointmentListAdapter()
 
         edoctorDlvnSdk!!.onSdkRequestLogin = {
             Log.d("zzz", "Nhan duoc data ne")

@@ -474,7 +474,7 @@ class EdoctorDlvnSdk(
                         sendBirdAccount?.accountId), sort = Optional.present(
                         AppointmentScheduleSort(createdAt = Optional.present(Sort.DESC))
                     ), limit = Optional.present(
-                        PageLimitInput(Optional.present(0), Optional.present(10))
+                        PageLimitInput(Optional.present(0), Optional.present(12))
                     ) )).execute()
                     AppStore.widgetList?.updateDataList(response.data?.appointmentSchedules as List<AppointmentSchedulesQuery.AppointmentSchedule>)
 //                    AppStore.widgetList?.dataSet = response.data?.appointmentSchedules as MutableList<SubscribeToScheduleSubscription.AppointmentSchedule>

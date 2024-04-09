@@ -2,7 +2,12 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.10 (Updated: 08/04/2024)**
+Latest version: **1.2.11 (Updated: 09/04/2024)**
+
+## Version 1.2.11 (09/04/2024)
+
+- Expose `com.edoctor.dlvn_sdk.widget.AppointmentWidgetList` for DLVN to add into xml layout.
+- Remove widget after succeeded in canceling.
 
 ## Version 1.2.10 (08/04/2024)
 

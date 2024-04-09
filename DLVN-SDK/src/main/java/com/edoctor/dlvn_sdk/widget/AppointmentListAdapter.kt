@@ -219,6 +219,7 @@ class AppointmentListAdapter() :
             CallManager.getInstance()?.cancelAppointmentSchedule(eClinicId, appointmentScheduleId) {
                 if (it is String && it == "CANCELED") {
                     dialog.dismiss()
+                    removeOnCancelSuccess(appointmentScheduleId)
                     showCancelSuccessDialog()
                 }
             }
@@ -267,6 +268,15 @@ class AppointmentListAdapter() :
     }
 
     @SuppressLint("NotifyDataSetChanged")
+    private fun removeOnCancelSuccess(appointmentScheduleId: String) {
+        val existIndex = dataSet.indexOfFirst { it.appointmentScheduleId == appointmentScheduleId }
+        if (existIndex != -1) {
+            dataSet.removeAt(existIndex)
+            notifyDataSetChanged()
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(updatedItem: SubscribeToScheduleSubscription.AppointmentSchedule) {
         val existIndex = dataSet.indexOfFirst { it.appointmentScheduleId == updatedItem.appointmentScheduleId }
         if (existIndex != -1) {
@@ -277,7 +287,12 @@ class AppointmentListAdapter() :
                 dataSet[existIndex] = updatedItem
             }
         } else {
-            dataSet.add(0, updatedItem)
+            if (
+                updatedItem.state != AppointmentScheduleState.CANCELED
+                && updatedItem.state != AppointmentScheduleState.EXPIRED
+                && updatedItem.state != AppointmentScheduleState.FINISHED) {
+                dataSet.add(0, updatedItem)
+            }
         }
         notifyDataSetChanged()
     }
