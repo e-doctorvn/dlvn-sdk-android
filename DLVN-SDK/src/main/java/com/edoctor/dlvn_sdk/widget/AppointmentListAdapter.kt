@@ -272,6 +272,7 @@ class AppointmentListAdapter() :
         val existIndex = dataSet.indexOfFirst { it.appointmentScheduleId == appointmentScheduleId }
         if (existIndex != -1) {
             dataSet.removeAt(existIndex)
+            checkDataSetSizeToShowIndicator()
             notifyDataSetChanged()
         }
     }
@@ -283,6 +284,7 @@ class AppointmentListAdapter() :
             if (updatedItem.state == AppointmentScheduleState.CANCELED) {
                 dataSet.removeAt(existIndex)
                 notifyItemRemoved(existIndex)
+                checkDataSetSizeToShowIndicator()
             } else {
                 dataSet[existIndex] = updatedItem
             }
@@ -293,6 +295,7 @@ class AppointmentListAdapter() :
                 && updatedItem.state != AppointmentScheduleState.FINISHED) {
                 dataSet.add(0, updatedItem)
             }
+            checkDataSetSizeToShowIndicator()
         }
         notifyDataSetChanged()
     }
@@ -341,7 +344,24 @@ class AppointmentListAdapter() :
                 dataSet.add(data)
             }
         }
+
+        checkDataSetSizeToShowIndicator()
 //        dataSet = newData as MutableList<SubscribeToScheduleSubscription.AppointmentSchedule>
+        notifyDataSetChanged()
+    }
+
+    private fun checkDataSetSizeToShowIndicator() {
+        if (dataSet.size > 0) {
+            AppStore.updateWidgetListDisplay?.invoke("HAS_DATA")
+        } else {
+            AppStore.updateWidgetListDisplay?.invoke("EMPTY")
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun clearDataList() {
+        dataSet = mutableListOf()
+        dataSet.clear()
         notifyDataSetChanged()
     }
 }

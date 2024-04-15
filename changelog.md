@@ -2,7 +2,12 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.11 (Updated: 09/04/2024)**
+Latest version: **1.2.12 (Updated: 15/04/2024)**
+
+## Version 1.2.12 (09/04/2024)
+
+- Handling `display/hide` scroll indicator when widget list has data or empty.
+- Handle cleaning up widget list & subscription when user logs out.
 
 ## Version 1.2.11 (09/04/2024)
 

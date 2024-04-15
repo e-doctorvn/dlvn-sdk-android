@@ -46,6 +46,7 @@ import com.google.gson.JsonObject
 import com.sendbird.calls.SendBirdCall
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import org.json.JSONException
@@ -346,7 +347,7 @@ class EdoctorDlvnSdk(
 //                                            sendBirdAccount?.token,
 //                                            saveCredentials
 //                                        )
-                                        webView .lifecycleScope.launch {
+                                        webView.lifecycleScope.launch {
                                             initializeSchedulesSubscription()
                                         }
 //                                        requestNotificationPermission()
@@ -479,7 +480,6 @@ class EdoctorDlvnSdk(
                     AppStore.widgetList?.updateDataList(response.data?.appointmentSchedules as List<AppointmentSchedulesQuery.AppointmentSchedule>)
 //                    AppStore.widgetList?.dataSet = response.data?.appointmentSchedules as MutableList<SubscribeToScheduleSubscription.AppointmentSchedule>
 
-
                     apolloClient!!.subscription(
                         SubscribeToScheduleSubscription(accountId = Optional.present(sendBirdAccount?.accountId))
                     )
@@ -537,6 +537,9 @@ class EdoctorDlvnSdk(
 
         webView.clearCacheAndCookies(context)
         PrefUtils.removeSdkAuthData(context)
+        AppStore.widgetList?.clearDataList()
+        AppStore.updateWidgetListDisplay?.invoke("LOG_OUT")
+        webView.lifecycleScope.cancel()
         SendbirdCallImpl.deAuthenticate(context)
         SendbirdChatImpl.disconnect()
     }

@@ -13,4 +13,5 @@ object AppStore {
     var activeChannelUrl: String? = null
     var isAppInForeground: Boolean = false
     var widgetList: AppointmentListAdapter? = null
+    var updateWidgetListDisplay: ((state: String) -> Unit)? = {}
 }
