@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center_horizontal"
+    android:layout_width="343dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/corner_background">
+    <LinearLayout
+        android:padding="8dp"
+        android:layout_gravity="right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="RtlHardcoded"
+        android:focusable="true"
+        android:clickable="true"
+        android:id="@+id/btn_close_cancel_success_dialog"
+        android:foreground="?attr/selectableItemBackground"
+        android:backgroundTint="@color/white"
+        android:background="@drawable/corner_background_100">
+        <ImageView
+            android:src="@drawable/ic_close"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="right"
+            android:contentDescription="icon_close"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/icon_cancel_success_dialog_wg"
+        android:src="@drawable/ic_cancel_success"
+        android:layout_width="287dp"
+        android:layout_height="92dp"
+        android:contentDescription="cancel_icon"
+        tools:ignore="HardcodedText" />
+    <TextView
+        android:id="@+id/tv_message_cancel_success_dialog_wg"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_marginTop="32dp"
+        android:text="Huỷ lịch hẹn thành công"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText" />
+    <TextView
+        android:id="@+id/tv_detail_cancel_success_dialog_wg"
+        android:textSize="14sp"
+        android:visibility="gone"
+        android:textColor="@color/black"
+        android:layout_marginTop="12dp"
+        android:text="Chưa đến khung giờ tư vấn.\n  Vui lòng chờ thử lại sau."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:text="Đóng"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_marginTop="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:clickable="true"
+        android:textAllCaps="false"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:id="@+id/btn_dismiss_cancel_success_dialog_wg"
+        android:foreground="?attr/selectableItemBackground"
+        android:background="@drawable/home_widget_pst_button_bg"
+        android:focusable="true"
+        tools:ignore="HardcodedText" />
+</LinearLayout>

@@ -1,0 +1,11 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!-- Gradient background from #EA6544 to #D12A1E -->
+    <gradient
+        android:angle="0"
+        android:startColor="#EA6544"
+        android:endColor="#D12A1E"
+        android:type="linear" />
+    <!-- Outer border radius -->
+    <corners android:radius="6dp" />
+</shape>

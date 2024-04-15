@@ -91,5 +91,9 @@
         app:layout_constraintVertical_bias="0.167"
         tools:ignore="MissingConstraints" />
 
-
+    <com.edoctor.dlvn_sdk.widget.AppointmentWidgetList
+        android:id="@+id/widgetList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

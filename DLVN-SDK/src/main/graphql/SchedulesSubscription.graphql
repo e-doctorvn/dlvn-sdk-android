@@ -1,0 +1,37 @@
+subscription subscribeToSchedule($eClinicId: String, $accountId: String) {
+  appointmentSchedule(eClinicId: $eClinicId, accountId: $accountId) {
+    appointmentScheduleId
+    doctor {
+      fullName
+      degree {
+        shortName
+      }
+      doctorId
+      avatar
+    }
+    eClinic {
+      eClinicId
+    }
+    profile {
+      profileCode
+      profileId
+      fullName
+      relation
+      phone
+    }
+    thirdParty {
+      sendbird {
+        channelUrl
+      }
+    }
+    package
+    reason
+    scheduledAt
+    scheduleToken
+    createdAt
+    updatedAt
+    state
+    joinAt
+    supportNumber
+  }
+}

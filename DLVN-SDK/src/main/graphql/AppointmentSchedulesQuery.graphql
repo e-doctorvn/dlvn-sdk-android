@@ -1,0 +1,51 @@
+query AppointmentSchedules(
+  $state: [AppointmentScheduleState]
+  $package: ProductPackageEnum
+  $accountId: String
+  $eClinicId: String
+  $limit: PageLimitInput
+  $sort: AppointmentScheduleSort
+) {
+  appointmentSchedules(
+    state: $state
+    package: $package
+    accountId: $accountId
+    eClinicId: $eClinicId
+    limit: $limit
+    sort: $sort
+  ) {
+    appointmentScheduleId
+    doctor {
+      fullName
+      degree {
+        shortName
+      }
+      doctorId
+      avatar
+    }
+    eClinic {
+      eClinicId
+    }
+    profile {
+      profileCode
+      profileId
+      fullName
+      relation
+      phone
+    }
+    thirdParty {
+      sendbird {
+        channelUrl
+      }
+    }
+    package
+    reason
+    scheduledAt
+    scheduleToken
+    createdAt
+    updatedAt
+    state
+    joinAt
+    supportNumber
+  }
+}

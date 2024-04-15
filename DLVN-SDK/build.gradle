@@ -2,6 +2,7 @@ plugins {
     id 'maven-publish'
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id("com.apollographql.apollo3") version "3.8.2"
     id "org.jetbrains.kotlin.plugin.serialization" version "1.6.0-RC"
 }
 
@@ -56,6 +57,7 @@ dependencies {
     implementation 'com.sendbird.sdk:sendbird-chat:4.14.0'
     implementation("com.google.firebase:firebase-messaging:23.4.1")
     implementation 'jp.wasabeef:glide-transformations:4.3.0'
+    implementation("com.apollographql.apollo3:apollo-runtime:3.8.2")
 }
 
 publishing {
@@ -63,11 +65,17 @@ publishing {
         release(MavenPublication) {
             groupId = 'com.github.e-doctorvn'
             artifactId = 'dlvn-sdk-android'
-            version = '1.2.1'
+            version = '1.2.12'
 
             afterEvaluate {
                 from components.release
             }
         }
+    }
+}
+
+apollo {
+    service("service") {
+        packageName.set("com.edoctor.dlvn_sdk")
     }
 }

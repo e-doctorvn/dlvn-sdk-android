@@ -20,7 +20,7 @@
         android:clipToOutline="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="54dp"
         android:padding="2dp"
         android:background="@drawable/corner_background">
         <com.sendbird.calls.SendBirdVideoView

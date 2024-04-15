@@ -1,6 +1,7 @@
 package com.edoctor.dlvn_sdk.webview
 
 import android.content.Intent
+import android.util.Log
 import android.webkit.JavascriptInterface
 import androidx.core.content.ContextCompat.startActivity
 import com.edoctor.dlvn_sdk.Constants
@@ -82,8 +83,9 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
             }
             Constants.WebviewParams.onLoginSendBird -> {
                 sdkInstance?.getSendbirdAccount()
-//                Request Mic + Cam permissions
-                mWebview?.requestCameraAndMicrophonePermissionForVideoCall()
+                if (json.has("package") && json.get("package").equals("VIDEO")) {
+                    mWebview?.requestCameraAndMicrophonePermissionForVideoCall()
+                }
             }
         }
         return true

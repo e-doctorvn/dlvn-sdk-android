@@ -2,20 +2,33 @@
 
 package com.edoctor.dlvn_sdk
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
+import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.Optional
+import com.apollographql.apollo3.exception.ApolloException
+import com.apollographql.apollo3.network.http.DefaultHttpEngine
+import com.apollographql.apollo3.network.ws.SubscriptionWsProtocol
+import com.apollographql.apollo3.network.ws.WebSocketNetworkTransport
 import com.edoctor.dlvn_sdk.helper.NotificationHelper
 import com.edoctor.dlvn_sdk.model.SBAccountResponse
 import com.edoctor.dlvn_sdk.model.SendBirdAccount
 import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdCallImpl
 import com.edoctor.dlvn_sdk.store.AppStore
 import com.edoctor.dlvn_sdk.Constants.Env
+import com.edoctor.dlvn_sdk.Constants.edrGraphQlUrlDev
+import com.edoctor.dlvn_sdk.Constants.edrGraphQlUrlProd
+import com.edoctor.dlvn_sdk.Constants.edrGraphQlWsUrlDev
+import com.edoctor.dlvn_sdk.Constants.edrGraphQlWsUrlProd
 import com.edoctor.dlvn_sdk.Constants.webViewTag
 import com.edoctor.dlvn_sdk.api.ApiService
 import com.edoctor.dlvn_sdk.api.RetrofitClient
@@ -24,16 +37,25 @@ import com.edoctor.dlvn_sdk.helper.PrefUtils
 import com.edoctor.dlvn_sdk.model.AccountInitResponse
 import com.edoctor.dlvn_sdk.sendbirdCall.CallManager
 import com.edoctor.dlvn_sdk.sendbirdCall.SendbirdChatImpl
+import com.edoctor.dlvn_sdk.type.AppointmentScheduleSort
+import com.edoctor.dlvn_sdk.type.PageLimitInput
+import com.edoctor.dlvn_sdk.type.Sort
 import com.edoctor.dlvn_sdk.webview.SdkWebView
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.JsonObject
 import com.sendbird.calls.SendBirdCall
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.create
+import java.lang.ClassCastException
 
 class EdoctorDlvnSdk(
     context: Context,
@@ -45,7 +67,10 @@ class EdoctorDlvnSdk(
     private var apiService: ApiService? = null
     private var authParams: JSONObject? = null
     private var isFetching: Boolean = false
+    private var subscriptionCreated: Boolean = false
     var isShortLinkAuthen: Boolean = false
+    private var apolloClient: ApolloClient? = null
+    private var requestPermissionLauncher: ActivityResultLauncher<Array<String>>? = null
 
     companion object {
         const val LOG_TAG = "EDOCTOR_SDK"
@@ -126,7 +151,11 @@ class EdoctorDlvnSdk(
     init {
         EdoctorDlvnSdk.context = context
         AppStore.sdkInstance = this
-
+//        if (context is AppCompatActivity) {
+////            requestPermissionLauncher = context.registerForActivityResult(
+////                ActivityResultContracts.RequestMultiplePermissions()
+////            ) { permissions -> onRequestPermissionsResult(permissions)}
+//        }
         if (apiService === null) {
             apiService = RetrofitClient(env)
                 .getInstance()
@@ -140,6 +169,7 @@ class EdoctorDlvnSdk(
 
         if (intent != null) {
             checkSavedAuthCredentials()
+            fetchInitialAppointments()
             SendbirdChatImpl.initSendbirdChat(context, edrAppId, null, null)
             SendbirdCallImpl.initSendbirdCall(context, edrAppId)
             checkAndRemoveShortLinkCredentials {
@@ -288,6 +318,7 @@ class EdoctorDlvnSdk(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun getSendbirdAccount(saveCredentials: Boolean = true) {
         try {
             if (sendBirdAccount == null || sendBirdAccount?.token == null) {
@@ -310,12 +341,16 @@ class EdoctorDlvnSdk(
                                             data.thirdParty.sendbird?.token,
                                         )
                                         // token != null: have appointmentSchedules
-                                        SendbirdCallImpl.authenticate(
-                                            context,
-                                            sendBirdAccount?.accountId.toString(),
-                                            sendBirdAccount?.token,
-                                            saveCredentials
-                                        )
+//                                        SendbirdCallImpl.authenticate(
+//                                            context,
+//                                            sendBirdAccount?.accountId.toString(),
+//                                            sendBirdAccount?.token,
+//                                            saveCredentials
+//                                        )
+                                        webView.lifecycleScope.launch {
+                                            initializeSchedulesSubscription()
+                                        }
+//                                        requestNotificationPermission()
                                     }
                                 }
                             }
@@ -341,12 +376,27 @@ class EdoctorDlvnSdk(
 
             apiService?.checkAccountExist(params)?.enqueue(object : Callback<Any> {
                 override fun onResponse(call: Call<Any>, response: Response<Any>) {
-                    if (response.body() != null) {
-                        val data = JSONObject(response.body().toString())
-                        val exist = data.get("checkAccountExist")
-                        accountExist = exist as Boolean?
-                        Log.d("zzz", "checkAccountExist: $exist")
-                        mCallback(exist)
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        try {
+                            if (responseBody != null && responseBody is String && responseBody != JSONObject.NULL) {
+                                val responseData = responseBody.toString()
+                                try {
+                                    if (responseData != JSONObject.NULL) {
+                                        val data = JSONObject(responseData)
+                                        val exist = data.optBoolean("checkAccountExist")
+                                        accountExist = exist
+                                        mCallback(exist)
+                                    }
+                                } catch (e: JSONException) {
+                                    Log.e("zzz", "Error parsing JSON", e)
+                                }
+                            } else {
+                                // Handle empty response body
+                            }
+                        } catch (_: ClassCastException) {
+
+                        }
                     }
                 }
 
@@ -389,6 +439,76 @@ class EdoctorDlvnSdk(
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
+    private suspend fun initializeSchedulesSubscription() {
+        edrAccessToken?.let {
+            if (!subscriptionCreated) {
+                try {
+                    Log.d("zzz", "initializeSchedulesSubscription: ${sendBirdAccount?.accountId}")
+                    val okHttpClient = OkHttpClient.Builder()
+                        .addInterceptor { chain ->
+                            val builder = chain.request().newBuilder()
+                            builder.header("Authorization", it)
+                            chain.proceed(builder.build())
+                        }
+                        .build()
+
+                    val subscriptionWsProtocol =
+                        SubscriptionWsProtocol.Factory(
+                            connectionPayload = { mapOf("authorization" to it) }
+                        )
+
+                    val webSocket = WebSocketNetworkTransport.Builder()
+                        .protocol(subscriptionWsProtocol)
+                        .serverUrl(if (environment == Env.SANDBOX) edrGraphQlWsUrlDev else edrGraphQlWsUrlProd)
+                        .build()
+
+                    apolloClient = ApolloClient.Builder()
+                        .serverUrl(if (environment == Env.SANDBOX) edrGraphQlUrlDev else edrGraphQlUrlProd)
+                        .subscriptionNetworkTransport(webSocket)
+                        .httpEngine(DefaultHttpEngine(okHttpClient))
+                        .build()
+
+                    subscriptionCreated = true
+
+                    val response = apolloClient!!.query(AppointmentSchedulesQuery(accountId = Optional.present(
+                        sendBirdAccount?.accountId), sort = Optional.present(
+                        AppointmentScheduleSort(createdAt = Optional.present(Sort.DESC))
+                    ), limit = Optional.present(
+                        PageLimitInput(Optional.present(0), Optional.present(12))
+                    ) )).execute()
+                    AppStore.widgetList?.updateDataList(response.data?.appointmentSchedules as List<AppointmentSchedulesQuery.AppointmentSchedule>)
+//                    AppStore.widgetList?.dataSet = response.data?.appointmentSchedules as MutableList<SubscribeToScheduleSubscription.AppointmentSchedule>
+
+                    apolloClient!!.subscription(
+                        SubscribeToScheduleSubscription(accountId = Optional.present(sendBirdAccount?.accountId))
+                    )
+                        .toFlow()
+                        .collect {
+                            Log.d("zzz", "onMessage: ${it.data}")
+                            it.data?.appointmentSchedule?.get(0)?.let { it1 ->
+                                Log.d("zzz", "handleScheduleSubscriptionMessage: $it1")
+                                handleScheduleSubscriptionMessage(
+                                    it1
+                                )
+                            }
+                        }
+                } catch (e: ApolloException) {
+                    Log.d("zzz", e.cause?.message.toString())
+                    Log.d("zzz", "Error: " + e.message.toString())
+                }
+            }
+        }
+    }
+
+    private fun handleScheduleSubscriptionMessage(data: SubscribeToScheduleSubscription.AppointmentSchedule) {
+        AppStore.widgetList?.updateData(data)
+    }
+
+    private fun fetchInitialAppointments() {
+
+    }
+
     fun handleAgreeConsentOnWeb() {
         initDLVNAccount {
             accountExist = true
@@ -396,6 +516,14 @@ class EdoctorDlvnSdk(
                 webView.reload()
             }
         }
+    }
+
+    private fun requestNotificationPermission() {
+        requestPermissionLauncher?.launch(
+            arrayOf(
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+        )
     }
 
     fun deauthenticateEDR() {
@@ -409,14 +537,22 @@ class EdoctorDlvnSdk(
 
         webView.clearCacheAndCookies(context)
         PrefUtils.removeSdkAuthData(context)
+        AppStore.widgetList?.clearDataList()
+        AppStore.updateWidgetListDisplay?.invoke("LOG_OUT")
+        webView.lifecycleScope.cancel()
         SendbirdCallImpl.deAuthenticate(context)
         SendbirdChatImpl.disconnect()
     }
 
     fun authenticateEDR(params: JSONObject) { // Goi luc login thanh cong, ko goi moi lan mo app
-        if (DLVNSendData(params)) {
-            initDLVNAccount {
-                Log.d("zzz", "initDLVNAccount success")
+        val dcid = params.getString("dcid")
+        checkAccountExist(dcid) {
+            if (it) {
+                if (DLVNSendData(params)) {
+                    initDLVNAccount {
+                        Log.d("zzz", "initDLVNAccount success")
+                    }
+                }
             }
         }
     }
@@ -497,5 +633,24 @@ class EdoctorDlvnSdk(
     private fun isNetworkConnected(): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return cm.activeNetworkInfo != null && cm.activeNetworkInfo!!.isConnected
+    }
+
+    private fun onRequestPermissionsResult(permissions: Map<String, @JvmSuppressWildcards Boolean>) {
+        try {
+            // 0 - Cam, 1 - Mic, 2 - Notification
+            val results = permissions.entries.map { it.value }
+
+            if (results[0]) {
+                NotificationHelper.initialize(context)
+            }
+
+            return
+        } catch (_: Error) {
+
+        }
+    }
+
+    fun CoroutineScope.go() = launch {
+        initializeSchedulesSubscription()
     }
 }

@@ -2,7 +2,58 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.1 (Updated: 19/03/2024)**
+Latest version: **1.2.12 (Updated: 15/04/2024)**
+
+## Version 1.2.12 (09/04/2024)
+
+- Handling `display/hide` scroll indicator when widget list has data or empty.
+- Handle cleaning up widget list & subscription when user logs out.
+
+## Version 1.2.11 (09/04/2024)
+
+- Expose `com.edoctor.dlvn_sdk.widget.AppointmentWidgetList` for DLVN to add into xml layout.
+- Remove widget after succeeded in canceling.
+
+## Version 1.2.10 (08/04/2024)
+
+- Add `textColor="@color/black"` for warning message in CancelConfirmDialog.
+
+## Version 1.2.9 (08/04/2024)
+
+- Release appointment widget support to use in DC app:
+  - Add `ApolloClient`, `AppointmentListAdapter`
+  - Add dialogs for widget's actions (cancel, confirm)
+
+## Version 1.2.8 (08/04/2024)
+
+- Fix crashing app bug when meets error in parsing response from `checkAccountExist`: add null safe with `JSONObject.NULL`
+
+## Version 1.2.7 (28/03/2024)
+
+- (Failed) Fix crashing app bug when meets error in parsing response from `checkAccountExist`.
+
+## Version 1.2.6 (26/03/2024)
+
+- Detect whether user is using old SDK version which does not support video calling.
+
+## Version 1.2.5 (25/03/2024)
+
+- **Remove**: Request Notification permission when user opens app (already used EDR's services) to fix app crashing.
+
+## Version 1.2.4 (22/03/2024)
+
+- Only request Camera + Microphone permissions when booking VIDEO consultant.
+- Request Notification permission when user opens app (already used EDR's services).
+
+## Version 1.2.3 (21/03/2024)
+
+- Remove `pictureInPicture` support for VideoCallActivity.
+- Fix infinite loading when upload image to doctor while having video call.
+
+## Version 1.2.2 (20/03/2024)
+
+- Remove `silent = true` for call notification.
+- Lock orientation `portrait` for Call activities.
 
 ## Version 1.2.1 (19/03/2024)
 

@@ -52,6 +52,7 @@ class IncomingCallActivity : AppCompatActivity() {
     private var bgIncoming: ImageView? = null
     private var callerAvatar: ImageView? = null
 
+    private var loading: Boolean = false
     private var timeoutValue: Int = 60
     private lateinit var mainHandler: Handler
     private var mReceiver: CallActionReceiver? = null
@@ -154,6 +155,7 @@ class IncomingCallActivity : AppCompatActivity() {
 
         if (callManager?.acceptCallFromQuitState == true) {
             bottomStack!!.visibility = View.GONE
+            callManager?.acceptCallFromQuitState = false
             if (checkMicCamPermissions()) {
                 val context: Context = this@IncomingCallActivity
                 val intent = Intent(context, VideoCallActivity::class.java)
@@ -202,43 +204,60 @@ class IncomingCallActivity : AppCompatActivity() {
 //        setUpAnimation()
 
         acceptCallBtn!!.setOnClickListener {
-            if (checkMicCamPermissions()) {
-                val context: Context = this@IncomingCallActivity
-                val intent = Intent(context, VideoCallActivity::class.java)
-                context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
+            if (!loading) {
+                loading = true
+                if (checkMicCamPermissions()) {
+                    val context: Context = this@IncomingCallActivity
+                    val intent = Intent(context, VideoCallActivity::class.java)
+                    context.startActivity(
+                        intent,
+                        ActivityOptions.makeSceneTransitionAnimation(this).toBundle()
+                    )
 
-                finish()
-            } else {
-                var dialog: AlertDialog? = null
-                val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-                builder.setMessage(getString(R.string.request_calling_permissions_msg))
-                builder.setPositiveButton(getString(R.string.end_time_ok_label)) { _, _ ->
-                    dialog?.dismiss()
-                    if (
-                        ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)
-                        || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)
-                        || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS)
-                    ) {
-                        requestPermissions(
-                            arrayOf(
-                                Manifest.permission.RECORD_AUDIO,
-                                Manifest.permission.CAMERA,
+                    finish()
+                } else {
+                    var dialog: AlertDialog? = null
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+                    builder.setMessage(getString(R.string.request_calling_permissions_msg))
+                    builder.setPositiveButton(getString(R.string.end_time_ok_label)) { _, _ ->
+                        loading = false
+                        dialog?.dismiss()
+                        if (
+                            ActivityCompat.shouldShowRequestPermissionRationale(
+                                this,
+                                Manifest.permission.RECORD_AUDIO
+                            )
+                            || ActivityCompat.shouldShowRequestPermissionRationale(
+                                this,
+                                Manifest.permission.CAMERA
+                            )
+                            || ActivityCompat.shouldShowRequestPermissionRationale(
+                                this,
                                 Manifest.permission.POST_NOTIFICATIONS
-                            ),
-                            PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
-                        )
-                        PermissionManager.setPermissionAsked(this, NEEDED_CALLING_PERMISSIONS)
-                    } else {
-                        startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                            data = Uri.fromParts("package", packageName, null)
-                        })
+                            )
+                        ) {
+                            requestPermissions(
+                                arrayOf(
+                                    Manifest.permission.RECORD_AUDIO,
+                                    Manifest.permission.CAMERA,
+                                    Manifest.permission.POST_NOTIFICATIONS
+                                ),
+                                PermissionManager.ALL_PERMISSIONS_REQUEST_CODE
+                            )
+                            PermissionManager.setPermissionAsked(this, NEEDED_CALLING_PERMISSIONS)
+                        } else {
+                            startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.fromParts("package", packageName, null)
+                            })
+                        }
                     }
+                    builder.setNegativeButton(getString(R.string.btn_close_label)) { _, _ ->
+                        loading = false
+                        dialog?.dismiss()
+                    }
+                    dialog = builder.create()
+                    dialog.show()
                 }
-                builder.setNegativeButton(getString(R.string.btn_close_label)) { _, _ ->
-                    dialog?.dismiss()
-                }
-                dialog = builder.create()
-                dialog.show()
             }
         }
 

@@ -68,7 +68,6 @@ object NotificationHelper {
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(fullScreenIntent)
-            .setSilent(true)
             .setFullScreenIntent(fullScreenIntent, true)
             .addAction(R.drawable.end_call_24, context.getString(R.string.incoming_decline_label), declineIntent)
             .addAction(R.drawable.accept_call_24, context.getString(R.string.incoming_accept_label), acceptIntent)

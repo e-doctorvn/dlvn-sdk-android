@@ -22,10 +22,12 @@
     <string name="incall_on_mic_msg">Bạn đã bật Mic</string>
     <string name="incall_off_cam_msg">Bạn đã tắt Cam</string>
     <string name="incall_on_cam_msg">Bạn đã bật Cam</string>
+    <string name="need_show_on_lockscreen_permission_label">Quyền Hiển thị trên màn hình khoá</string>
     <string name="request_noti_permission_msg">Quý khách vui lòng cấp quyền Thông báo để thực hiện thao tác.</string>
     <string name="request_permission_msg">Quý khách vui lòng cấp quyền Máy ảnh để thực hiện thao tác.</string>
     <string name="request_rational_calling_permissions_msg">Quý khách vui lòng cấp những quyền sau để sử dụng chức năng gọi video.</string>
     <string name="request_calling_permissions_msg">Quý khách vui lòng cấp quyền Máy ảnh, Ghi âm và Thông báo để sử dụng chức năng gọi video.</string>
+    <string name="request_show_on_lockscreen_permission_msg">Để có thể có trải nghiệm tốt nhất, quý khách vui lòng cho phép quyền HIỂN THỊ TRÊN MÀN HÌNH KHOÁ trong Cài đặt ứng dụng.</string>
     <string name="no_internet_msg">Không có kết nối internet.\nVui lòng kiểm tra lại.</string>
     <string name="common_error_msg">Đã có lỗi xảy ra.\nVui lòng thử lại.</string>
     <string name="ssl_error_confirm_msg">Quý khách có muốn tiếp tục với liên kết này không?</string>

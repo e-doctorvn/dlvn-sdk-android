@@ -66,6 +66,8 @@ class VideoCallActivity : AppCompatActivity() {
     private var bottomOverlay: RelativeLayout? = null
     private var bottomContainer: LinearLayout? = null
     private var chatLoading: ProgressBar? = null
+
+    private var loading: Boolean = false
     private var totalCallTime: Int = 1800
     private lateinit var mainHandler: Handler
 //    private lateinit var audioDialog: AudioOutputDialog
@@ -187,7 +189,9 @@ class VideoCallActivity : AppCompatActivity() {
         }
 
         btnOpenChat!!.setOnClickListener {
-            openWebViewCallActivity()
+            if (!loading) {
+                openWebViewCallActivity()
+            }
         }
 
         btnRotateCam!!.setOnClickListener {
@@ -217,22 +221,20 @@ class VideoCallActivity : AppCompatActivity() {
     }
 
     private fun openWebViewCallActivity() {
+        loading = true
         chatLoading!!.visibility = View.VISIBLE
         btnOpenChat!!.visibility = View.GONE
 
         val intent = Intent(this, WebViewCallActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        loading = false
         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
     }
 
     @SuppressLint("ShowToast", "InflateParams")
     private fun showOutputActionToast(messageId: Int) {
         val inflater = layoutInflater
-        val layout: View = inflater.inflate(
-            R.layout.media_toast,
-            null
-        )
-
+        val layout: View = inflater.inflate(R.layout.media_toast,null)
         val text = layout.findViewById<View>(R.id.tv_media_toast) as TextView
         text.text = getString(messageId)
 
@@ -245,17 +247,17 @@ class VideoCallActivity : AppCompatActivity() {
 
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val pictureInPictureParamsBuilder = PictureInPictureParams.Builder()
-            pictureInPictureParamsBuilder.setAspectRatio(Rational(9, 16))
-            pictureInPictureParamsBuilder.setSourceRectHint(Rect(0, 0, 140, 100))
-            val pictureInPictureParams = pictureInPictureParamsBuilder.build()
-            enterPictureInPictureMode(pictureInPictureParams)
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                enterPictureInPictureMode()
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            val pictureInPictureParamsBuilder = PictureInPictureParams.Builder()
+//            pictureInPictureParamsBuilder.setAspectRatio(Rational(9, 16))
+//            pictureInPictureParamsBuilder.setSourceRectHint(Rect(0, 0, 140, 100))
+//            val pictureInPictureParams = pictureInPictureParamsBuilder.build()
+//            enterPictureInPictureMode(pictureInPictureParams)
+//        } else {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                enterPictureInPictureMode()
+//            }
+//        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

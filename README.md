@@ -2,7 +2,7 @@
 
 EDR - DLVN Android SDK
 
-## Version 1.2.1
+## Version 1.2.12
 
 ## Requirements
 
@@ -26,7 +26,7 @@ This dependency requires:
 
   ```sh
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.2.1'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.2.12'
         implementation 'com.google.firebase:firebase-messaging:23.4.0'
     }
   ```
@@ -212,3 +212,16 @@ Open URL from dynamic link. The URL should be full format with `data` and other 
 | :-------- | :---------------- | :----------- |
 | `fm`      | `FragmentManager` | **Required** |
 | `url`     | `String`          | **Required** |
+
+#### Home widget
+
+To display appointment widgets from EDR, you need to add the view into your xml layout file:
+
+```xml
+  <com.edoctor.dlvn_sdk.widget.AppointmentWidgetList
+    android:id="@+id/widgetList"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/>
+```
+
+And that's it!

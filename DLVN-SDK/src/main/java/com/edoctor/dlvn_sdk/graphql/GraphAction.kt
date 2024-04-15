@@ -35,6 +35,18 @@ object GraphAction {
                 "    appointmentScheduleId\n" +
                 "  }\n" +
                 "}"
+        const val cancelAppointmentSchedule = "mutation CancelAppointment(\$eClinicId: String!, \$appointmentScheduleId: String!) {\n" +
+                "  eClinicCancel(eClinicId: \$eClinicId, appointmentScheduleId: \$appointmentScheduleId) {\n" +
+                "    appointmentScheduleId\n" +
+                "    state\n" +
+                "  }\n" +
+                "}"
+        const val confirmAppointmentSchedule = "mutation EClinicJoin(\$eClinicId: String!, \$appointmentScheduleId: String!) {\n" +
+                "  eClinicJoin(eClinicId: \$eClinicId, appointmentScheduleId: \$appointmentScheduleId) {\n" +
+                "    appointmentScheduleId\n" +
+                "    state\n" +
+                "  }\n" +
+                "}"
     }
     object Query {
         const val sendBirdAccount = "query SendbirdAccount {\n" +
