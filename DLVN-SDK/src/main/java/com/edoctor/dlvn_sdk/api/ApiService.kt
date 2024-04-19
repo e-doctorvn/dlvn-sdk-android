@@ -34,5 +34,5 @@ interface ApiService {
     fun expireEClinicRinging(@Header("Authorization") token: String, @Body params: JsonObject): Call<Any>
 
     @POST("graphql")
-    fun getAppointmentDetail(@Body params: JsonObject): Call<AppointmentDetailResponse>
+    fun getAppointmentDetail(@Header("Authorization") token: String, @Body params: JsonObject): Call<AppointmentDetailResponse>
 }

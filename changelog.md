@@ -2,7 +2,16 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.8 (Updated: 08/04/2024)**
+Latest version: **1.2.14 (Updated: 19/04/2024)**
+Full-feature version: **1.2.13 (Updated: 19/04/2024)**
+
+## Version 1.2.14 (19/04/2024)
+
+- Fix app crashing when `getAppointmentDetail` return `null` due to missing authen token.
+
+<!-- There are already published versions from 1.2.9 to 1.2.13 which support home widget -->
+<!-- This build has latest version number but lack of ApolloGraphql support -->
+<!-- Full-feature version is 1.2.13 -->
 
 ## Version 1.2.8 (08/04/2024)
 

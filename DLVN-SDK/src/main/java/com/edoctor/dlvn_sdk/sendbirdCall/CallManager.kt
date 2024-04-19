@@ -241,20 +241,22 @@ class CallManager {
                 params.addProperty("variables", variables.toString())
 
                 EdoctorDlvnSdk.edrAccessToken?.let {
-                    apiService?.getAppointmentDetail(params)
+                    apiService?.getAppointmentDetail(it, params)
                         ?.enqueue(object : Callback<AppointmentDetailResponse> {
                             override fun onResponse(
                                 call: Call<AppointmentDetailResponse>,
                                 response: Response<AppointmentDetailResponse>
                             ) {
                                 val data = response.body()?.appointmentSchedules?.get(0)
-                                if (!data?.thirdParty?.sendbird?.channelUrl.isNullOrEmpty()) {
-                                    appointmentDetail?.channelUrl =
-                                        data!!.thirdParty.sendbird.channelUrl.toString()
+                                if (data != null && data != JSONObject.NULL) {
+                                    if (!data.thirdParty.sendbird.channelUrl.isNullOrEmpty()) {
+                                        appointmentDetail?.channelUrl =
+                                            data.thirdParty.sendbird.channelUrl.toString()
+                                    }
+                                    appointmentDetail?.doctor = data.doctor
+                                    appointmentDetail?.callDuration = data.callDuration
+                                    mCallback(appointmentDetail)
                                 }
-                                appointmentDetail?.doctor = data?.doctor!!
-                                appointmentDetail?.callDuration = data.callDuration
-                                mCallback(appointmentDetail)
                             }
 
                             override fun onFailure(
