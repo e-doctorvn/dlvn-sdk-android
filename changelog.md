@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.15 (Updated: 23/04/2024)**
+Latest version: **1.2.16 (Updated: 10/05/2024)**
+
+## Version 1.2.16 (10/05/2024)
+
+- Add `callId` into `eClinicEndCall` api.
 
 ## Version 1.2.15 (23/04/2024)
 
