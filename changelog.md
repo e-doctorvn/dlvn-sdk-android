@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.16 (Updated: 10/05/2024)**
+Latest version: **1.2.17 (Updated: 30/05/2024)**
+
+## Version 1.2.17 (30/05/2024)
+
+- Uncomment `authenticateSendBirdCall` function 😭.
 
 ## Version 1.2.16 (10/05/2024)
 

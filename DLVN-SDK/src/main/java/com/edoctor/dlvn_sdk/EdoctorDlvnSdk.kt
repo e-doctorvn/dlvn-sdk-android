@@ -341,12 +341,12 @@ class EdoctorDlvnSdk(
                                             data.thirdParty.sendbird?.token,
                                         )
                                         // token != null: have appointmentSchedules
-//                                        SendbirdCallImpl.authenticate(
-//                                            context,
-//                                            sendBirdAccount?.accountId.toString(),
-//                                            sendBirdAccount?.token,
-//                                            saveCredentials
-//                                        )
+                                        SendbirdCallImpl.authenticate(
+                                            context,
+                                            sendBirdAccount?.accountId.toString(),
+                                            sendBirdAccount?.token,
+                                            saveCredentials
+                                        )
                                         webView.lifecycleScope.launch {
                                             initializeSchedulesSubscription()
                                         }
@@ -486,11 +486,13 @@ class EdoctorDlvnSdk(
                         .toFlow()
                         .collect {
                             Log.d("zzz", "onMessage: ${it.data}")
-                            it.data?.appointmentSchedule?.get(0)?.let { it1 ->
-                                Log.d("zzz", "handleScheduleSubscriptionMessage: $it1")
-                                handleScheduleSubscriptionMessage(
-                                    it1
-                                )
+                            if (it.data?.appointmentSchedule?.isNotEmpty() == true) {
+                                it.data?.appointmentSchedule?.get(0)?.let { it1 ->
+                                    Log.d("zzz", "handleScheduleSubscriptionMessage: $it1")
+                                    handleScheduleSubscriptionMessage(
+                                        it1
+                                    )
+                                }
                             }
                         }
                 } catch (e: ApolloException) {
