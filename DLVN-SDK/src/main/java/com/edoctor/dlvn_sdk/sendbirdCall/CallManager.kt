@@ -220,6 +220,7 @@ class CallManager {
         if (directCall?.customItems?.contains("appointmentScheduleId") == true && directCall?.customItems?.contains("eClinicId")!!) {
             variables.put("eClinicId", directCall?.customItems?.get("eClinicId"))
             variables.put("appointmentScheduleId", directCall?.customItems?.get("appointmentScheduleId"))
+            variables.put("callId", directCall?.callId)
             params.addProperty("query", GraphAction.Mutation.eClinicEndCall)
             params.addProperty("variables", variables.toString())
 

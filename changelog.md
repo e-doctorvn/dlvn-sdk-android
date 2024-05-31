@@ -2,7 +2,29 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.13 (Updated: 19/04/2024)**
+Latest version: **1.2.18 (Updated: 31/05/2024)**
+
+## Version 1.2.18 (31/05/2024)
+
+- Set `sdkSupportConsultant` as session storage's item on `onPageFinished`.
+
+## Version 1.2.17 (30/05/2024)
+
+- Uncomment `authenticateSendBirdCall` function 😭.
+
+## Version 1.2.16 (10/05/2024)
+
+- Add `callId` into `eClinicEndCall` api.
+
+## Version 1.2.15 (23/04/2024)
+
+- Re-publish to make version number clear.
+- Same code as version `1.2.13`
+
+## Version 1.2.14 (19/04/2024) (BATCH FIX)
+
+- Fix app crashing when handling `getAppointmentDetail`'s `null` data due to missing authen token.
+- Back to different branch which does not have widget implementation.
 
 ## Version 1.2.13 (19/04/2024)
 

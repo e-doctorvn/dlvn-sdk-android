@@ -243,6 +243,8 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 }
 
                 override fun onPageFinished(view: WebView?, url: String?) {
+                    view?.evaluateJavascript("sessionStorage.setItem(\"sdkSupportConsultant\", \"${true}\");") {}
+                    view?.evaluateJavascript("sessionStorage.setItem(\"sdkSupportVideoCall\", \"${true}\");") {}
                     checkTimeoutLoadWebView = true
                     Handler().postDelayed({
                         if (loading.visibility != View.GONE && hideLoading) {
@@ -264,8 +266,8 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                         view?.evaluateJavascript("sessionStorage.setItem(\"accessTokenEdr\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
                         view?.evaluateJavascript("sessionStorage.setItem(\"upload_token\", \"${EdoctorDlvnSdk.edrAccessToken}\");") {}
                         view?.evaluateJavascript("sessionStorage.setItem(\"accessTokenDlvn\", \"${EdoctorDlvnSdk.dlvnAccessToken}\");") {}
-                        view?.evaluateJavascript("sessionStorage.setItem(\"sdkSupportConsultant\", ${true});") {}
-                        view?.evaluateJavascript("sessionStorage.setItem(\"sdkSupportVideoCall\", ${true});") {}
+                        view?.evaluateJavascript("sessionStorage.setItem(\"sdkSupportConsultant\", \"${true}\");") {}
+                        view?.evaluateJavascript("sessionStorage.setItem(\"sdkSupportVideoCall\", \"${true}\");") {}
                     }
                     if (EdoctorDlvnSdk.accountExist == false) {
                         view?.evaluateJavascript("sessionStorage.setItem(\"consent\", ${true});") {}

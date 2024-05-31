@@ -30,8 +30,8 @@ object GraphAction {
                 "    }\n" +
                 "  }\n" +
                 "}"
-        const val eClinicEndCall = "mutation EClinicEndCall(\$eClinicId: String!, \$appointmentScheduleId: String!) {\n" +
-                "  eClinicEndCall(eClinicId: \$eClinicId, appointmentScheduleId: \$appointmentScheduleId) {\n" +
+        const val eClinicEndCall = "mutation EClinicEndCall(\$eClinicId: String!, \$appointmentScheduleId: String!, \$callId: String) {\n" +
+                "  eClinicEndCall(eClinicId: \$eClinicId, appointmentScheduleId: \$appointmentScheduleId, \$callId: String) {\n" +
                 "    appointmentScheduleId\n" +
                 "  }\n" +
                 "}"
