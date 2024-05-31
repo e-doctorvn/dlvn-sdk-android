@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.17 (Updated: 30/05/2024)**
+Latest version: **1.2.18 (Updated: 31/05/2024)**
+
+## Version 1.2.18 (31/05/2024)
+
+- Set `sdkSupportConsultant` as session storage's item on `onPageFinished`.
 
 ## Version 1.2.17 (30/05/2024)
 
