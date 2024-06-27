@@ -362,16 +362,15 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return object : Dialog(requireActivity(), theme) {
+            @Deprecated("Deprecated in Java")
             override fun onBackPressed() {
-                if (myWebView.url == domain) {
-                    selfClose()
-                } else if (myWebView.canGoBack()) {
-                    myWebView.goBack()
-//                    if (myWebView.url?.contains("/phong-tu-van") == false) {
-//                        myWebView.goBack()
-//                    }
-                } else {
-                    dismiss()
+                requireActivity().runOnUiThread {
+                    if (myWebView.url == domain) {
+                        selfClose()
+                    }
+                    if (!myWebView.canGoBack()) {
+                        selfClose()
+                    }
                 }
             }
         }
