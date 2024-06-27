@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.18 (Updated: 31/05/2024)**
+Latest version: **1.2.19 (Updated: 27/06/2024)**
+
+## Version 1.2.19 (27/06/2024)
+
+- Update handling WebView `goBack`.
 
 ## Version 1.2.18 (31/05/2024)
 
