@@ -253,7 +253,10 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                             EdoctorDlvnSdk.debounceWVShortLink = false
 
                             requireActivity().runOnUiThread {
-                                requestPostNotificationPermission()
+//                                requestPostNotificationPermission()
+                                if (!EdoctorDlvnSdk.dlvnAccessToken.isNullOrEmpty()) {
+                                    requestCameraAndMicrophonePermissionForVideoCall()
+                                }
                             }
                         }
                         super.onPageFinished(view, url)
