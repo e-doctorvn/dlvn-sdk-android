@@ -2,7 +2,15 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.18 (Updated: 31/05/2024)**
+Latest version: **1.2.20 (Updated: 17/07/2024)**
+
+## Version 1.2.20 (17/07/2024)
+
+- Request call `permissions`: Camera, Microphone & Notification when open WebView with `authenticated` state.
+
+## Version 1.2.19 (27/06/2024)
+
+- Update handling WebView `goBack`.
 
 ## Version 1.2.18 (31/05/2024)
 

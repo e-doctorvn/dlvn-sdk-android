@@ -31,13 +31,14 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                 if (CallManager.getInstance()?.directCall != null) {
                     CallManager.getInstance()?.closeWebViewActivity?.invoke()
                 } else {
-                    // mWebview?.requireActivity()?.runOnUiThread { mWebview?.selfClose() }
                     mWebview?.requireActivity()?.runOnUiThread {
-                        if (mWebview!!.domain == JSONObject(json.getString("data")).getString("url")) {
+                        if (mWebview!!.myWebView.canGoBack()) {
+                            mWebview!!.myWebView.goBack()
+                        } else {
                             mWebview!!.selfClose()
-                            if (sdkInstance?.isShortLinkAuthen == true) {
-                                sdkInstance?.handleDeauthenticateShortLink()
-                            }
+                        }
+                        if (sdkInstance?.isShortLinkAuthen == true) {
+                            sdkInstance?.handleDeauthenticateShortLink()
                         }
                     }
                 }
