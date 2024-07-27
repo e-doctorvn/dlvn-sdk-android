@@ -1,5 +1,6 @@
 package com.edoctor.dlvn_sdk.sendbirdCall
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.app.ActivityManager.RunningAppProcessInfo
@@ -7,7 +8,9 @@ import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
 import com.edoctor.dlvn_sdk.R
 import com.edoctor.dlvn_sdk.helper.NotificationHelper
@@ -58,6 +61,7 @@ object SendbirdCallImpl {
 
         val UNIQUE_HANDLER_ID = UUID.randomUUID().toString()
         SendBirdCall.addListener(UNIQUE_HANDLER_ID, object : SendBirdCallListener() {
+            @SuppressLint("UnspecifiedRegisterReceiverFlag")
             override fun onRinging(call: DirectCall) {
                 val ongoingCallCount: Int = SendBirdCall.ongoingCallCount
                 if (ongoingCallCount >= 2) {
@@ -89,7 +93,12 @@ object SendbirdCallImpl {
 
                     val filter = IntentFilter()
                     filter.addAction("CallAction")
-                    context.registerReceiver(CallActionReceiver(), filter)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        context.registerReceiver(CallActionReceiver(), filter,
+                            Context.RECEIVER_NOT_EXPORTED)
+                    } else {
+                        context.registerReceiver(CallActionReceiver(), filter)
+                    }
                 }
             }
 
