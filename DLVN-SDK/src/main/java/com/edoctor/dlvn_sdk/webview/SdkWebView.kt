@@ -245,22 +245,24 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 override fun onPageFinished(view: WebView?, url: String?) {
                     view?.evaluateJavascript("sessionStorage.setItem(\"sdkSupportConsultant\", \"${true}\");") {}
                     view?.evaluateJavascript("sessionStorage.setItem(\"sdkSupportVideoCall\", \"${true}\");") {}
-                    checkTimeoutLoadWebView = true
-                    Handler().postDelayed({
-                        if (loading.visibility != View.GONE && hideLoading) {
-                            hideLoading = false
-                            loading.visibility = View.GONE
-                            EdoctorDlvnSdk.debounceWVShortLink = false
-
-                            requireActivity().runOnUiThread {
-//                                requestPostNotificationPermission()
-                                if (!EdoctorDlvnSdk.dlvnAccessToken.isNullOrEmpty()) {
-                                    requestCameraAndMicrophonePermissionForVideoCall()
-                                }
+                    try {
+                        checkTimeoutLoadWebView = true
+                        Handler().postDelayed({
+                            if (loading.visibility != View.GONE && hideLoading) {
+                                hideLoading = false
+                                loading.visibility = View.GONE
+                                EdoctorDlvnSdk.debounceWVShortLink = false
+                            }
+                            super.onPageFinished(view, url)
+                        }, 2250)
+                        requireActivity().runOnUiThread {
+                            if (!EdoctorDlvnSdk.dlvnAccessToken.isNullOrEmpty()) {
+                                requestCameraAndMicrophonePermissionForVideoCall()
                             }
                         }
-                        super.onPageFinished(view, url)
-                    }, 2250)
+                    } catch (e: Exception) {
+                        Log.d("zzz", e.toString())
+                    }
                 }
 
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -428,13 +430,22 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     }
 
     fun requestCameraAndMicrophonePermissionForVideoCall() {
-        requestMultipleCallPermissionLauncher?.launch(
-            arrayOf(
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.CAMERA,
-                Manifest.permission.POST_NOTIFICATIONS
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestMultipleCallPermissionLauncher?.launch(
+                arrayOf(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
             )
-        )
+        } else {
+            requestMultipleCallPermissionLauncher?.launch(
+                arrayOf(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+                )
+            )
+        }
     }
 
     @Throws(IOException::class)
@@ -517,38 +528,40 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
 
             val results = permissions.entries.map { it.value }
-            val availableBelowAndroid11 = Build.VERSION.SDK_INT < 30 && results[0] && results[1]
-            val availableAboveAndroid11 = Build.VERSION.SDK_INT >= 30 && results[0]
+            if (results.isNotEmpty()) {
+                val availableBelowAndroid11 = Build.VERSION.SDK_INT < 30 && results[0] && results[1]
+                val availableAboveAndroid11 = Build.VERSION.SDK_INT >= 30 && results[0]
 
-            if (availableAboveAndroid11 || availableBelowAndroid11) {
-                val photoFile: File = createImageFile()
-                mCM = photoFile.toUri().toString()
+                if (availableAboveAndroid11 || availableBelowAndroid11) {
+                    val photoFile: File = createImageFile()
+                    mCM = photoFile.toUri().toString()
 
-                val captureImgUri =
-                    FileProvider.getUriForFile(
-                        requireContext(),
-                        requireContext().applicationContext.packageName + ".com.edoctor.application.provider",
-                        photoFile
-                    )
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
-                takePictureIntent.putExtra("return-data", false)
-                takePictureIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                    val captureImgUri =
+                        FileProvider.getUriForFile(
+                            requireContext(),
+                            requireContext().applicationContext.packageName + ".com.edoctor.application.provider",
+                            photoFile
+                        )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImgUri)
+                    takePictureIntent.putExtra("return-data", false)
+                    takePictureIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
 
-                val intentArray: Array<Intent> = arrayOf(takePictureIntent)
+                    val intentArray: Array<Intent> = arrayOf(takePictureIntent)
 
-                if (webViewCallActivity == null) {
-                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
+                    if (webViewCallActivity == null) {
+                        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
+                    }
                 }
-            }
-            // SELECT IMAGES
-            contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
-            contentSelectionIntent.type = "*/*"
-            contentSelectionIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                // SELECT IMAGES
+                contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
+                contentSelectionIntent.type = "*/*"
+                contentSelectionIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
 
-            chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
-            chooserIntent.putExtra(Intent.EXTRA_TITLE, "Chọn ảnh từ")
-            chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            startActivityForResult(chooserIntent, FCR)
+                chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
+                chooserIntent.putExtra(Intent.EXTRA_TITLE, "Chọn ảnh từ")
+                chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                startActivityForResult(chooserIntent, FCR)
+            }
             return
         } catch (_: Error) {
 
@@ -560,7 +573,10 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             // 0 - Cam, 1 - Mic, 2 - Notification
             val results = permissions.entries.map { it.value }
 
-            if (results[0]) {
+            if (results.isNotEmpty() && results.size > 2 && results[2]) {
+                NotificationHelper.initialize(EdoctorDlvnSdk.context)
+            }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                 NotificationHelper.initialize(EdoctorDlvnSdk.context)
             }
 //            if (Build.MANUFACTURER.equals("Google", true)) {

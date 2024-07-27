@@ -2,7 +2,12 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.20 (Updated: 17/07/2024)**
+Latest version: **1.2.21 (Updated: 27/07/2024)**
+
+## Version 1.2.21 (27/07/2024)
+
+- Null and empty check results of call permissions request launcher.
+- Add flag `RECEIVER_NOT_EXPORTED` to `registerReceiver` function on call ringing event.
 
 ## Version 1.2.20 (17/07/2024)
 
