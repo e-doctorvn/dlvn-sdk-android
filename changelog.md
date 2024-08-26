@@ -2,7 +2,13 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.21 (Updated: 27/07/2024)**
+Latest version: **1.2.22 (Updated: 26/08/2024)**
+
+## Version 1.2.22 (26/08/2024)
+
+- Add `foregroundServiceType` and `FOREGROUND_SERVICE` permissions.
+- Upgrade `targetSdk` to `34`
+- Handle request call permissions in SDK's init function.
 
 ## Version 1.2.21 (27/07/2024)
 
