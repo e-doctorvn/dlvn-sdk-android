@@ -16,9 +16,9 @@ class ScrollIndicatorView(context: Context, attrs: AttributeSet?) : View(context
         invalidate()
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         // Draw the indicator line
-        canvas?.drawLine(indicatorPosition, 0f, indicatorPosition, height.toFloat(), paint)
+        canvas.drawLine(indicatorPosition, 0f, indicatorPosition, height.toFloat(), paint)
     }
 }

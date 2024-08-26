@@ -7,9 +7,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -45,7 +47,6 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.JsonObject
 import com.sendbird.calls.SendBirdCall
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
@@ -151,11 +152,9 @@ class EdoctorDlvnSdk(
     init {
         EdoctorDlvnSdk.context = context
         AppStore.sdkInstance = this
-//        if (context is AppCompatActivity) {
-////            requestPermissionLauncher = context.registerForActivityResult(
-////                ActivityResultContracts.RequestMultiplePermissions()
-////            ) { permissions -> onRequestPermissionsResult(permissions)}
-//        }
+        requestPermissionLauncher = (context as? AppCompatActivity)?.registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions -> onRequestPermissionsResult(permissions)}
         if (apiService === null) {
             apiService = RetrofitClient(env)
                 .getInstance()
@@ -169,7 +168,6 @@ class EdoctorDlvnSdk(
 
         if (intent != null) {
             checkSavedAuthCredentials()
-            fetchInitialAppointments()
             SendbirdChatImpl.initSendbirdChat(context, edrAppId, null, null)
             SendbirdCallImpl.initSendbirdCall(context, edrAppId)
             checkAndRemoveShortLinkCredentials {
@@ -293,6 +291,7 @@ class EdoctorDlvnSdk(
                             getSendbirdAccount()
                         } else {
                             showError(context.getString(R.string.common_error_msg))
+                            mCallback(null)
                         }
                         isFetching = false
                     }
@@ -304,6 +303,7 @@ class EdoctorDlvnSdk(
                             message = context.getString(R.string.no_internet_msg)
                         }
                         showError(message)
+                        webView.selfClose()
                         t.printStackTrace()
                         isFetching = false
                     }
@@ -318,7 +318,6 @@ class EdoctorDlvnSdk(
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     fun getSendbirdAccount(saveCredentials: Boolean = true) {
         try {
             if (sendBirdAccount == null || sendBirdAccount?.token == null) {
@@ -350,7 +349,7 @@ class EdoctorDlvnSdk(
                                         webView.lifecycleScope.launch {
                                             initializeSchedulesSubscription()
                                         }
-//                                        requestNotificationPermission()
+//                                        requestCallPermissions()
                                     }
                                 }
                             }
@@ -507,10 +506,6 @@ class EdoctorDlvnSdk(
         AppStore.widgetList?.updateData(data)
     }
 
-    private fun fetchInitialAppointments() {
-
-    }
-
     fun handleAgreeConsentOnWeb() {
         initDLVNAccount {
             accountExist = true
@@ -520,12 +515,23 @@ class EdoctorDlvnSdk(
         }
     }
 
-    private fun requestNotificationPermission() {
-        requestPermissionLauncher?.launch(
-            arrayOf(
-                Manifest.permission.POST_NOTIFICATIONS
+    private fun requestCallPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher?.launch(
+                arrayOf(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
             )
-        )
+        } else {
+            requestPermissionLauncher?.launch(
+                arrayOf(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.CAMERA,
+                )
+            )
+        }
     }
 
     fun deauthenticateEDR() {
@@ -600,6 +606,7 @@ class EdoctorDlvnSdk(
         if (!dlvnToken.isNullOrEmpty() && !edrToken.isNullOrEmpty()) {
             edrAccessToken = edrToken
             dlvnAccessToken = dlvnToken
+            requestCallPermissions()
         }
     }
 
@@ -642,7 +649,10 @@ class EdoctorDlvnSdk(
             // 0 - Cam, 1 - Mic, 2 - Notification
             val results = permissions.entries.map { it.value }
 
-            if (results[0]) {
+            if (results.isNotEmpty() && results.size > 2 && results[2]) {
+                NotificationHelper.initialize(context)
+            }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                 NotificationHelper.initialize(context)
             }
 
