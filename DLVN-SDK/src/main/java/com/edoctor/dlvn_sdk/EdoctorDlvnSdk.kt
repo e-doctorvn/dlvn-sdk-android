@@ -152,9 +152,9 @@ class EdoctorDlvnSdk(
     init {
         EdoctorDlvnSdk.context = context
         AppStore.sdkInstance = this
-        requestPermissionLauncher = (context as? AppCompatActivity)?.registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ) { permissions -> onRequestPermissionsResult(permissions)}
+//        requestPermissionLauncher = (context as? AppCompatActivity)?.registerForActivityResult(
+//            ActivityResultContracts.RequestMultiplePermissions()
+//        ) { permissions -> onRequestPermissionsResult(permissions)}
         if (apiService === null) {
             apiService = RetrofitClient(env)
                 .getInstance()
@@ -606,7 +606,7 @@ class EdoctorDlvnSdk(
         if (!dlvnToken.isNullOrEmpty() && !edrToken.isNullOrEmpty()) {
             edrAccessToken = edrToken
             dlvnAccessToken = dlvnToken
-            requestCallPermissions()
+//            requestCallPermissions()
         }
     }
 

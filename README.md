@@ -2,13 +2,13 @@
 
 EDR - DLVN Android SDK
 
-## Version 1.2.23
+## Version 1.2.24
 
 ## Requirements
 
 This dependency requires:
 
-- **Compile SDK API level 33 (or later)** in the main application (`compileSdk 33 //or later`)
+- **Compile SDK API level 34 (or later)** in the main application (`compileSdk 34 //or later`)
 - Target at least **Android 5.0 - API level 21 (or later)** (`minSdk 21`)
 
 ## Installation
@@ -26,7 +26,7 @@ This dependency requires:
 
   ```sh
     dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.2.23'
+        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.2.24'
         implementation 'com.google.firebase:firebase-messaging:23.4.0'
     }
   ```

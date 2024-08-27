@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.23 (Updated: 26/08/2024)**
+Latest version: **1.2.24 (Updated: 27/08/2024)**
+
+## Version 1.2.24 (27/08/2024)
+
+- Comment block of code that init permission request launcher.
 
 ## Version 1.2.23 (26/08/2024)
 
