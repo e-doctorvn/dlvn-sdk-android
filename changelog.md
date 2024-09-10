@@ -2,7 +2,11 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.24 (Updated: 27/08/2024)**
+Latest version: **1.2.25 (Updated: 10/09/2024)**
+
+## Version 1.2.25 (10/09/2024)
+
+- Close webview on homepage by checking if `currentUrl` contains `domain` with no extra slashes.
 
 ## Version 1.2.24 (27/08/2024)
 

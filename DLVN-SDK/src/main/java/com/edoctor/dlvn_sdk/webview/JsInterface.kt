@@ -20,6 +20,19 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
         sdkInstance = edoctorDlvnSdk
     }
 
+    private fun isHomePageUrl(baseUrl: String, fullUrl: String): Boolean {
+        // Ensure the base URL is a prefix of the full URL
+        if (!fullUrl.startsWith(baseUrl)) {
+            return false
+        }
+
+        // Check if there are characters following the base URL
+        val suffix = fullUrl.substring(baseUrl.length)
+
+        // Return true if there is a '/' in the suffix
+        return !suffix.contains("/")
+    }
+
     @JavascriptInterface
     fun receiveMessage(data: String): Boolean {
         val json = JSONObject(data)
@@ -32,6 +45,10 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                     CallManager.getInstance()?.closeWebViewActivity?.invoke()
                 } else {
                     mWebview?.requireActivity()?.runOnUiThread {
+                        if (isHomePageUrl(mWebview!!.domain, JSONObject(json.optString("data")).optString("url"))) {
+                            mWebview!!.selfClose()
+                            return@runOnUiThread
+                        }
                         if (mWebview!!.myWebView.canGoBack()) {
                             mWebview!!.myWebView.goBack()
                         } else {
