@@ -45,7 +45,7 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
                     CallManager.getInstance()?.closeWebViewActivity?.invoke()
                 } else {
                     mWebview?.requireActivity()?.runOnUiThread {
-                        if (isHomePageUrl(mWebview!!.domain, JSONObject(json.optString("data")).optString("url"))) {
+                        if (isHomePageUrl(mWebview!!.defaultDomain, JSONObject(json.optString("data")).optString("url"))) {
                             mWebview!!.selfClose()
                             return@runOnUiThread
                         }
