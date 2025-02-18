@@ -247,14 +247,12 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     view?.evaluateJavascript("sessionStorage.setItem(\"sdkSupportVideoCall\", \"${true}\");") {}
                     try {
                         checkTimeoutLoadWebView = true
-                        Handler().postDelayed({
-                            if (loading.visibility != View.GONE && hideLoading) {
-                                hideLoading = false
-                                loading.visibility = View.GONE
-                                EdoctorDlvnSdk.debounceWVShortLink = false
-                            }
+                        if (loading.visibility != View.GONE) {
+                            hideLoading = false
+                            loading.visibility = View.GONE
+                            EdoctorDlvnSdk.debounceWVShortLink = false
+                        }
                             super.onPageFinished(view, url)
-                        }, 2250)
                         requireActivity().runOnUiThread {
                             if (!EdoctorDlvnSdk.dlvnAccessToken.isNullOrEmpty()) {
                                 requestCameraAndMicrophonePermissionForVideoCall()
