@@ -68,10 +68,15 @@ class EdoctorDlvnSdk(
     private var apiService: ApiService? = null
     private var authParams: JSONObject? = null
     private var isFetching: Boolean = false
+        set(value) {
+            field = value
+            onLoadingStateChanged?.invoke(value)
+        }
     private var subscriptionCreated: Boolean = false
     var isShortLinkAuthen: Boolean = false
     private var apolloClient: ApolloClient? = null
     private var requestPermissionLauncher: ActivityResultLauncher<Array<String>>? = null
+    var onLoadingStateChanged: ((Boolean) -> Unit)? = null
 
     companion object {
         const val LOG_TAG = "EDOCTOR_SDK"
@@ -198,9 +203,19 @@ class EdoctorDlvnSdk(
 
         if (authParams != null && !isFetching && !webView.isVisible) {
             if (isNetworkConnected()) {
-                webView.show(fragmentManager, webViewTag)
-                initDLVNAccount {
-                    webView.reload()
+                initDLVNAccount { result ->
+                    if (result != null && !webView.isVisible) {
+                        try {
+                            if (fragmentManager.isDestroyed) {
+                                showError("Cannot show WebView - FragmentManager is no longer valid")
+                                return@initDLVNAccount
+                            }
+                            webView.show(fragmentManager, webViewTag)
+                        } catch (e: Exception) {
+                            Log.e(LOG_TAG, "Error showing WebView: ${e.message}")
+                            showError("Failed to show WebView")
+                        }
+                    }
                 }
             } else {
                 showError(context.getString(R.string.no_internet_msg))
@@ -209,7 +224,16 @@ class EdoctorDlvnSdk(
             if (!isFetching && !webView.isVisible) {
                 if (isNetworkConnected()) {
                     webView.hideLoading = true
-                    webView.show(fragmentManager, webViewTag)
+                    try {
+                        if (!fragmentManager.isDestroyed) {
+                            webView.show(fragmentManager, webViewTag)
+                        } else {
+                            showError("Cannot show WebView - FragmentManager is no longer valid")
+                        }
+                    } catch (e: Exception) {
+                        Log.e(LOG_TAG, "Error showing WebView: ${e.message}")
+                        showError("Failed to show WebView")
+                    }
                 } else {
                     showError(context.getString(R.string.no_internet_msg))
                 }
@@ -313,8 +337,8 @@ class EdoctorDlvnSdk(
                     showError("Call `DLVNSendData` before calling this function!")
                 }
             }
-        } catch (_: Error) {
-
+        } catch (e: Error) {
+            Log.e(LOG_TAG, "initDLVNAccount failed with exception: ${e.message}")
         }
     }
 
