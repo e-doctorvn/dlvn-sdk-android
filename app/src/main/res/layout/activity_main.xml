@@ -88,7 +88,35 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/call_danh"
-        app:layout_constraintVertical_bias="0.167"
+        app:layout_constraintVertical_bias="0.1"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/btn_test_foreground"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="Test Foreground Service"
+        android:backgroundTint="#4CAF50"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_dangxuat"
+        app:layout_constraintVertical_bias="0.15"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/btn_stop_foreground"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="Stop Foreground Service"
+        android:backgroundTint="#F44336"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_test_foreground"
+        app:layout_constraintVertical_bias="0.1"
         tools:ignore="MissingConstraints" />
 
     <com.edoctor.dlvn_sdk.widget.AppointmentWidgetList

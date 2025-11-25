@@ -22,7 +22,6 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <application android:requestLegacyExternalStorage="true">
         <provider
@@ -40,7 +39,7 @@
         <service
             android:name=".service.FCMService"
             android:exported="false"
-            android:foregroundServiceType="remoteMessaging|dataSync">
+            android:foregroundServiceType="remoteMessaging">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -50,7 +49,7 @@
             android:enabled="true"
             android:exported="false"
             android:stopWithTask="false"
-            android:foregroundServiceType="dataSync|remoteMessaging" />
+            android:foregroundServiceType="remoteMessaging" />
 
         <activity
             android:name=".sendbirdCall.IncomingCallActivity"

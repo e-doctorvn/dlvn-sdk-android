@@ -1,6 +1,10 @@
 package com.edoctor.application
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -9,7 +13,11 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
+import com.edoctor.dlvn_sdk.service.CallService
+import com.edoctor.dlvn_sdk.sendbirdCall.VideoCallActivity
 import org.json.JSONObject
 
 
@@ -20,8 +28,14 @@ class MainActivity : AppCompatActivity() {
     private var loginManh: Button? = null
     private var loginDanh: Button? = null
     private var btn_dangxuat: Button? = null
+    private var btnTestForeground: Button? = null
+    private var btnStopForeground: Button? = null
     private var txtName: TextView? = null
     private var edoctorDlvnSdk: EdoctorDlvnSdk? = null
+    
+    companion object {
+        private const val PERMISSION_REQUEST_CODE = 100
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,11 +50,16 @@ class MainActivity : AppCompatActivity() {
         loginDanh = findViewById(R.id.btn_login_Danh)
         txtName = findViewById(R.id.textView)
         btn_dangxuat = findViewById(R.id.btn_dangxuat)
+        btnTestForeground = findViewById(R.id.btn_test_foreground)
+        btnStopForeground = findViewById(R.id.btn_stop_foreground)
 
         edoctorDlvnSdk!!.onSdkRequestLogin = {
             Log.d("zzz", "Nhan duoc data ne")
             Log.d("zzz", it)
         }
+        
+        // Check and request permissions
+        checkPermissions()
 
         loginManh!!.setOnClickListener {
             txtName!!.text = "Danh (EDR)"
@@ -80,6 +99,16 @@ class MainActivity : AppCompatActivity() {
         btn_dangxuat!!.setOnClickListener {
             edoctorDlvnSdk!!.deauthenticateEDR()
         }
+        
+        // Test Foreground Service Button
+        btnTestForeground!!.setOnClickListener {
+            testForegroundService()
+        }
+        
+        // Stop Foreground Service Button
+        btnStopForeground!!.setOnClickListener {
+            stopForegroundService()
+        }
     }
 
     private fun showToast() {
@@ -97,5 +126,85 @@ class MainActivity : AppCompatActivity() {
         toast.duration = Toast.LENGTH_SHORT
         toast.view = layout
         toast.show()
+    }
+    
+    private fun checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permissions = arrayOf(
+                Manifest.permission.POST_NOTIFICATIONS,
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO
+            )
+            
+            val permissionsToRequest = permissions.filter {
+                ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+            }
+            
+            if (permissionsToRequest.isNotEmpty()) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    permissionsToRequest.toTypedArray(),
+                    PERMISSION_REQUEST_CODE
+                )
+            }
+        }
+    }
+    
+    private fun testForegroundService() {
+        try {
+            Log.d("ForegroundTest", "Starting foreground service test...")
+            Toast.makeText(this, "Testing Foreground Service (remoteMessaging type)", Toast.LENGTH_LONG).show()
+            
+            // Simulate a test call using CallService from SDK
+            val intent = Intent(this, CallService::class.java).apply {
+                putExtra("EXTRA_IS_HEADS_UP_NOTIFICATION", true)
+                putExtra("EXTRA_REMOTE_NICKNAME_OR_USER_ID", "Test User")
+                putExtra("EXTRA_CALL_STATE", VideoCallActivity.STATE.STATE_ACCEPTING)
+                putExtra("EXTRA_CALL_ID", "test_call_${System.currentTimeMillis()}")
+                putExtra("EXTRA_IS_VIDEO_CALL", true)
+                putExtra("EXTRA_DO_ACCEPT", true)
+            }
+            
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+                Log.d("ForegroundTest", "Foreground service started with remoteMessaging type")
+                Toast.makeText(this, "✅ Service started with remoteMessaging type", Toast.LENGTH_SHORT).show()
+            } else {
+                startService(intent)
+                Log.d("ForegroundTest", "Service started (pre-O)")
+            }
+            
+        } catch (e: Exception) {
+            Log.e("ForegroundTest", "Error starting foreground service", e)
+            Toast.makeText(this, "❌ Error: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+    
+    private fun stopForegroundService() {
+        try {
+            Log.d("ForegroundTest", "Stopping foreground service...")
+            CallService.stopService(this)
+            Toast.makeText(this, "✅ Service stopped", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Log.e("ForegroundTest", "Error stopping service", e)
+            Toast.makeText(this, "❌ Error stopping: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+    
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                    Toast.makeText(this, "✅ All permissions granted", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "⚠️ Some permissions denied", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }
