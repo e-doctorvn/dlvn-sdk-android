@@ -3,22 +3,17 @@ package com.edoctor.dlvn_sdk.sendbirdCall
 import android.annotation.SuppressLint
 import android.app.ActivityOptions
 import android.app.AlertDialog
-import android.app.PictureInPictureParams
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.util.Rational
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -37,7 +32,6 @@ import com.edoctor.dlvn_sdk.helper.DimensionUtils
 import com.edoctor.dlvn_sdk.model.Dimension
 import com.edoctor.dlvn_sdk.service.CallService
 import com.edoctor.dlvn_sdk.store.AppStore
-import com.google.android.material.snackbar.Snackbar
 import com.sendbird.calls.AcceptParams
 import com.sendbird.calls.CallOptions
 import com.sendbird.calls.DirectCall
@@ -58,7 +52,6 @@ class VideoCallActivity : AppCompatActivity() {
     private var btnToggleMic: ImageButton? = null
     private var tvMicStatus: TextView? = null
     private var tvCamStatus: TextView? = null
-//    private var btnAudioDevices: ImageButton? = null
     private var callManager: CallManager? = null
     private var bgAvatar: ImageView? = null
     private var tvReconnecting: TextView? = null
@@ -70,7 +63,6 @@ class VideoCallActivity : AppCompatActivity() {
     private var loading: Boolean = false
     private var totalCallTime: Int = 1800
     private lateinit var mainHandler: Handler
-//    private lateinit var audioDialog: AudioOutputDialog
     private var directCall: DirectCall? = CallManager.getInstance()?.directCall
 
     enum class STATE {
@@ -140,7 +132,6 @@ class VideoCallActivity : AppCompatActivity() {
         btnToggleMic = findViewById(R.id.btn_toggle_mic)
         tvMicStatus = findViewById(R.id.tv_mic_stt)
         tvCamStatus = findViewById(R.id.tv_cam_stt)
-//        btnAudioDevices = findViewById(R.id.btn_audio_devices)
         tvReconnecting = findViewById(R.id.tv_reconnecting)
         tvCallTimeout = findViewById(R.id.tv_call_timeout)
         chatLoading = findViewById(R.id.wv_chat_loading)
@@ -162,7 +153,6 @@ class VideoCallActivity : AppCompatActivity() {
 
         mainHandler = Handler(Looper.getMainLooper())
         countdownCallTime()
-//        audioDialog = AudioOutputDialog(this)
 
         Glide
             .with(this)
@@ -285,9 +275,7 @@ class VideoCallActivity : AppCompatActivity() {
     private fun initCallEventListener() {
         callManager?.onCallStateChanged = {
             when (it) {
-                CallState.ESTABLISHED -> {
-
-                }
+                CallState.ESTABLISHED -> { /* Call established, waiting for connection */ }
                 CallState.CONNECTED -> {
                     if (!directCall?.isRemoteVideoEnabled!!) {
                         bgAvatar!!.visibility = View.VISIBLE
@@ -338,8 +326,10 @@ class VideoCallActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("DEPRECATION", "MissingSuperCall")
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-//        super.onBackPressed()
+        // Intentionally not calling super to prevent back navigation during call
     }
 
     private fun toggleLocalView(hide: Boolean = false) {
@@ -380,14 +370,10 @@ class VideoCallActivity : AppCompatActivity() {
         override fun run() {
             if (totalCallTime > 0) {
                 totalCallTime -= 1
-                if (totalCallTime == 300) { // last 5 minutes
-                    initEndTimeDialog()
-                }
+                if (totalCallTime == 300) initEndTimeDialog()
                 tvCallTimeout!!.text = formatCallTime()
             } else {
                 mainHandler.removeCallbacks(this)
-//                callManager!!.endEclinicCall()
-//                directCall!!.end()
             }
             mainHandler.postDelayed(this, 1000)
         }
@@ -398,20 +384,10 @@ class VideoCallActivity : AppCompatActivity() {
     }
 
     private fun initEndTimeDialog() {
-        val li = LayoutInflater.from(this)
-        val view: View = li.inflate(R.layout.end_time_dialog, null)
-
-        val alertDialogBuilder: AlertDialog.Builder =
-            AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
-        alertDialogBuilder.setView(view)
-
-//        val btnCancel = view.findViewById<ImageView>(R.id.btn_end_time_ok)
-
-//        btnCancel.setOnClickListener {
-//            // TODO: 7/5/18 your click listener
-//        }
-
-        val alertDialogEndTime = alertDialogBuilder.create()
+        val view: View = LayoutInflater.from(this).inflate(R.layout.end_time_dialog, null)
+        val alertDialogEndTime = AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+            .setView(view)
+            .create()
         val attributes = alertDialogEndTime.window?.attributes
         attributes?.let {
             attributes.y += 500

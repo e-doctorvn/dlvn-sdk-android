@@ -19,33 +19,22 @@ import com.edoctor.dlvn_sdk.R
 import java.lang.reflect.Method
 
 object PermissionManager {
-    private const val CAMERA_PERMISSION_REQUEST_CODE = 1001
-    private const val MICROPHONE_PERMISSION_REQUEST_CODE = 1002
-    private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1003
     const val ALL_PERMISSIONS_REQUEST_CODE = 1004
 
     fun handleRequestPermission(activity: Activity, permission: String, requestPermissionLauncher: ActivityResultLauncher<String>) {
         when {
-            ContextCompat.checkSelfPermission(
-                activity,
-                permission
-            ) == PackageManager.PERMISSION_GRANTED -> {
-
-            }
+            ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED -> { }
             ActivityCompat.shouldShowRequestPermissionRationale(activity, permission) -> {
                 requestPermissionLauncher.launch(permission)
                 setPermissionAsked(activity, permission)
             }
-            else -> {
-                if (getRationalDisplayStatus(activity, permission)) {
-                    EdoctorDlvnSdk.showError(getDisplayMessage(activity, permission))
-                    activity.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = Uri.fromParts("package", activity.packageName, null)
-                    })
-                } else {
-                    requestPermissionLauncher.launch(permission)
-                }
+            getRationalDisplayStatus(activity, permission) -> {
+                EdoctorDlvnSdk.showError(getDisplayMessage(activity, permission))
+                activity.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", activity.packageName, null)
+                })
             }
+            else -> requestPermissionLauncher.launch(permission)
         }
     }
 
@@ -67,7 +56,6 @@ object PermissionManager {
                 return activity.getString(R.string.request_noti_permission_msg)
             }
         }
-
         return activity.getString(R.string.request_permission_msg)
     }
 
@@ -81,8 +69,7 @@ object PermissionManager {
                 Int::class.javaPrimitiveType,
                 String::class.java
             )
-            val result =
-                method.invoke(manager, 10020, Binder.getCallingUid(), context.packageName) as Int
+            val result = method.invoke(manager, 10020, Binder.getCallingUid(), context.packageName) as Int
             AppOpsManager.MODE_ALLOWED == result
         } catch (e: Exception) {
             false

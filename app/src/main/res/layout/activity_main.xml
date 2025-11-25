@@ -1,127 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.14" />
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:padding="3dp"
-        android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/btn_id"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        tools:ignore="MissingConstraints">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header -->
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sendbird SDK Demo"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status: Not authenticated"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:textColor="#666666"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Sendbird Authentication Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔐 Authentication"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_login_Manh"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="48dp"
+                android:text="Login User 1"
+                android:layout_marginEnd="4dp"/>
+
+            <Button
+                android:id="@+id/btn_login_Danh"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="48dp"
+                android:text="Login User 2"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
 
         <Button
-            android:id="@+id/btn_login_Manh"
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:text="Login Manh"/>
+            android:id="@+id/btn_dangxuat"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="🚪 Logout"
+            android:backgroundTint="#FF5722"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Sendbird Call Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📞 Sendbird Call"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/call_manh"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="48dp"
+                android:text="📹 Video Call"
+                android:backgroundTint="#4CAF50"
+                android:layout_marginEnd="4dp"/>
+
+            <Button
+                android:id="@+id/call_danh"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="48dp"
+                android:text="📱 Voice Call"
+                android:backgroundTint="#2196F3"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
+
         <Button
-            android:visibility="gone"
-            android:id="@+id/btn_login_Danh"
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:text="Login Danh"/>
+            android:id="@+id/btn_check_call_status"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="📊 Check Call Status"
+            android:backgroundTint="#9C27B0"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Sendbird Chat Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="💬 Sendbird Chat"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btn_open_chat"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="💬 Open Chat (WebView)"
+            android:backgroundTint="#00BCD4"/>
+
+        <Button
+            android:id="@+id/btn_check_chat_status"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="📊 Check Chat Status"
+            android:backgroundTint="#607D8B"
+            android:layout_marginTop="8dp"/>
+
+        <!-- WebView Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🌐 WebView"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btn_id"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="🌐 Open Health Consultant"
+            android:backgroundTint="#3F51B5"/>
+
+        <!-- Service Test Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="⚙️ Service Test"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_test_foreground"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="48dp"
+                android:text="▶️ Start Service"
+                android:backgroundTint="#4CAF50"
+                android:layout_marginEnd="4dp"/>
+
+            <Button
+                android:id="@+id/btn_stop_foreground"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="48dp"
+                android:text="⏹️ Stop Service"
+                android:backgroundTint="#F44336"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
+
+        <!-- Widget Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📅 Appointments Widget"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"/>
+
+        <com.edoctor.dlvn_sdk.widget.AppointmentWidgetList
+            android:id="@+id/widgetList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btn_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="open webview"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.368" />
-
-    <Button
-        android:id="@+id/call_manh"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:text="Call Manh"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.512" />
-
-    <Button
-        android:id="@+id/call_danh"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:text="Call Danh"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.656" />
-
-    <Button
-        android:id="@+id/btn_dangxuat"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:text="đăng xuất"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/call_danh"
-        app:layout_constraintVertical_bias="0.1"
-        tools:ignore="MissingConstraints" />
-
-    <Button
-        android:id="@+id/btn_test_foreground"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:text="Test Foreground Service"
-        android:backgroundTint="#4CAF50"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_dangxuat"
-        app:layout_constraintVertical_bias="0.15"
-        tools:ignore="MissingConstraints" />
-
-    <Button
-        android:id="@+id/btn_stop_foreground"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:text="Stop Foreground Service"
-        android:backgroundTint="#F44336"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_test_foreground"
-        app:layout_constraintVertical_bias="0.1"
-        tools:ignore="MissingConstraints" />
-
-    <com.edoctor.dlvn_sdk.widget.AppointmentWidgetList
-        android:id="@+id/widgetList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

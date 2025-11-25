@@ -2,7 +2,17 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.30 (Updated: 25/11/2025)**
+Latest version: **1.3.0 (Updated: 26/11/2025)**
+
+## Version 1.3.0 (26/11/2025)
+
+### Breaking Changes
+- Upgrade `minSdk` to 23, `compileSdk` and `targetSdk` to 35 (Android 15).
+
+### Improvements
+- Code refactoring and optimization for better performance.
+- Remove unused code and improve code quality.
+- Update demo app with improved UI.
 
 ## Version 1.2.30 (25/11/2025)
 

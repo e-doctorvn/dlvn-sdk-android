@@ -1,7 +1,6 @@
 package com.edoctor.dlvn_sdk.webview
 
 import android.content.Intent
-import android.util.Log
 import android.webkit.JavascriptInterface
 import androidx.core.content.ContextCompat.startActivity
 import com.edoctor.dlvn_sdk.Constants
@@ -10,15 +9,11 @@ import com.edoctor.dlvn_sdk.sendbirdCall.CallManager
 import com.edoctor.dlvn_sdk.store.AppStore
 import org.json.JSONObject
 
-class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
-    private var sdkInstance: EdoctorDlvnSdk? = null
-    private var mWebview: SdkWebView? = null
-    private var suspendReceiving: Boolean = false
-
-    init {
-        mWebview = webView
-        sdkInstance = edoctorDlvnSdk
-    }
+class JsInterface(
+    private val webView: SdkWebView,
+    private val sdkInstance: EdoctorDlvnSdk
+) {
+    private var suspendReceiving = false
 
     private fun isHomePageUrl(baseUrl: String, fullUrl: String): Boolean {
         // Ensure the base URL is a prefix of the full URL
@@ -37,75 +32,68 @@ class JsInterface(webView: SdkWebView, edoctorDlvnSdk: EdoctorDlvnSdk) {
     fun receiveMessage(data: String): Boolean {
         val json = JSONObject(data)
         when (json.getString("type")) {
-            Constants.WebviewParams.closeWebview -> {
-                if (AppStore.activeChannelUrl != Constants.entryChannel) {
-                    AppStore.activeChannelUrl = Constants.entryChannel
-                }
-                if (CallManager.getInstance()?.directCall != null) {
-                    CallManager.getInstance()?.closeWebViewActivity?.invoke()
-                } else {
-                    mWebview?.requireActivity()?.runOnUiThread {
-                        if (isHomePageUrl(mWebview!!.defaultDomain, JSONObject(json.optString("data")).optString("url"))) {
-                            mWebview!!.selfClose()
-                            return@runOnUiThread
-                        }
-                        if (mWebview!!.myWebView.canGoBack()) {
-                            mWebview!!.myWebView.goBack()
-                        } else {
-                            mWebview!!.selfClose()
-                        }
-                        if (sdkInstance?.isShortLinkAuthen == true) {
-                            sdkInstance?.handleDeauthenticateShortLink()
-                        }
-                    }
-                }
-            }
-            Constants.WebviewParams.requestLoginNative -> {
-                val callbackData = JSONObject(json.get("data").toString())
-                if (callbackData.has("currentUrl")) {
-                    if (!suspendReceiving) {
-                        suspendReceiving = true
-                        sdkInstance?.onSdkRequestLogin?.invoke(callbackData.getString("currentUrl"))
-                        mWebview?.requireActivity()?.runOnUiThread { mWebview?.selfClose() }
-                        suspendReceiving = false
-                    }
-                }
-            }
-            Constants.WebviewParams.goBackFromDlvn -> {
-                mWebview?.requireActivity()?.runOnUiThread { mWebview?.myWebView?.goBack() }
-            }
-            Constants.WebviewParams.shareDlvnArticle -> {
-                val sharingIntent = Intent(Intent.ACTION_SEND)
-                val shareBody = json.getString("url")
-                sharingIntent.type = "text/plain"
-                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody)
-                mWebview?.context?.let { startActivity(it, Intent.createChooser(sharingIntent, "Share via"), null) }
-            }
-            Constants.WebviewParams.onChangeChatChannel -> {
-                if (json.has("channelUrl")) {
-                    AppStore.activeChannelUrl = json.get("channelUrl").toString()
-                }
-            }
-            Constants.WebviewParams.onRequestUpdateApp -> {
-                mWebview?.openAppInStore()
-            }
-            Constants.WebviewParams.onAuthenShortLink -> {
-                val userId = json.get("userId") as String
-                val edrToken = json.get("edrToken") as String
-                val dlvnToken = json.get("dlvnToken") as String
-
-                sdkInstance?.handleAuthenticateShortLink(userId, edrToken, dlvnToken)
-            }
-            Constants.WebviewParams.onAgreeConsent -> {
-//                sdkInstance?.handleAgreeConsentOnWeb()
-            }
+            Constants.WebviewParams.closeWebview -> handleCloseWebview(json)
+            Constants.WebviewParams.requestLoginNative -> handleRequestLogin(json)
+            Constants.WebviewParams.goBackFromDlvn -> 
+                webView.requireActivity().runOnUiThread { webView.myWebView.goBack() }
+            Constants.WebviewParams.shareDlvnArticle -> shareArticle(json.getString("url"))
+            Constants.WebviewParams.onChangeChatChannel -> 
+                json.optString("channelUrl").takeIf { it.isNotEmpty() }?.let { AppStore.activeChannelUrl = it }
+            Constants.WebviewParams.onRequestUpdateApp -> webView.openAppInStore()
+            Constants.WebviewParams.onAuthenShortLink -> 
+                sdkInstance.handleAuthenticateShortLink(
+                    json.getString("userId"),
+                    json.getString("edrToken"),
+                    json.getString("dlvnToken")
+                )
+            Constants.WebviewParams.onAgreeConsent -> { /* Reserved for future use */ }
             Constants.WebviewParams.onLoginSendBird -> {
-                sdkInstance?.getSendbirdAccount()
-                if (json.has("package") && json.get("package").equals("VIDEO")) {
-                    mWebview?.requestCameraAndMicrophonePermissionForVideoCall()
+                sdkInstance.getSendbirdAccount()
+                if (json.optString("package") == "VIDEO") {
+                    webView.requestCameraAndMicrophonePermissionForVideoCall()
                 }
             }
         }
         return true
+    }
+
+    private fun handleCloseWebview(json: JSONObject) {
+        if (AppStore.activeChannelUrl != Constants.entryChannel) {
+            AppStore.activeChannelUrl = Constants.entryChannel
+        }
+        CallManager.getInstance()?.directCall?.let {
+            CallManager.getInstance()?.closeWebViewActivity?.invoke()
+            return
+        }
+        webView.requireActivity().runOnUiThread {
+            val dataUrl = JSONObject(json.optString("data")).optString("url")
+            when {
+                isHomePageUrl(webView.defaultDomain, dataUrl) -> webView.selfClose()
+                webView.myWebView.canGoBack() -> webView.myWebView.goBack()
+                else -> webView.selfClose()
+            }
+            if (sdkInstance.isShortLinkAuthen) {
+                sdkInstance.handleDeauthenticateShortLink()
+            }
+        }
+    }
+
+    private fun handleRequestLogin(json: JSONObject) {
+        val callbackData = JSONObject(json.getString("data"))
+        val currentUrl = callbackData.optString("currentUrl")
+        if (currentUrl.isNotEmpty() && !suspendReceiving) {
+            suspendReceiving = true
+            sdkInstance.onSdkRequestLogin?.invoke(currentUrl)
+            webView.requireActivity().runOnUiThread { webView.selfClose() }
+            suspendReceiving = false
+        }
+    }
+
+    private fun shareArticle(url: String) {
+        val sharingIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, url)
+        }
+        webView.context?.let { startActivity(it, Intent.createChooser(sharingIntent, "Share via"), null) }
     }
 }

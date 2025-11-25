@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Binder
+import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -52,7 +53,7 @@ class CallService : Service() {
         super.onDestroy()
     }
 
-    override fun onBind(intent: Intent): IBinder? {
+    override fun onBind(intent: Intent): IBinder {
         return mBinder
     }
 
@@ -142,8 +143,18 @@ class CallService : Service() {
     }
 
     private fun updateNotification(serviceData: ServiceData) {
-        mServiceData.set(serviceData)
-        startForeground(NOTIFICATION_ID, getNotification(mServiceData))
+        mServiceData.copyFrom(serviceData)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(
+                NOTIFICATION_ID,
+                getNotification(mServiceData),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL or
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+            )
+        } else {
+            startForeground(NOTIFICATION_ID, getNotification(mServiceData))
+        }
     }
 
     companion object {
@@ -265,17 +276,17 @@ data class ServiceData(
     var isEndAction: Boolean = false,
     var doLocalVideoStart: Boolean = false,
 ) {
-    fun set(serviceData: ServiceData) {
-        isHeadsUpNotification = serviceData.isHeadsUpNotification
-        remoteNicknameOrUserId = serviceData.remoteNicknameOrUserId
-        callState = serviceData.callState
-        callId = serviceData.callId
-        isAcceptAction = serviceData.isAcceptAction
-        isVideoCall = serviceData.isVideoCall
-        calleeIdToDial = serviceData.calleeIdToDial
-        doDial = serviceData.doDial
-        doAccept = serviceData.doAccept
-        isEndAction = serviceData.isEndAction
-        doLocalVideoStart = serviceData.doLocalVideoStart
+    fun copyFrom(other: ServiceData) = apply {
+        isHeadsUpNotification = other.isHeadsUpNotification
+        remoteNicknameOrUserId = other.remoteNicknameOrUserId
+        callState = other.callState
+        callId = other.callId
+        isAcceptAction = other.isAcceptAction
+        isVideoCall = other.isVideoCall
+        calleeIdToDial = other.calleeIdToDial
+        doDial = other.doDial
+        doAccept = other.doAccept
+        isEndAction = other.isEndAction
+        doLocalVideoStart = other.doLocalVideoStart
     }
 }

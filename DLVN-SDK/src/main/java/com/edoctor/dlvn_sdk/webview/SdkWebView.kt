@@ -14,7 +14,6 @@ import android.net.http.SslError
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
 import android.os.Message
 import android.provider.MediaStore
 import android.util.Log
@@ -66,8 +65,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private var checkTimeoutLoadWebView = false
     var domain = Constants.healthConsultantUrlDev
     var defaultDomain = Constants.healthConsultantUrlDev
-    private val FCR = 99
-    private var mCM: String? = null
+    private var capturedImagePath: String? = null
     var hideLoading: Boolean = false
     private var mUMA: ValueCallback<Array<Uri>>? = null
     private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
@@ -78,7 +76,9 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         sdkInstance = sdk
         AppStore.webViewInstance = this
     }
+
     companion object {
+        private const val FILE_CHOOSER_REQUEST = 99
         var isVisible = false
     }
 
@@ -312,12 +312,6 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     return true
                 }
 
-                override fun shouldInterceptRequest(
-                    view: WebView?,
-                    request: WebResourceRequest?
-                ): WebResourceResponse? {
-                    return super.shouldInterceptRequest(view, request)
-                }
             }
 
             val jsInterface = JsInterface(this, sdkInstance)
@@ -350,9 +344,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             if (!isNetworkConnected()) {
                 containerErrorNetwork.visibility = View.VISIBLE
             }
-        } catch (e: Error) {
-
-        }
+        } catch (_: Error) { }
         return v
     }
 
@@ -416,17 +408,6 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         )
     }
 
-    private fun requestPostNotificationPermission() {
-        requestPermissionLauncher?.let {
-            PermissionManager.handleRequestPermission(
-                requireActivity(),
-                Manifest.permission.POST_NOTIFICATIONS,
-                it
-            )
-            NotificationHelper.initialize(requireContext())
-        }
-    }
-
     fun requestCameraAndMicrophonePermissionForVideoCall() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestMultipleCallPermissionLauncher?.launch(
@@ -455,31 +436,6 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         return File.createTempFile(imageFileName, ".jpg", storageDir)
     }
 
-    fun openFileChooser(uploadMsg: ValueCallback<Uri?>?) {
-        this.openFileChooser(uploadMsg, "*/*")
-    }
-
-    private fun openFileChooser(
-        uploadMsg: ValueCallback<Uri?>?,
-        acceptType: String?
-    ) {
-        this.openFileChooser(uploadMsg, acceptType, null)
-    }
-
-    private fun openFileChooser(
-        uploadMsg: ValueCallback<Uri?>?,
-        acceptType: String?,
-        capture: String?
-    ) {
-        val i = Intent(Intent.ACTION_GET_CONTENT)
-        i.addCategory(Intent.CATEGORY_OPENABLE)
-        i.type = "*/*"
-        requireActivity().startActivityForResult(
-            Intent.createChooser(i, "File Browser"),
-            99
-        )
-    }
-
     override fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
@@ -489,28 +445,14 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
         var results: Array<Uri>? = null
 
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == FCR) {
-                if (intent?.dataString == null) { // Multi select || Take photo
-                    if (intent != null) {
-                        if (intent.clipData != null) { // Multi select
-                            results = Array(intent.clipData!!.itemCount) {
-                                intent.clipData!!.getItemAt(it).uri
-                            }
-                        } else if (mCM != null) { // Take photo
-                            results = arrayOf(Uri.parse(mCM))
-                        }
-                    } else { // Take photo
-                        mCM?.let {
-                            results = arrayOf(Uri.parse(it))
-                        }
-                    }
-                } else { // Single select
-                    val dataString = intent.dataString
-                    if (dataString != null) {
-                        results = arrayOf(Uri.parse(dataString))
-                    }
+        if (resultCode == Activity.RESULT_OK && requestCode == FILE_CHOOSER_REQUEST) {
+            results = when {
+                intent?.clipData != null -> Array(intent.clipData!!.itemCount) {
+                    intent.clipData!!.getItemAt(it).uri
                 }
+                intent?.dataString != null -> arrayOf(Uri.parse(intent.dataString))
+                capturedImagePath != null -> arrayOf(Uri.parse(capturedImagePath))
+                else -> null
             }
         }
 
@@ -532,7 +474,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
                 if (availableAboveAndroid11 || availableBelowAndroid11) {
                     val photoFile: File = createImageFile()
-                    mCM = photoFile.toUri().toString()
+                    capturedImagePath = photoFile.toUri().toString()
 
                     val captureImgUri =
                         FileProvider.getUriForFile(
@@ -558,46 +500,16 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
                 chooserIntent.putExtra(Intent.EXTRA_TITLE, "Chọn ảnh từ")
                 chooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-                startActivityForResult(chooserIntent, FCR)
+                startActivityForResult(chooserIntent, FILE_CHOOSER_REQUEST)
             }
-            return
-        } catch (_: Error) {
-
-        }
+        } catch (_: Error) { }
     }
 
     private fun onRequestCallPermissionsResult(permissions: Map<String, @JvmSuppressWildcards Boolean>) {
-        try {
-            // 0 - Cam, 1 - Mic, 2 - Notification
-            val results = permissions.entries.map { it.value }
-
-            if (results.isNotEmpty() && results.size > 2 && results[2]) {
-                NotificationHelper.initialize(EdoctorDlvnSdk.context)
-            }
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                NotificationHelper.initialize(EdoctorDlvnSdk.context)
-            }
-//            if (Build.MANUFACTURER.equals("Google", true)) {
-//                var dialog: AlertDialog? = null
-//                val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-//                builder.setTitle(getString(R.string.need_show_on_lockscreen_permission_label))
-//                builder.setMessage(getString(R.string.request_show_on_lockscreen_permission_msg))
-//                builder.setPositiveButton(getString(R.string.end_time_ok_label)) { _, _ ->
-//                    dialog?.dismiss()
-//                    PermissionManager.checkAndRequestShowOnLockScreenXiaomiDevice(requireActivity())
-//                }
-//                builder.setNegativeButton("Đóng") { _, _ ->
-//                    dialog?.dismiss()
-//                }
-//                dialog = builder.create()
-//                dialog.show()
-//                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.gray_primary))
-//                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.dlvn_primary))
-//            }
-
-            return
-        } catch (_: Error) {
-
+        val results = permissions.values.toList()
+        val hasNotificationPermission = results.size > 2 && results[2]
+        if (hasNotificationPermission || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            NotificationHelper.initialize(EdoctorDlvnSdk.context)
         }
     }
 }
