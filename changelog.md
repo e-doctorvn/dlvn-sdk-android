@@ -2,7 +2,13 @@
 
 EDR - DLVN Android SDK
 
-Latest version: **1.2.29 (Updated: 25/11/2025)**
+Latest version: **1.2.30 (Updated: 25/11/2025)**
+
+## Version 1.2.30 (25/11/2025)
+
+- Remove `dataSync` foreground service type from `FCMService` and `CallService` to prevent conflicts with WorkManager and comply with Android 12+ restrictions.
+- Remove unused `FOREGROUND_SERVICE_DATA_SYNC` permission.
+- Only use `remoteMessaging` type which is appropriate for calling/messaging use case.
 
 ## Version 1.2.29 (25/11/2025)
 
