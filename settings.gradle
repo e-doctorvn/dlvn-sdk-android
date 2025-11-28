@@ -12,10 +12,6 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url "https://repo.sendbird.com/public/maven" }
-        maven {
-            url "https://jitpack.io"
-            credentials { username authToken }
-        }
     }
 }
 rootProject.name = "Application"
