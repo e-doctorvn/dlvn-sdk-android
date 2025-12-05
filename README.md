@@ -317,7 +317,7 @@ Widget tự động xử lý:
 
 ## Changelog
 
-Xem [CHANGELOG.md](changelog.md) để biết lịch sử phiên bản và ghi chú phát hành.
+Xem [CHANGELOG.md](CHANGELOG.md) để biết lịch sử phiên bản và ghi chú phát hành.
 
 ---
 
