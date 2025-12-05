@@ -1,227 +1,326 @@
-# dlvn-sdk-android
+# DLVN SDK Android
 
-EDR - DLVN Android SDK
+[![](https://jitpack.io/v/e-doctorvn/dlvn-sdk-android.svg)](https://jitpack.io/#e-doctorvn/dlvn-sdk-android)
 
-## Version 1.2.27
+> SDK Android của eDoctor dành cho Dai-ichi Life Vietnam - Tích hợp dịch vụ tư vấn sức khỏe.
 
-## Requirements
+## Mục lục
 
-This dependency requires:
+- [Yêu cầu hệ thống](#yêu-cầu-hệ-thống)
+- [Cài đặt](#cài-đặt)
+- [Bắt đầu nhanh](#bắt-đầu-nhanh)
+- [Cấu hình môi trường](#cấu-hình-môi-trường)
+- [API Reference](#api-reference)
+- [Push Notifications](#push-notifications)
+- [Widget](#widget)
+- [Changelog](#changelog)
 
-- **Compile SDK API level 34 (or later)** in the main application (`compileSdk 34 //or later`)
-- Target at least **Android 5.0 - API level 21 (or later)** (`minSdk 21`)
+---
 
-## Installation
+## Yêu cầu hệ thống
 
-- In `settings.gradle` add the following line:
+| Yêu cầu | Phiên bản tối thiểu |
+|---------|---------------------|
+| **Compile SDK** | API 35 (Android 15) |
+| **Min SDK** | API 23 (Android 6.0) |
+| **Target SDK** | API 35 |
+| **Java** | 17 |
+| **Kotlin** | 2.0+ |
 
-  ```sh
+---
+
+## Cài đặt
+
+### Bước 1: Thêm repositories
+
+Trong file `settings.gradle` hoặc `settings.gradle.kts` của project:
+
+```groovy
+dependencyResolutionManagement {
     repositories {
+        // ... các repositories khác
         maven { url "https://jitpack.io" }
         maven { url "https://repo.sendbird.com/public/maven" }
     }
-  ```
+}
+```
 
-- In `build.gradle (Module :app)` add the following line:
+### Bước 2: Thêm dependencies
 
-  ```sh
-    dependencies {
-        implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.2.27'
-        implementation 'com.google.firebase:firebase-messaging:23.4.0'
+Trong file `build.gradle` của module app:
+
+```groovy
+dependencies {
+    implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.3.1'
+    implementation 'com.google.firebase:firebase-messaging:25.0.1'
+}
+```
+
+---
+
+## Bắt đầu nhanh
+
+### Khởi tạo SDK
+
+```kotlin
+import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
+import com.edoctor.dlvn_sdk.Env
+
+class MainActivity : AppCompatActivity() {
+    private lateinit var dlvnSdk: EdoctorDlvnSdk
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        // Khởi tạo SDK
+        dlvnSdk = EdoctorDlvnSdk(
+            context = this,
+            intent = intent,      // có thể null - dùng để xử lý notification
+            env = Env.SANDBOX     // hoặc Env.LIVE cho production
+        )
     }
-  ```
-
-## Usage
-
-```kotlin
-import com.example.dlvn_sdk.EdoctorDlvnSdk
-
-// Initialize SDK instance with context before using any functions
-val dlvnSdk = EdoctorDlvnSdk(context: Context, intent: Intent?, env: Env)
+}
 ```
 
-In this constructor:
+### Tham số khởi tạo
 
-- `Intent` should be the intent from MainActivity of application. SDK uses this to handle notifications which belong to chat/video consultant service. This parameter can be `null`.
-- `env` is an enum of `Env { LIVE, SANDBOX }`. It already has the **_default value_** of `Env.SANDBOX`, so adding it to the constructor is **optional**.
+| Tham số | Kiểu | Bắt buộc | Mô tả |
+|---------|------|----------|-------|
+| `context` | `Context` | ✅ | Context của Application hoặc Activity |
+| `intent` | `Intent?` | ❌ | Intent từ MainActivity để xử lý notification |
+| `env` | `Env` | ❌ | Môi trường (mặc định: `Env.SANDBOX`) |
 
-## Environment notes
+---
 
-- On `SANDBOX`, default webview's URL is `khuat.dai-ichi-life.com.vn/tu-van-suc-khoe` and eDoctor's API on `dev`
-- On `LIVE`, default webview's URL is `kh.dai-ichi-life.com.vn/tu-van-suc-khoe` and eDoctor's API on `production`
+## Cấu hình môi trường
 
-## API References
+| Môi trường | WebView URL | API |
+|------------|-------------|-----|
+| `SANDBOX` | `khuat.dai-ichi-life.com.vn/tu-van-suc-khoe` | Development |
+| `LIVE` | `kh.dai-ichi-life.com.vn/tu-van-suc-khoe` | Production |
 
-#### Open WebView
+---
 
-Open given URL using WebView dialog. If URL is null, use the default `/tu-van-suc-khoe`
+## API Reference
 
-```kotlin
-  dlvnSdk.openWebView(fm: FragmentManager, url: String?): Unit
-```
+### Các phương thức WebView
 
-| Parameter | Type              | Description  |
-| :-------- | :---------------- | :----------- |
-| `fm`      | `FragmentManager` | **Required** |
-| `url`     | `String?`         | Can be null  |
+#### openWebView
 
-#### DLVNSendData
-
-Function for DLVN to pass data to the SDK **before opening** webview.
-This function returns:
-
-- `true` if successfully receive the data
-- `false` if `params` is empty OR missing `dcid` || `token` field
+Mở WebView dialog với URL được chỉ định. Sử dụng URL mặc định `/tu-van-suc-khoe` nếu URL là null.
 
 ```kotlin
-  dlvnSdk.DLVNSendData(params: JSONObject): Boolean
+dlvnSdk.openWebView(fm: FragmentManager, url: String?)
 ```
 
-| Parameter | Type         | Description  |
-| :-------- | :----------- | :----------- |
-| `params`  | `JSONObject` | **Required** |
-
-#### onSdkRequestLogin
-
-Function for DLVN to listen to the SDK when it needs to request login from DC app.
-
-```kotlin
-  dlvnSdk.onSdkRequestLogin: ((callbackUrl: String) -> Unit)
-```
-
-| Return        | Type     | Description |
-| :------------ | :------- | :---------- |
-| `callbackUrl` | `String` |             |
-
-- ##### Example
-
-  - **Java**:
-
-  ```java
-  dlvnSdk.setOnSdkRequestLogin(callbackUrl -> {
-      String url = callbackUrl;
-      return null;
-  });
-  ```
-
-  - **Kotlin**:
-
-  ```kotlin
-  dlvnSdk.onSdkRequestLogin = { it ->
-      val url = it
-  }
-  ```
-
-#### deauthenticateEDR
-
-Clear SDK's data when DC app logs out.
-
-```kotlin
-  dlvnSdk.deauthenticateEDR(): Unit
-```
-
-#### authenticateEDR
-
-Call this function after user logined successfully to initialize SDK's listener for chat/call events.
-
-```kotlin
-  dlvnSdk.authenticateEDR(params: JSONObject): Unit
-```
-
-| Parameter | Type         | Description  |
-| :-------- | :----------- | :----------- |
-| `params`  | `JSONObject` | **Required** |
-
-#### isEdrMessage
-
-Call this function to check if the remote message is from EDR.
-
-```kotlin
-  EdoctorDlvnSdk.Companion.isEdrMessage(message: RemoteMessage): Boolean
-```
-
-| Parameter | Type            | Description  |
-| :-------- | :-------------- | :----------- |
-| `message` | `RemoteMessage` | **Required** |
-
-#### handleEdrRemoteMessage
-
-Call this function to let SDK handle the remote message from EDR.
-If parameter `icon` is null, SDK will use its default icon for notification.
-
-```kotlin
-  EdoctorDlvnSdk.Companion.handleEdrRemoteMessage(context: Context, message: RemoteMessage, icon: Int?): Unit
-```
-
-| Parameter | Type            | Description   |
-| :-------- | :-------------- | :------------ |
-| `context` | `Context`       | **Required**  |
-| `message` | `RemoteMessage` | **Required**  |
-| `icon`    | `Int?`          | Can be `null` |
-
-- ##### Example
-
-  - **Java**:
-
-  ```java
-  @Override
-  public void onMessageReceived(@NonNull RemoteMessage message) {
-      super.onMessageReceived(message);
-      if (EdoctorDlvnSdk.Companion.isEdrMessage(message)) {
-          EdoctorDlvnSdk.Companion.handleEdrRemoteMessage(this, message, R.drawable.dc_app_icon);
-      } else {
-          // DLVN handle
-      }
-  }
-  ```
-
-#### handleNewToken
-
-Call this function inside the override function `onNewToken` of `FirebaseMessagingService`.
-
-```kotlin
-  EdoctorDlvnSdk.Companion.handleNewToken(context: Context, token: String): Unit
-```
-
-| Parameter | Type      | Description  |
-| :-------- | :-------- | :----------- |
-| `context` | `Context` | **Required** |
-| `token`   | `String`  | **Required** |
-
-#### setAppState
-
-Call this function inside `@OnLifecycleEvent(Lifecycle.Event.ON_START)` and `@OnLifecycleEvent(Lifecycle.Event.ON_STOP)` to let SDK knows whether DC app is in foreground or not.
-
-```kotlin
-  EdoctorDlvnSdk.Companion.setAppState(isForeground: Boolean): Unit
-```
-
-| Parameter      | Type      | Description  |
-| :------------- | :-------- | :----------- |
-| `isForeground` | `Boolean` | **Required** |
+| Tham số | Kiểu | Bắt buộc | Mô tả |
+|---------|------|----------|-------|
+| `fm` | `FragmentManager` | ✅ | Fragment manager để hiển thị dialog |
+| `url` | `String?` | ❌ | URL tùy chỉnh |
 
 #### openWebViewWithEncodedData
 
-Open URL from dynamic link. The URL should be full format with `data` and other params.
+Mở URL từ dynamic link với các tham số data đã được encode.
 
 ```kotlin
-  dlvnSdk.openWebViewWithEncodedData(fm: FragmentManager, url: String): Unit
+dlvnSdk.openWebViewWithEncodedData(fm: FragmentManager, url: String)
 ```
 
-| Parameter | Type              | Description  |
-| :-------- | :---------------- | :----------- |
-| `fm`      | `FragmentManager` | **Required** |
-| `url`     | `String`          | **Required** |
+| Tham số | Kiểu | Bắt buộc | Mô tả |
+|---------|------|----------|-------|
+| `fm` | `FragmentManager` | ✅ | Fragment manager để hiển thị dialog |
+| `url` | `String` | ✅ | URL đầy đủ với `data` và các params khác |
 
-#### Home widget
+---
 
-To display appointment widgets from EDR, you need to add the view into your xml layout file:
+### Các phương thức truyền dữ liệu
+
+#### DLVNSendData
+
+Truyền dữ liệu cho SDK **trước khi** mở WebView.
+
+```kotlin
+dlvnSdk.DLVNSendData(params: JSONObject): Boolean
+```
+
+| Tham số | Kiểu | Bắt buộc | Mô tả |
+|---------|------|----------|-------|
+| `params` | `JSONObject` | ✅ | Phải chứa các trường `dcid` và `token` |
+
+**Giá trị trả về:**
+- `true` - Nhận dữ liệu thành công
+- `false` - Params rỗng hoặc thiếu trường bắt buộc
+
+---
+
+### Các phương thức xác thực
+
+#### authenticateEDR
+
+Khởi tạo các listener của SDK cho sự kiện chat/call sau khi user đăng nhập.
+
+```kotlin
+dlvnSdk.authenticateEDR(params: JSONObject)
+```
+
+| Tham số | Kiểu | Bắt buộc | Mô tả |
+|---------|------|----------|-------|
+| `params` | `JSONObject` | ✅ | Dữ liệu xác thực user |
+
+#### deauthenticateEDR
+
+Xóa dữ liệu SDK khi user đăng xuất.
+
+```kotlin
+dlvnSdk.deauthenticateEDR()
+```
+
+---
+
+### Callback Listeners
+
+#### onSdkRequestLogin
+
+Lắng nghe yêu cầu đăng nhập từ SDK.
+
+**Kotlin:**
+```kotlin
+dlvnSdk.onSdkRequestLogin = { callbackUrl ->
+    // Xử lý yêu cầu đăng nhập
+    val url = callbackUrl
+}
+```
+
+**Java:**
+```java
+dlvnSdk.setOnSdkRequestLogin(callbackUrl -> {
+    String url = callbackUrl;
+    return null;
+});
+```
+
+---
+
+## Push Notifications
+
+### Thiết lập Firebase Messaging Service
+
+Implement các phương thức sau trong `FirebaseMessagingService`:
+
+#### isEdrMessage
+
+Kiểm tra xem remote message có phải từ EDR không.
+
+```kotlin
+EdoctorDlvnSdk.isEdrMessage(message: RemoteMessage): Boolean
+```
+
+#### handleEdrRemoteMessage
+
+Xử lý remote message từ EDR và hiển thị notification.
+
+```kotlin
+EdoctorDlvnSdk.handleEdrRemoteMessage(
+    context: Context,
+    message: RemoteMessage,
+    icon: Int?  // null sẽ sử dụng icon mặc định của SDK
+)
+```
+
+#### handleNewToken
+
+Cập nhật FCM token cho SDK.
+
+```kotlin
+EdoctorDlvnSdk.handleNewToken(context: Context, token: String)
+```
+
+### Ví dụ đầy đủ
+
+```kotlin
+class MyFirebaseService : FirebaseMessagingService() {
+    
+    override fun onMessageReceived(message: RemoteMessage) {
+        super.onMessageReceived(message)
+        
+        if (EdoctorDlvnSdk.isEdrMessage(message)) {
+            EdoctorDlvnSdk.handleEdrRemoteMessage(
+                context = this,
+                message = message,
+                icon = R.drawable.ic_notification
+            )
+        } else {
+            // Xử lý các notification khác
+        }
+    }
+    
+    override fun onNewToken(token: String) {
+        super.onNewToken(token)
+        EdoctorDlvnSdk.handleNewToken(this, token)
+    }
+}
+```
+
+---
+
+### App Lifecycle
+
+#### setAppState
+
+Thông báo cho SDK biết trạng thái foreground/background của app. Gọi trong lifecycle observer.
+
+```kotlin
+EdoctorDlvnSdk.setAppState(isForeground: Boolean)
+```
+
+**Ví dụ với ProcessLifecycleOwner:**
+
+```kotlin
+class MyApplication : Application(), DefaultLifecycleObserver {
+    
+    override fun onCreate() {
+        super.onCreate()
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+    }
+    
+    override fun onStart(owner: LifecycleOwner) {
+        EdoctorDlvnSdk.setAppState(true)
+    }
+    
+    override fun onStop(owner: LifecycleOwner) {
+        EdoctorDlvnSdk.setAppState(false)
+    }
+}
+```
+
+---
+
+## Widget
+
+### Appointment Widget
+
+Hiển thị widget lịch hẹn từ EDR trong layout:
 
 ```xml
-  <com.edoctor.dlvn_sdk.widget.AppointmentWidgetList
+<com.edoctor.dlvn_sdk.widget.AppointmentWidgetList
     android:id="@+id/widgetList"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
+    android:layout_height="wrap_content" />
 ```
 
-And that's it!
+Widget tự động xử lý:
+- Lấy dữ liệu lịch hẹn
+- Hiển thị danh sách lịch hẹn
+- Các thao tác hủy/xác nhận
+
+---
+
+## Changelog
+
+Xem [CHANGELOG.md](changelog.md) để biết lịch sử phiên bản và ghi chú phát hành.
+
+---
+
+## License
+
+Copyright (c) 2023-2025 eDoctor Vietnam. All rights reserved.

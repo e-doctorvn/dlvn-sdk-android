@@ -1,39 +1,56 @@
-# dlvn-sdk-android
+# Changelog
 
-EDR - DLVN Android SDK
+All notable changes to DLVN SDK Android will be documented in this file.
 
-Latest version: **1.3.0 (Updated: 26/11/2025)**
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Version 1.3.0 (26/11/2025)
+---
+
+## [1.3.1] - 2025-12-05
+
+### Changed
+- Cập nhật README sang tiếng Việt
+- Cải thiện cấu trúc tài liệu
+
+---
+
+## [1.3.0] - 2025-11-26
 
 ### Breaking Changes
-- Upgrade `minSdk` to 23, `compileSdk` and `targetSdk` to 35 (Android 15).
+- **Min SDK**: Upgraded from API 21 to API 23 (Android 6.0)
+- **Compile SDK**: Upgraded to API 35 (Android 15)
+- **Target SDK**: Upgraded to API 35 (Android 15)
 
-### Improvements
-- Code refactoring and optimization for better performance.
-- Remove unused code and improve code quality.
-- Update demo app with improved UI.
+### Changed
+- Code refactoring and optimization for better performance
+- Improved code quality and removed unused code
+- Updated demo app with improved UI
 
-## Version 1.2.30 (25/11/2025)
+## [1.2.30] - 2025-11-25
 
-- Remove `dataSync` foreground service type from `FCMService` and `CallService` to prevent conflicts with WorkManager and comply with Android 12+ restrictions.
-- Remove unused `FOREGROUND_SERVICE_DATA_SYNC` permission.
-- Only use `remoteMessaging` type which is appropriate for calling/messaging use case.
+### Fixed
+- Remove `dataSync` foreground service type from `FCMService` and `CallService` to prevent conflicts with WorkManager
+- Comply with Android 12+ foreground service restrictions
+- Remove unused `FOREGROUND_SERVICE_DATA_SYNC` permission
+- Use only `remoteMessaging` type for calling/messaging use case
 
-## Version 1.2.29 (25/11/2025)
+## [1.2.29] - 2025-11-25
 
-- Remove `dataSync` foreground service type from `FCMService` and `CallService` to prevent conflicts with WorkManager and comply with Android 12+ restrictions.
-- Remove unused `FOREGROUND_SERVICE_DATA_SYNC` permission.
-- Only use `remoteMessaging` type which is appropriate for calling/messaging use case.
+### Fixed
+- Remove `dataSync` foreground service type from `FCMService` and `CallService`
+- Android 12+ foreground service compliance fixes
 
-## Version 1.2.28 (25/11/2025)
+## [1.2.28] - 2025-11-25
 
-- Change logic for init webview.
-- Add loading when call api initDLVNAccount.
+### Changed
+- Improved WebView initialization logic
+- Added loading indicator when calling `initDLVNAccount` API
 
-## Version 1.2.27 (18/02/2025)
+## [1.2.27] - 2025-02-18
 
-- Fix loading issue when open SDK.
+### Fixed
+- Loading issue when opening SDK
 
 ## Version 1.2.26 (17/09/2024)
 
