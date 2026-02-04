@@ -4,10 +4,13 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.edoctor.dlvn_sdk.Constants
@@ -29,6 +32,7 @@ class WebViewCallActivity: AppCompatActivity() {
     private var btnEndCall: ImageButton? = null
     private var btnToggleCam: ImageButton? = null
     private var btnToggleMic: ImageButton? = null
+    private var pipBaseTopMargin: Int = 0
 
     private var callManager: CallManager? = CallManager.getInstance()
     private val directCall: DirectCall? = callManager?.directCall
@@ -58,6 +62,7 @@ class WebViewCallActivity: AppCompatActivity() {
         remoteView = findViewById(R.id.remote_view_wv)
         remoteCoverView = findViewById(R.id.cover_wv)
         btnRemoteView = findViewById(R.id.btn_remote_view_wv)
+        pipBaseTopMargin = (btnRemoteView?.layoutParams as? ViewGroup.MarginLayoutParams)?.topMargin ?: 0
 
         btnEndCall = findViewById(R.id.btn_end_call_pip)
         btnToggleMic = findViewById(R.id.btn_toggle_mic_pip)
@@ -104,6 +109,18 @@ class WebViewCallActivity: AppCompatActivity() {
         val layout = btnRemoteView!!.layoutParams
         layout.width = (screenSize.width * 0.27f).toInt()
         layout.height = ((screenSize.width * 0.27f) * 1.5f).toInt()
+
+        val root = findViewById<View>(R.id.webview_call_root)
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val lp = btnRemoteView?.layoutParams as? ViewGroup.MarginLayoutParams
+            if (lp != null) {
+                lp.topMargin = pipBaseTopMargin + systemBars.top
+                btnRemoteView?.layoutParams = lp
+            }
+            insets
+        }
+        ViewCompat.requestApplyInsets(root)
     }
 
     private fun initCallEventListener() {

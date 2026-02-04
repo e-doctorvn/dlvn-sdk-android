@@ -40,6 +40,8 @@ import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.DialogFragment
 import com.edoctor.dlvn_sdk.Constants
 import com.edoctor.dlvn_sdk.EdoctorDlvnSdk
@@ -51,10 +53,12 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
+import kotlin.math.max
 
 class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private lateinit var loading: ConstraintLayout
     private lateinit var loadingProgressBar: ProgressBar
+    private lateinit var webViewContainer: View
     lateinit var myWebView: WebView
     private var buttonBack: Button? = null
     private var buttonNext: Button? = null
@@ -141,6 +145,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             buttonBack = v.findViewById(R.id.buttonBack)
             buttonNext = v.findViewById(R.id.buttonNext)
             containerErrorNetwork = v.findViewById(R.id.containerErrorNetwork)
+            webViewContainer = v.findViewById(R.id.webview_container)
             myWebView.overScrollMode = View.OVER_SCROLL_NEVER
 
             if (EdoctorDlvnSdk.needClearCache) {
@@ -160,6 +165,17 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 loading.visibility = View.VISIBLE
                 myWebView.reload()
             }
+
+            ViewCompat.setOnApplyWindowInsetsListener(v) { _, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+                val bottom = max(systemBars.bottom, ime.bottom)
+                applyInsets(webViewContainer, systemBars.left, systemBars.top, systemBars.right, bottom)
+                applyInsets(loading, systemBars.left, systemBars.top, systemBars.right, bottom)
+                applyInsets(containerErrorNetwork, systemBars.left, systemBars.top, systemBars.right, bottom)
+                insets
+            }
+            ViewCompat.requestApplyInsets(v)
 
             myWebView.webChromeClient = object : WebChromeClient() {
                 override fun onCreateWindow(
@@ -346,6 +362,10 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             }
         } catch (_: Error) { }
         return v
+    }
+
+    private fun applyInsets(view: View, left: Int, top: Int, right: Int, bottom: Int) {
+        view.setPadding(left, top, right, bottom)
     }
 
     override fun onDestroy() {
