@@ -51,7 +51,7 @@ Trong file `build.gradle` của module app:
 
 ```groovy
 dependencies {
-    implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.3.2'
+    implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.3.3'
     implementation 'com.google.firebase:firebase-messaging:25.0.1'
 }
 ```

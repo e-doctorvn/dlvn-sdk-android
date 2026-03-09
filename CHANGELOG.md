@@ -5,6 +5,20 @@ All notable changes to DLVN SDK Android will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.3] - 2026-03-09
+
+### Changed
+
+- Updated README dependency example to use version `1.3.3`
+- Updated `jitpack.yml` to publish the `DLVN-SDK` module directly during JitPack builds
+
+### Fixed
+
+- Disabled `NullSafeMutableLiveData` lint check in the demo `app` module to avoid the same JitPack lint crash seen in release builds
+- Prevented JitPack from failing on the demo app's `lintVitalAnalyzeRelease` task by aligning the build flow with the library publish task
+
+---
+
 ## [1.3.2] - 2026-03-09
 
 ### Changed
