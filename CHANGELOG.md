@@ -5,13 +5,20 @@ All notable changes to DLVN SDK Android will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
----
-
-## [1.3.1] - 2025-12-05
+## [1.3.1] - 2026-02-04
 
 ### Changed
+- Updated `com.sendbird.sdk:sendbird-chat` from `4.32.0` to `4.32.2`
+- Updated `com.sendbird.sdk:sendbird-chat` from `4.32.2` to `4.32.4`
+- Updated `androidx.lifecycle:lifecycle-process` from `2.8.7` to `2.10.0`
 - Cập nhật README sang tiếng Việt
 - Cải thiện cấu trúc tài liệu
+- Dọn cấu hình JitPack và authentication token tạm thời trong quá trình publish
+
+### Fixed
+- Added ProGuard rule `-dontwarn com.sendbird.android.shadow.**` to avoid warnings from Sendbird shadow package
+- Added window insets handling for SDK WebView to better support edge-to-edge layouts, system bars, and keyboard insets
+- Adjusted the floating preview position in `WebViewCallActivity` to avoid overlapping the status bar on edge-to-edge screens
 
 ---
 
