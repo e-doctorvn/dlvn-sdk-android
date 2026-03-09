@@ -5,11 +5,26 @@ All notable changes to DLVN SDK Android will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.2] - 2026-03-09
+
+### Changed
+
+- Updated `com.sendbird.sdk:sendbird-chat` from `4.32.4` to `4.33.1`
+- Updated README dependency example to use version `1.3.2`
+
+### Fixed
+
+- Updated Sendbird Chat push handler integration to use current v4 APIs
+- Avoided null-token crashes when registering Sendbird push tokens
+- Disabled `NullSafeMutableLiveData` lint check in the SDK module to work around a JitPack lint crash with the current AGP/Kotlin/Lifecycle toolchain
+
+---
+
 ## [1.3.1] - 2026-02-04
 
 ### Changed
 
-- Updated `com.sendbird.sdk:sendbird-chat` from `4.32.0` to `4.33.1`
+- Updated `com.sendbird.sdk:sendbird-chat` from `4.32.0` to `4.32.4`
 - Updated `androidx.lifecycle:lifecycle-process` from `2.8.7` to `2.10.0`
 - Cập nhật README sang tiếng Việt
 - Cải thiện cấu trúc tài liệu
@@ -18,7 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Added ProGuard rule `-dontwarn com.sendbird.android.shadow.**` to avoid warnings from Sendbird shadow package
-- Updated Sendbird Chat push handler integration to use current v4 APIs and avoid null-token crashes
 - Added window insets handling for SDK WebView to better support edge-to-edge layouts, system bars, and keyboard insets
 - Adjusted the floating preview position in `WebViewCallActivity` to avoid overlapping the status bar on edge-to-edge screens
 
