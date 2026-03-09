@@ -8,15 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.3.1] - 2026-02-04
 
 ### Changed
-- Updated `com.sendbird.sdk:sendbird-chat` from `4.32.0` to `4.32.2`
-- Updated `com.sendbird.sdk:sendbird-chat` from `4.32.2` to `4.32.4`
+
+- Updated `com.sendbird.sdk:sendbird-chat` from `4.32.0` to `4.33.1`
 - Updated `androidx.lifecycle:lifecycle-process` from `2.8.7` to `2.10.0`
 - Cập nhật README sang tiếng Việt
 - Cải thiện cấu trúc tài liệu
 - Dọn cấu hình JitPack và authentication token tạm thời trong quá trình publish
 
 ### Fixed
+
 - Added ProGuard rule `-dontwarn com.sendbird.android.shadow.**` to avoid warnings from Sendbird shadow package
+- Updated Sendbird Chat push handler integration to use current v4 APIs and avoid null-token crashes
 - Added window insets handling for SDK WebView to better support edge-to-edge layouts, system bars, and keyboard insets
 - Adjusted the floating preview position in `WebViewCallActivity` to avoid overlapping the status bar on edge-to-edge screens
 
@@ -25,11 +27,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.3.0] - 2025-11-26
 
 ### Breaking Changes
+
 - **Min SDK**: Upgraded from API 21 to API 23 (Android 6.0)
 - **Compile SDK**: Upgraded to API 35 (Android 15)
 - **Target SDK**: Upgraded to API 35 (Android 15)
 
 ### Changed
+
 - Code refactoring and optimization for better performance
 - Improved code quality and removed unused code
 - Updated demo app with improved UI
@@ -37,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.30] - 2025-11-25
 
 ### Fixed
+
 - Remove `dataSync` foreground service type from `FCMService` and `CallService` to prevent conflicts with WorkManager
 - Comply with Android 12+ foreground service restrictions
 - Remove unused `FOREGROUND_SERVICE_DATA_SYNC` permission
@@ -45,18 +50,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.29] - 2025-11-25
 
 ### Fixed
+
 - Remove `dataSync` foreground service type from `FCMService` and `CallService`
 - Android 12+ foreground service compliance fixes
 
 ## [1.2.28] - 2025-11-25
 
 ### Changed
+
 - Improved WebView initialization logic
 - Added loading indicator when calling `initDLVNAccount` API
 
 ## [1.2.27] - 2025-02-18
 
 ### Fixed
+
 - Loading issue when opening SDK
 
 ## Version 1.2.26 (17/09/2024)

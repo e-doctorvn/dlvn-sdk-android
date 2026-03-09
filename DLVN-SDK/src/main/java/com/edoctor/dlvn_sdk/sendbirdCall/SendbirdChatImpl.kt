@@ -13,17 +13,16 @@ import com.sendbird.android.handler.PushRequestCompleteHandler
 import com.sendbird.android.params.InitParams
 import com.sendbird.android.push.PushTokenRegistrationStatus
 import com.sendbird.android.push.SendbirdPushHelper
-import com.sendbird.calls.SendBirdCall
 
 object SendbirdChatImpl {
     private const val TAG = "RNSendBirdChat"
 
-    fun initSendbirdChat(context: Context, APP_ID: String, userId: String?, token: String?) {
+    fun initSendbirdChat(context: Context, appId: String, userId: String?, token: String?) {
         if (!SendbirdChat.isInitialized) {
-            SendbirdPushHelper.registerPushHandler(PushNotificationService())
+            SendbirdPushHelper.registerHandler(PushNotificationService())
 
             SendbirdChat.init(
-                InitParams(APP_ID, context, useCaching = true),
+                InitParams(appId, context, useCaching = true),
                 object : InitResultHandler {
                     override fun onMigrationStarted() {
                         Log.i("Application", "Called when there's an update in Sendbird server.")
@@ -48,42 +47,50 @@ object SendbirdChatImpl {
 
     private fun authenticateChat(userId: String?, token: String?) {
         if (userId != null && token != null) {
-            SendbirdChat.connect(userId, token) { user, _ ->
+            SendbirdChat.connect(userId, token) { user, e ->
+                if (e != null) {
+                    Log.e(TAG, "Failed to connect Sendbird Chat", e)
+                    return@connect
+                }
+
                 if (user != null) {
-                    SendbirdPushHelper.getPushToken { token, _ ->
-                        if (token == null) {
-                            FirebaseMessaging.getInstance().token
-                                .addOnCompleteListener(object :
-                                    OnCompleteListener<String?> {
-                                    override fun onComplete(task: Task<String?>) {
-                                        if (!task.isSuccessful) {
-                                            return
-                                        }
-                                        registerPushToken(task.result!!)
-                                        Log.d("zzz", "READY TO GET CHAT NOTI")
-                                    }
-                                })
-                        }
-                    }
+                    syncPushTokenAfterConnect()
                     SendbirdChat.setPushTriggerOption(SendbirdChat.PushTriggerOption.ALL) {}
-                    SendbirdPushHelper.registerPushHandler(PushNotificationService())
+                    SendbirdPushHelper.registerHandler(PushNotificationService())
                 } else {
-                    // Handle error.
+                    Log.w(TAG, "Sendbird Chat connection completed with null user.")
                 }
             }
         }
     }
 
+    private fun syncPushTokenAfterConnect() {
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener(object : OnCompleteListener<String?> {
+                override fun onComplete(task: Task<String?>) {
+                    if (!task.isSuccessful) {
+                        Log.w(TAG, "Failed to fetch FCM token for Sendbird Chat.")
+                        return
+                    }
+
+                    task.result
+                        ?.takeIf { it.isNotBlank() }
+                        ?.let(::registerPushToken)
+                }
+            })
+    }
+
     fun registerPushToken(pushToken: String) {
+        if (pushToken.isBlank()) return
         if (SendbirdChat.isInitialized) {
-            SendbirdChat.registerPushToken(pushToken) { status ,e ->
+            SendbirdChat.registerPushToken(pushToken) { status, e ->
                 if (e != null) {
-                    // Handle error.
+                    Log.e(TAG, "Failed to register Sendbird push token", e)
+                    return@registerPushToken
                 }
 
                 if (status == PushTokenRegistrationStatus.PENDING) {
-                    // A token registration is pending.
-                    // Try registering again after a connection has been successfully established.
+                    Log.d(TAG, "Sendbird push token registration is pending.")
                 }
             }
         }
@@ -91,22 +98,54 @@ object SendbirdChatImpl {
 
     fun disconnect() {
         if (SendbirdChat.isInitialized) {
-            SendbirdPushHelper.unregisterPushHandler(false, object : PushRequestCompleteHandler {
+            SendbirdPushHelper.unregisterHandler(false, object : PushRequestCompleteHandler {
                 override fun onComplete(isRegistered: Boolean, token: String?) {
-                    SendbirdChat.pendingPushToken.let {
-                        if (!it.isNullOrEmpty()) {
-                            SendbirdChat.unregisterPushToken(it) {}
-                        }
-                    }
-                    SendbirdChat.disconnect {
-                        Log.d("zzz", "SendbirdChat disconnected.")
-                    }
+                    unregisterPushTokenAndDisconnect(token)
                 }
 
                 override fun onError(e: SendbirdException) {
                     Log.d(TAG, e.message.toString())
+                    disconnectChat()
                 }
             })
+        }
+    }
+
+    private fun unregisterPushTokenAndDisconnect(pushToken: String?) {
+        pushToken?.takeIf { it.isNotBlank() }?.let {
+            unregisterPushToken(it)
+            return
+        }
+
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener(object : OnCompleteListener<String?> {
+                override fun onComplete(task: Task<String?>) {
+                    if (!task.isSuccessful) {
+                        Log.w(TAG, "Failed to fetch FCM token while disconnecting Sendbird Chat.")
+                        disconnectChat()
+                        return
+                    }
+
+                    task.result
+                        ?.takeIf { it.isNotBlank() }
+                        ?.let(::unregisterPushToken)
+                        ?: disconnectChat()
+                }
+            })
+    }
+
+    private fun unregisterPushToken(pushToken: String) {
+        SendbirdChat.unregisterPushToken(pushToken) { e ->
+            if (e != null) {
+                Log.w(TAG, "Failed to unregister Sendbird push token", e)
+            }
+            disconnectChat()
+        }
+    }
+
+    private fun disconnectChat() {
+        SendbirdChat.disconnect {
+            Log.d(TAG, "SendbirdChat disconnected.")
         }
     }
 }

@@ -15,6 +15,6 @@ class PushNotificationService: SendbirdPushHandler() {
     }
 
     override fun onNewToken(newToken: String?) {
-        SendbirdChatImpl.registerPushToken(newToken!!)
+        newToken?.let(SendbirdChatImpl::registerPushToken)
     }
 }
