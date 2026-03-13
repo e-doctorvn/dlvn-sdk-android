@@ -5,6 +5,16 @@ All notable changes to DLVN SDK Android will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.4] - 2026-03-13
+
+### Changed
+
+- Updated theme color accents from brown to blue in widget-related layouts
+- Optimized drawable assets (`ic_cam_atv`, `ic_cam_ina`, `ic_chat_atv`, `ic_mic_atv`, `ic_mic_ina`, `shortcut_ic`) to reduce resource size
+- Updated README dependency example to use version `1.3.4`
+
+---
+
 ## [1.3.3] - 2026-03-09
 
 ### Changed
