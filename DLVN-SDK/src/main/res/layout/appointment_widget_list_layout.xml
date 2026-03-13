@@ -19,6 +19,6 @@
             android:id="@+id/scrollIndicatorEdr"
             android:layout_width="24dp"
             android:layout_height="4dp"
-            android:background="@color/brown_primary" />
+            android:background="@color/blue_primary" />
     </LinearLayout>
 </LinearLayout>

@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="red_or">#be4d25</color>
     <color name="red_primary">#DE181F</color>
+    <color name="blue_primary">#1746FF</color>
     <color name="blue_secondary">#1479FF</color>
     <color name="daiichi_secondary">#D8A78B</color>
     <color name="green">#069000</color>

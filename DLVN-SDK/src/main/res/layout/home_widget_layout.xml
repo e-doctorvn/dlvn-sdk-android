@@ -182,7 +182,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginStart="8dp"
-                android:textColor="@color/brown_primary"
+                android:textColor="@color/blue_primary"
                 android:text="Lối tắt vào phòng tư vấn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
