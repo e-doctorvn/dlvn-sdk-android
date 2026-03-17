@@ -133,19 +133,29 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         val v: View = inflater.inflate(
-            R.layout.webview,
+            R.layout.dlvn_sdk_webview,
             container, false
         )
         try {
             dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
-            myWebView = v.findViewById(R.id.webview)
-            loadingProgressBar = v.findViewById(R.id.loadingProgressBar)
-            loading = v.findViewById(R.id.loading)
+            myWebView = requireNotNull(v.findViewById<WebView?>(R.id.webview)) {
+                missingRequiredViewMessage("webview")
+            }
+            loadingProgressBar = requireNotNull(v.findViewById<ProgressBar?>(R.id.loadingProgressBar)) {
+                missingRequiredViewMessage("loadingProgressBar")
+            }
+            loading = requireNotNull(v.findViewById<ConstraintLayout?>(R.id.loading)) {
+                missingRequiredViewMessage("loading")
+            }
             buttonBack = v.findViewById(R.id.buttonBack)
             buttonNext = v.findViewById(R.id.buttonNext)
-            containerErrorNetwork = v.findViewById(R.id.containerErrorNetwork)
-            webViewContainer = v.findViewById(R.id.webview_container)
+            containerErrorNetwork = requireNotNull(v.findViewById<ConstraintLayout?>(R.id.containerErrorNetwork)) {
+                missingRequiredViewMessage("containerErrorNetwork")
+            }
+            webViewContainer = requireNotNull(v.findViewById<View?>(R.id.webview_container)) {
+                missingRequiredViewMessage("webview_container")
+            }
             myWebView.overScrollMode = View.OVER_SCROLL_NEVER
 
             if (EdoctorDlvnSdk.needClearCache) {
@@ -366,6 +376,10 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
     private fun applyInsets(view: View, left: Int, top: Int, right: Int, bottom: Int) {
         view.setPadding(left, top, right, bottom)
+    }
+
+    private fun missingRequiredViewMessage(viewId: String): String {
+        return "Missing required view '$viewId' in SDK layout. Check for resource name collisions in host app."
     }
 
     override fun onDestroy() {
