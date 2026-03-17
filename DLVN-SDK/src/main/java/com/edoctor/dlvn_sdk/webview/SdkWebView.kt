@@ -38,9 +38,11 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.DialogFragment
 import com.edoctor.dlvn_sdk.Constants
@@ -59,6 +61,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private lateinit var loading: ConstraintLayout
     private lateinit var loadingProgressBar: ProgressBar
     private lateinit var webViewContainer: View
+    private lateinit var statusBarScrim: View
     lateinit var myWebView: WebView
     private var buttonBack: Button? = null
     private var buttonNext: Button? = null
@@ -75,6 +78,10 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
     private var requestMultipleCallPermissionLauncher: ActivityResultLauncher<Array<String>>? = null
     private var requestMultiplePermissionLauncher: ActivityResultLauncher<Array<String>>? = null
+    private var originalActivityStatusBarColor: Int? = null
+    private var originalActivityLightStatusBar: Boolean? = null
+    private var originalActivityHadTranslucentStatus: Boolean? = null
+    private var originalActivityHadDrawsSystemBarBackgrounds: Boolean? = null
 
     init {
         sdkInstance = sdk
@@ -89,12 +96,6 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Companion.isVisible = true
-        dialog?.window?.setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            dialog?.window?.decorView?.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
-        }
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) {}
@@ -137,7 +138,14 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             container, false
         )
         try {
-            dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            dialog?.window?.let { window ->
+                window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.blue_primary)
+                WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = false
+            }
+            applyActivityStatusBarStyle()
 
             myWebView = requireNotNull(v.findViewById<WebView?>(R.id.webview)) {
                 missingRequiredViewMessage("webview")
@@ -155,6 +163,9 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
             }
             webViewContainer = requireNotNull(v.findViewById<View?>(R.id.webview_container)) {
                 missingRequiredViewMessage("webview_container")
+            }
+            statusBarScrim = requireNotNull(v.findViewById<View?>(R.id.status_bar_scrim)) {
+                missingRequiredViewMessage("status_bar_scrim")
             }
             myWebView.overScrollMode = View.OVER_SCROLL_NEVER
 
@@ -178,11 +189,16 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
 
             ViewCompat.setOnApplyWindowInsetsListener(v) { _, insets ->
                 val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                val cutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
                 val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+                val left = max(systemBars.left, cutout.left)
+                val top = max(systemBars.top, cutout.top)
+                val right = max(systemBars.right, cutout.right)
                 val bottom = max(systemBars.bottom, ime.bottom)
-                applyInsets(webViewContainer, systemBars.left, systemBars.top, systemBars.right, bottom)
-                applyInsets(loading, systemBars.left, systemBars.top, systemBars.right, bottom)
-                applyInsets(containerErrorNetwork, systemBars.left, systemBars.top, systemBars.right, bottom)
+                applyInsets(webViewContainer, left, top, right, bottom)
+                applyInsets(loading, left, top, right, bottom)
+                applyInsets(containerErrorNetwork, left, top, right, bottom)
+                applyStatusBarScrim(top)
                 insets
             }
             ViewCompat.requestApplyInsets(v)
@@ -378,13 +394,78 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
         view.setPadding(left, top, right, bottom)
     }
 
+    private fun applyStatusBarScrim(height: Int) {
+        val layoutParams = statusBarScrim.layoutParams
+        if (layoutParams.height != height) {
+            layoutParams.height = height
+            statusBarScrim.layoutParams = layoutParams
+        }
+        statusBarScrim.visibility = if (height > 0) View.VISIBLE else View.GONE
+    }
+
+    private fun applyActivityStatusBarStyle() {
+        activity?.window?.let { window ->
+            if (originalActivityStatusBarColor == null) {
+                originalActivityStatusBarColor = window.statusBarColor
+            }
+            if (originalActivityHadTranslucentStatus == null) {
+                originalActivityHadTranslucentStatus =
+                    (window.attributes.flags and WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) != 0
+            }
+            if (originalActivityHadDrawsSystemBarBackgrounds == null) {
+                originalActivityHadDrawsSystemBarBackgrounds =
+                    (window.attributes.flags and WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS) != 0
+            }
+            val controller = WindowCompat.getInsetsController(window, window.decorView)
+            if (originalActivityLightStatusBar == null) {
+                originalActivityLightStatusBar = controller.isAppearanceLightStatusBars
+            }
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.blue_primary)
+            controller.isAppearanceLightStatusBars = false
+        }
+    }
+
+    private fun restoreActivityStatusBarStyle() {
+        activity?.window?.let { window ->
+            originalActivityHadTranslucentStatus?.let { hadFlag ->
+                if (hadFlag) {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+                } else {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+                }
+            }
+            originalActivityHadDrawsSystemBarBackgrounds?.let { hadFlag ->
+                if (hadFlag) {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                } else {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                }
+            }
+            originalActivityStatusBarColor?.let { color ->
+                window.statusBarColor = color
+            }
+            originalActivityLightStatusBar?.let { isLightStatusBar ->
+                WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = isLightStatusBar
+            }
+        }
+        originalActivityStatusBarColor = null
+        originalActivityLightStatusBar = null
+        originalActivityHadTranslucentStatus = null
+        originalActivityHadDrawsSystemBarBackgrounds = null
+    }
+
     private fun missingRequiredViewMessage(viewId: String): String {
         return "Missing required view '$viewId' in SDK layout. Check for resource name collisions in host app."
     }
 
     override fun onDestroy() {
-        myWebView.removeAllViews();
-        myWebView.destroy()
+        restoreActivityStatusBarStyle()
+        if (::myWebView.isInitialized) {
+            myWebView.removeAllViews()
+            myWebView.destroy()
+        }
         Companion.isVisible = false
         super.onDestroy()
     }
@@ -406,13 +487,8 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     }
 
     fun selfClose() {
-        this.dismiss()
         hideLoading = false
-        myWebView.removeAllViews()
-        myWebView.destroy()
-        Companion.isVisible = false
-        super.onDestroy()
-        this.onDestroy()
+        dismissAllowingStateLoss()
     }
 
     fun clearCacheAndCookies(context: Context) {

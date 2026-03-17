@@ -5,6 +5,22 @@ All notable changes to DLVN SDK Android will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.6] - 2026-03-17
+
+### Changed
+
+- Updated README dependency example to use version `1.3.6`
+- Updated SDK WebView status bar styling to `@color/blue_primary` with white status bar icons/text
+
+### Fixed
+
+- Fixed SDK WebView overlapping the status bar in host apps using full-screen/edge-to-edge themes
+- Added cutout-aware window insets handling and a `status_bar_scrim` fallback to ensure consistent status bar background across emulator/device variants
+- Preserved and restored host activity status bar state when opening/closing `SdkWebView` to avoid UI side effects
+- Cleaned up WebView closing flow to avoid duplicate lifecycle destroy calls
+
+---
+
 ## [1.3.5] - 2026-03-17
 
 ### Changed

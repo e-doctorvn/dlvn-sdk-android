@@ -93,4 +93,14 @@
                 />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/status_bar_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="top"
+        android:background="@color/blue_primary"
+        android:clickable="false"
+        android:focusable="false"
+        android:importantForAccessibility="no" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
