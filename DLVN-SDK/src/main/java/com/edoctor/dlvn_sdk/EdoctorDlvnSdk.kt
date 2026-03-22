@@ -11,7 +11,6 @@ import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -403,10 +402,9 @@ class EdoctorDlvnSdk(
                         val responseBody = response.body()
                         try {
                             if (responseBody != null && responseBody is String && responseBody != JSONObject.NULL) {
-                                val responseData = responseBody.toString()
                                 try {
-                                    if (responseData != JSONObject.NULL) {
-                                        val data = JSONObject(responseData)
+                                    if (responseBody != JSONObject.NULL) {
+                                        val data = JSONObject(responseBody)
                                         val exist = data.optBoolean("checkAccountExist")
                                         accountExist = exist
                                         mCallback(exist)
