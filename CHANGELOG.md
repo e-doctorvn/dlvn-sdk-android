@@ -5,6 +5,20 @@ All notable changes to DLVN SDK Android will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.7] - 2026-09-30
+
+### Changed
+
+- Updated LIVE and SANDBOX WebView URLs to `kh.daiichilife.com.vn` and `khuat.daiichilife.com.vn`, preserving `/tu-van-suc-khoe` and existing API endpoints.
+- Updated the publishing version and README dependency example to `1.3.7`.
+
+### Fixed
+
+- Replaced substring-based internal link detection with parsed HTTP/HTTPS hostname checks for `daiichilife.com.vn` and dot-separated subdomains in both normal and new-window navigation.
+- Kept internal Daiichi links in the SDK WebView and external links in the system browser; added regression tests for lookalike hosts, userinfo, path/query spoofing, and malformed URLs.
+
+---
+
 ## [1.3.6] - 2026-03-17
 
 ### Changed

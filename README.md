@@ -2,7 +2,7 @@
 
 [![](https://jitpack.io/v/e-doctorvn/dlvn-sdk-android.svg)](https://jitpack.io/#e-doctorvn/dlvn-sdk-android)
 
-> SDK Android của eDoctor dành cho Dai-ichi Life Vietnam - Tích hợp dịch vụ tư vấn sức khỏe.
+> SDK Android của eDoctor dành cho Daiichi Life Việt Nam - Tích hợp dịch vụ tư vấn sức khỏe.
 
 ## Mục lục
 
@@ -51,7 +51,7 @@ Trong file `build.gradle` của module app:
 
 ```groovy
 dependencies {
-    implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.3.6'
+    implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.3.7'
     implementation 'com.google.firebase:firebase-messaging:25.0.1'
 }
 ```
@@ -96,8 +96,10 @@ class MainActivity : AppCompatActivity() {
 
 | Môi trường | WebView URL | API |
 |------------|-------------|-----|
-| `SANDBOX` | `khuat.dai-ichi-life.com.vn/tu-van-suc-khoe` | Development |
-| `LIVE` | `kh.dai-ichi-life.com.vn/tu-van-suc-khoe` | Production |
+| `SANDBOX` | `https://khuat.daiichilife.com.vn/tu-van-suc-khoe` | Development |
+| `LIVE` | `https://kh.daiichilife.com.vn/tu-van-suc-khoe` | Production |
+
+Các liên kết HTTP/HTTPS có hostname chính xác là `daiichilife.com.vn` hoặc subdomain với ranh giới dấu `.` tiếp tục mở trong SDK WebView. Các liên kết ngoài hệ thống mở bằng trình duyệt hệ thống; tên miền xuất hiện trong path, query hoặc một hostname giả không được coi là internal.
 
 ---
 

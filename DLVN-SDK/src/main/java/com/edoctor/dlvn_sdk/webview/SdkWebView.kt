@@ -214,7 +214,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                     val data = result.extra
                     val context = view.context
 
-                    if (data.toString().contains(Constants.dlvnDomain)) {
+                    if (isInternalDaiichiUrl(data)) {
                         view.loadUrl(data.toString() + "?from=eDoctor&screen=eDoctorHome")
                         return true
                     } else {
@@ -340,7 +340,7 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
                 ): Boolean {
                     val url = request?.url?.toString()
                     try {
-                        if (url.toString().contains(Constants.dlvnDomain)) {
+                        if (isInternalDaiichiUrl(url)) {
                             view?.loadUrl(url.toString() + "?from=eDoctor&screen=eDoctorHome")
                             return false
                         } else {

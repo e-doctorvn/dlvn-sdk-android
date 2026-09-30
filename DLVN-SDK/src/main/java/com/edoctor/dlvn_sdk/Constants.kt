@@ -1,8 +1,8 @@
 package com.edoctor.dlvn_sdk
 
 object Constants {
-    const val healthConsultantUrlDev = "https://khuat.dai-ichi-life.com.vn/tu-van-suc-khoe"  // "https://e-doctor.dev/tu-van-suc-khoe"
-    const val healthConsultantUrlProd = "https://kh.dai-ichi-life.com.vn/tu-van-suc-khoe"
+    const val healthConsultantUrlDev = "https://khuat.daiichilife.com.vn/tu-van-suc-khoe"
+    const val healthConsultantUrlProd = "https://kh.daiichilife.com.vn/tu-van-suc-khoe"
     const val edrApiUrlDev = "https://virtual-clinic.api.e-doctor.dev/"
     const val edrApiUrlProd = "https://virtual-clinic.api.edoctor.io/"
     const val edrAttachmentUrlDev = "https://e-doctor.dev/_upload/image/"
@@ -11,7 +11,7 @@ object Constants {
     const val edrGraphQlUrlProd = "https://virtual-clinic.api.edoctor.io/graphql"
     const val edrGraphQlWsUrlDev = "wss://virtual-clinic.api.e-doctor.dev/graphql"
     const val edrGraphQlWsUrlProd = "wss://virtual-clinic.api.edoctor.io/graphql"
-    const val dlvnDomain = "dai-ichi-life.com.vn"
+    const val dlvnDomain = "daiichilife.com.vn"
     const val webViewTag = "EDR-WebView"
     const val sdkMainClassname = "com.edoctor.application.MainActivity"
     const val dConnectMainClassname = "com.dlvn.mcustomerportal.activity.DashboardActivity"
