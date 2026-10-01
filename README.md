@@ -21,11 +21,19 @@
 
 | Yêu cầu | Phiên bản tối thiểu |
 |---------|---------------------|
-| **Compile SDK** | API 35 (Android 15) |
+| **Compile SDK** | API 36 (Android 16) |
 | **Min SDK** | API 23 (Android 6.0) |
-| **Target SDK** | API 35 |
+| **Target SDK** | API 36 |
 | **Java** | 17 |
-| **Kotlin** | 2.0+ |
+| **Kotlin dùng để build SDK** | 2.3.21 |
+
+Project dùng AGP 8.13.2 và Gradle Wrapper 8.14.5. Chạy kiểm tra bằng JDK 17:
+
+```sh
+./gradlew :app:assembleDebug :DLVN-SDK:assembleRelease testDebugUnitTest lintDebug
+```
+
+Dependencies được đối chiếu với Maven ngày 01/10/2026. AndroidX Core 1.18.0, OkHttp 5.4.0 và Glide 5.0.7 là các bản stable gần nhất hỗ trợ compile SDK 36; các bản mới hơn yêu cầu API 37. Apollo giữ bản stable cuối của nhánh 3.x (3.8.6); nâng sang 5.x cần migration API/codegen GraphQL. Toolchain giữ nhánh AGP 8.x với Kotlin 2.3.x được R8 hỗ trợ; AGP 9.x/built-in Kotlin là một migration riêng. `minSdk` vẫn là 23.
 
 ---
 
@@ -52,7 +60,7 @@ Trong file `build.gradle` của module app:
 ```groovy
 dependencies {
     implementation 'com.github.e-doctorvn:dlvn-sdk-android:1.3.7'
-    implementation 'com.google.firebase:firebase-messaging:25.0.1'
+    implementation 'com.google.firebase:firebase-messaging:25.1.3'
 }
 ```
 

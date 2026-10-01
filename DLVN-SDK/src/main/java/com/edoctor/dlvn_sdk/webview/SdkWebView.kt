@@ -34,6 +34,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.ProgressBar
+import androidx.activity.ComponentDialog
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -471,18 +473,14 @@ class SdkWebView(sdk: EdoctorDlvnSdk): DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return object : Dialog(requireActivity(), theme) {
-            @Deprecated("Deprecated in Java")
-            override fun onBackPressed() {
-                requireActivity().runOnUiThread {
-                    if (myWebView.url == domain) {
-                        selfClose()
-                    }
-                    if (!myWebView.canGoBack()) {
+        return ComponentDialog(requireActivity(), theme).apply {
+            onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (myWebView.url == domain || !myWebView.canGoBack()) {
                         selfClose()
                     }
                 }
-            }
+            })
         }
     }
 

@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace 'com.edoctor.application'
-    compileSdk 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId "com.example.application"
-        minSdk 23
-        targetSdk 35
+        minSdk = 23
+        targetSdk = 36
         versionCode 1
         versionName "1.0"
 
@@ -30,10 +30,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-    lint {
-        // Work around a crash in androidx.lifecycle's lint detector with the current AGP/Kotlin toolchain.
-        disable 'NullSafeMutableLiveData'
-    }
     kotlin {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_17
@@ -42,10 +38,10 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'androidx.appcompat:appcompat:1.8.0'
+    implementation 'com.google.android.material:material:1.14.0'
     implementation project(path: ':DLVN-SDK')
-    implementation 'androidx.core:core-ktx:1.16.0'
+    implementation 'androidx.core:core-ktx:1.18.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'

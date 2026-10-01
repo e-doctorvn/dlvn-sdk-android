@@ -21,6 +21,7 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -74,6 +75,11 @@ class VideoCallActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_call)
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Keep the call screen open until the call ends.
+            }
+        })
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         callManager = CallManager.getInstance()
@@ -324,12 +330,6 @@ class VideoCallActivity : AppCompatActivity() {
                 total.minus(duration).div(1000).let { result -> if (result >= 0) abs(result) else 0 }
             } ?: totalCallTime
         }
-    }
-
-    @Suppress("DEPRECATION", "MissingSuperCall")
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        // Intentionally not calling super to prevent back navigation during call
     }
 
     private fun toggleLocalView(hide: Boolean = false) {
